@@ -9,16 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2c0f8c6c3a7ed44eacea81769e6d87d, type: 3}
-  m_Name: 01_power
+  m_Script: {fileID: 11500000, guid: a63aeb7295f7fe44db6e18355dd68c2c, type: 3}
+  m_Name: 08_firewall
   m_EditorClassIdentifier: 
-  upgradeName: power
-  description: +[int] damage
+  upgradeName: fireWall
+  description: 
   icon: {fileID: 0}
-  stat: damage
+  stat: armor
   perUpgradeValue: 1
-  maxLevel: 15
-  costFormula: 1+1*(n-1)
+  maxLevel: 10
+  costFormula: 8+1*(n-1)
   costUnit: redBits
-  unlockRoot: {fileID: 0}
-  unlockRequirementLevel: 1

@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2c0f8c6c3a7ed44eacea81769e6d87d, type: 3}
-  m_Name: 08_firewall
+  m_Script: {fileID: 11500000, guid: a63aeb7295f7fe44db6e18355dd68c2c, type: 3}
+  m_Name: 06_attackSize
   m_EditorClassIdentifier: 
-  upgradeName: firewall
-  description: '''+[int] armor'
+  upgradeName: attack size
+  description: +[int]% attack size
   icon: {fileID: 0}
-  stat: armor
-  perUpgradeValue: 1
+  stat: attackSize
+  perUpgradeValue: 10
   maxLevel: 10
-  costFormula: 8+1*(n-1)
+  costFormula: 10+1*(n-1)
   costUnit: redBits
