@@ -15,8 +15,8 @@ MonoBehaviour:
   upgradeName: fireWall
   description: 
   icon: {fileID: 0}
-  stat: armor
+  stat: 7
   perUpgradeValue: 1
   maxLevel: 10
   costFormula: 8+1*(n-1)
-  costUnit: redBits
+  costUnit: 0

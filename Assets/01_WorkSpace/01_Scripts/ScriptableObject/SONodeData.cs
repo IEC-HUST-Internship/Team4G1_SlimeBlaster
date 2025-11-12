@@ -9,13 +9,12 @@ public class SONodeData : ScriptableObject
     public Sprite icon;
 
     [Header("Stats")]
-    public string stat;            // HP, Armor, BossDamage, etc.
+    public EnumStat stat;          // Type-safe dropdown for stats
     public int perUpgradeValue;    // How much this upgrade adds per level
     public int maxLevel = 10;      // Max threshold
 
     [Header("Cost Formula")]
     [Tooltip("Write formula using n for level, e.g. '1+1*(n-1)'")]
     public string costFormula = "1+1*(n-1)";
-    public string costUnit;        // Red Bits, Blue Bits, etc.
-
+    public EnumCurrency costUnit;  // Type-safe dropdown for currency
 }

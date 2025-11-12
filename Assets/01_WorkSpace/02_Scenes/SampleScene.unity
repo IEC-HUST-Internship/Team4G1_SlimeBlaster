@@ -176,7 +176,7 @@ MonoBehaviour:
     unlockRequirementLevel: 1
     unlocked: 0
     currentLevel: 0
-  unlockRootButton: {fileID: 0}
+  unlockRootObject: {fileID: 0}
   playerStats: {fileID: 318531935}
 --- !u!114 &1815339
 MonoBehaviour:
@@ -692,24 +692,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaaf6be7d211a074a8d9fa0f1f2dd795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 100
+  hp: 0
   hpLossPerSecond: 0
-  damage: 100
-  pct_attackSize: 100
-  attackSpeed: 1
+  damage: 0
+  attackSizePercent: 0
+  attackSpeed: 0
   exp: 0
   baseReflection: 0
   armor: 0
   bossArmor: 0
   bossDamage: 0
-  pct_critRate: 0
-  pct_critDamage: 100
-  pct_additionalDamagePerEnemy: 10
-  additionalRedBitsDrop: 5
-  pct_spawnRate: 100
-  redBits: 1000
-  blueBits: 1000
-  purpleBits: 1000
+  critRatePercent: 0
+  critDamagePercent: 0
+  additionalDamagePerEnemyInAreaPercent: 0
+  additionalRedBitsDropPerEnemy: 0
+  spawnRatePercent: 0
+  redBits: 0
+  blueBits: 0
+  purpleBits: 0
 --- !u!114 &318531936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,7 +1209,7 @@ MonoBehaviour:
     unlockRequirementLevel: 1
     unlocked: 0
     currentLevel: 0
-  unlockRootButton: {fileID: 0}
+  unlockRootObject: {fileID: 0}
   playerStats: {fileID: 318531935}
 --- !u!1 &619394800
 GameObject:
@@ -1506,7 +1506,7 @@ MonoBehaviour:
     unlockRequirementLevel: 1
     unlocked: 0
     currentLevel: 0
-  unlockRootButton: {fileID: 0}
+  unlockRootObject: {fileID: 1745943869}
   playerStats: {fileID: 318531935}
 --- !u!114 &737057730
 MonoBehaviour:
@@ -1647,7 +1647,7 @@ MonoBehaviour:
     unlockRequirementLevel: 1
     unlocked: 1
     currentLevel: 0
-  unlockRootButton: {fileID: 0}
+  unlockRootObject: {fileID: 0}
   playerStats: {fileID: 318531935}
 --- !u!114 &1347757821
 MonoBehaviour:
@@ -2358,7 +2358,7 @@ MonoBehaviour:
     unlockRequirementLevel: 1
     unlocked: 0
     currentLevel: 0
-  unlockRootButton: {fileID: 0}
+  unlockRootObject: {fileID: 0}
   playerStats: {fileID: 318531935}
 --- !u!1 &1762157845
 GameObject:

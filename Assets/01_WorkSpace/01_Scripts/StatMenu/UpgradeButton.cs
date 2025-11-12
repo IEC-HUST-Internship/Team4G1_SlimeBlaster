@@ -4,8 +4,11 @@ using UnityEngine.UI;
 public class UpgradeButton : MonoBehaviour
 {
     [Header("Node Data")]
-    public NodeInstance nodeInstance;          // Assign in inspector
-    public UpgradeButton unlockRootButton;     // Drag the button this node depends on
+    public NodeInstance nodeInstance;
+
+    [Header("Unlock Root")]
+    public GameObject unlockRootObject; // Drag the GameObject in inspector
+    private UpgradeButton unlockRootButton;
 
     [Header("Player Stats")]
     public PlayerStats playerStats;
@@ -17,11 +20,16 @@ public class UpgradeButton : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
 
-        // Assign the unlockRoot reference at runtime
-        if (unlockRootButton != null)
-            nodeInstance.unlockRoot = unlockRootButton.nodeInstance;
+        // Get UpgradeButton from the GameObject at runtime
+        if (unlockRootObject != null)
+        {
+            unlockRootButton = unlockRootObject.GetComponent<UpgradeButton>();
+            if (unlockRootButton != null)
+            {
+                nodeInstance.unlockRoot = unlockRootButton.nodeInstance;
+            }
+        }
 
-        // Initialize unlock state at start
         UpdateUnlockStatus();
     }
 
@@ -30,14 +38,14 @@ public class UpgradeButton : MonoBehaviour
         if (!nodeInstance.CanUpgrade()) return;
 
         int cost = nodeInstance.GetCostForNextLevel();
-        if (playerStats.HasEnoughBits(nodeInstance.data.costUnit, cost))
+
+        if (playerStats.HasEnoughCurrency(nodeInstance.data.costUnit, cost))
         {
-            playerStats.SpendBits(nodeInstance.data.costUnit, cost);
+            playerStats.SpendCurrency(nodeInstance.data.costUnit, cost);
             nodeInstance.Upgrade();
             ApplyUpgradeEffect();
             Debug.Log($"{nodeInstance.data.upgradeName} upgraded to level {nodeInstance.currentLevel}");
 
-            // After upgrade, update unlocks for dependent nodes
             if (unlockRootButton != null)
                 unlockRootButton.UpdateDependentUnlocks();
         }
@@ -49,31 +57,15 @@ public class UpgradeButton : MonoBehaviour
 
     private void ApplyUpgradeEffect()
     {
-        int value = nodeInstance.data.perUpgradeValue;
-
-        switch (nodeInstance.data.stat)
-        {
-            case "hp": playerStats.hp += value; break;
-            case "hpLossPerSecond": playerStats.hpLossPerSecond += value; break;
-            case "damage": playerStats.damage += value; break;
-            case "attackSize": playerStats.pct_attackSize += value; break;
-            case "exp": playerStats.exp += value; break;
-            case "baseReflection": playerStats.baseReflection += value; break;
-            case "armor": playerStats.armor += value; break;
-            case "bossArmor": playerStats.bossArmor += value; break;
-            case "bossDamage": playerStats.bossDamage += value; break;
-            default: Debug.LogWarning($"Unknown stat: {nodeInstance.data.stat}"); break;
-        }
+        // Works for any EnumStat
+        playerStats.AddStat(nodeInstance.data.stat, nodeInstance.data.perUpgradeValue);
     }
 
-    /// <summary>
-    /// Update this node's unlock state
-    /// </summary>
     public void UpdateUnlockStatus()
     {
         if (nodeInstance.unlockRoot == null)
         {
-            nodeInstance.unlocked = true; // root node always unlocked
+            nodeInstance.unlocked = true;
         }
         else
         {
@@ -81,12 +73,8 @@ public class UpgradeButton : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Update all dependent nodes after this node upgrades
-    /// </summary>
     public void UpdateDependentUnlocks()
     {
-        // Find all UpgradeButtons in the scene (or you can store a list of dependents)
         UpgradeButton[] allButtons = FindObjectsByType<UpgradeButton>(FindObjectsSortMode.None);
         foreach (var btn in allButtons)
         {

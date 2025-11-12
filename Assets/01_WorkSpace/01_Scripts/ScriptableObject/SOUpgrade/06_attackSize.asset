@@ -15,8 +15,8 @@ MonoBehaviour:
   upgradeName: attack size
   description: +[int]% attack size
   icon: {fileID: 0}
-  stat: attackSize
+  stat: 3
   perUpgradeValue: 10
   maxLevel: 10
   costFormula: 10+1*(n-1)
-  costUnit: redBits
+  costUnit: 0

@@ -61,7 +61,8 @@ public class PlayerAttackAndMove2D : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f / Mathf.Max(playerStats.attackSpeed, 0.01f));
+            float attackSpeed = Mathf.Max(playerStats.GetStatValue(EnumStat.attackSpeed), 0.01f);
+            yield return new WaitForSeconds(1f / attackSpeed);
             Attack();
         }
     }
@@ -71,18 +72,20 @@ public class PlayerAttackAndMove2D : MonoBehaviour
         // Detect all 2D colliders inside the box
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, transform.localScale, 0f, enemyLayer);
 
+        int damage = playerStats.GetStatValue(EnumStat.damage);
+
         foreach (var hit in hits)
         {
             // Apply damage if enemy has EnemyMovement script
             EnemyMovement enemy = hit.GetComponent<EnemyMovement>();
             if (enemy != null)
             {
-                enemy.TakeDamage(playerStats.damage);
+                enemy.TakeDamage(damage);
             }
         }
+
         StartCoroutine(FlashAlpha());
     }
-
 
     private IEnumerator FlashAlpha()
     {
@@ -90,7 +93,7 @@ public class PlayerAttackAndMove2D : MonoBehaviour
 
         Color original = rend.color;
 
-        // Set alpha to 0.8 (keep original color)
+        // Set alpha to 0.4 (keep original color)
         Color flashColor = new Color(original.r, original.g, original.b, 0.4f);
         rend.color = flashColor;
 

@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+
 [System.Serializable]
 public class NodeInstance
 {
     public SONodeData data;               // Reference to the blueprint
-    public NodeInstance unlockRoot;     // Reference to another NodeInstance it depends on
+    public NodeInstance unlockRoot;       // Reference to another NodeInstance it depends on
     public int unlockRequirementLevel = 1;
 
     public bool unlocked = false;
@@ -24,16 +25,25 @@ public class NodeInstance
         return currentLevel < data.maxLevel;
     }
 
+    /// <summary>
+    /// Upgrade this node
+    /// </summary>
     public void Upgrade()
     {
         if (CanUpgrade())
             currentLevel++;
     }
 
+    /// <summary>
+    /// Get cost for next level using formula in the SONodeData
+    /// </summary>
     public int GetCostForNextLevel()
     {
-        int n = currentLevel + 1;
-        string formula = data.costFormula.Replace("n", n.ToString());
+        int nextLevel = currentLevel + 1;
+
+        // Replace 'n' in formula with current level
+        string formula = data.costFormula.Replace("n", nextLevel.ToString());
+
         try
         {
             var dt = new System.Data.DataTable();
@@ -44,6 +54,33 @@ public class NodeInstance
         {
             Debug.LogWarning($"Invalid cost formula for {data.upgradeName}: {data.costFormula}");
             return 1;
+        }
+    }
+
+    /// <summary>
+    /// Apply this node's upgrade effect to PlayerStats
+    /// </summary>
+    public void ApplyUpgradeEffect(PlayerStats playerStats)
+    {
+        // Use enum-based stat
+        if (playerStats != null)
+        {
+            playerStats.AddStat(data.stat, data.perUpgradeValue);
+        }
+    }
+
+    /// <summary>
+    /// Update unlock status based on unlockRoot
+    /// </summary>
+    public void UpdateUnlockStatus()
+    {
+        if (unlockRoot == null)
+        {
+            unlocked = true; // root node always unlocked
+        }
+        else
+        {
+            unlocked = unlockRoot.currentLevel >= unlockRequirementLevel;
         }
     }
 }

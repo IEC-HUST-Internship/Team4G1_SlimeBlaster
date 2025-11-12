@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a63aeb7295f7fe44db6e18355dd68c2c, type: 3}
-  m_Name: 02_crowding
+  m_Name: 04_connectionBuster
   m_EditorClassIdentifier: 
-  upgradeName: crowding
-  description: '''+[int] SpawenRate'
+  upgradeName: connectionBuster
+  description: attack deals [int]% damage per enemy in area
   icon: {fileID: 0}
-  stat: 14
-  perUpgradeValue: 50
-  maxLevel: 15
-  costFormula: 2+1*(n-1)
+  stat: 12
+  perUpgradeValue: 5
+  maxLevel: 5
+  costFormula: 50+1*(n-1)
   costUnit: 0

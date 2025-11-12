@@ -15,8 +15,8 @@ MonoBehaviour:
   upgradeName: power
   description: '''+[int] damage'
   icon: {fileID: 0}
-  stat: damage
+  stat: 2
   perUpgradeValue: 1
   maxLevel: 15
   costFormula: 1+1*(n-1)
-  costUnit: redBits
+  costUnit: 0

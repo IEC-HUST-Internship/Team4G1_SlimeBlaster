@@ -25,29 +25,10 @@ public class SaveAndLoadStat : MonoBehaviour
             var node = button.nodeInstance;
             if (node.currentLevel > 0)
             {
+                // Total upgrade value = per upgrade * current level
                 int totalValue = node.data.perUpgradeValue * node.currentLevel;
-                ApplyUpgrade(node, totalValue);
+                playerStats.AddStat(node.data.stat, totalValue);
             }
-        }
-    }
-
-    /// <summary>
-    /// Central method to apply a value to the correct stat
-    /// </summary>
-    private void ApplyUpgrade(NodeInstance node, int value)
-    {
-        switch (node.data.stat)
-        {
-            case "hp": playerStats.hp += value; break;
-            case "hpLossPerSecond": playerStats.hpLossPerSecond += value; break;
-            case "damage": playerStats.damage += value; break;
-            case "attackSize": playerStats.pct_attackSize += value; break;
-            case "exp": playerStats.exp += value; break;
-            case "baseReflection": playerStats.baseReflection += value; break;
-            case "armor": playerStats.armor += value; break;
-            case "bossArmor": playerStats.bossArmor += value; break;
-            case "bossDamage": playerStats.bossDamage += value; break;
-            default: Debug.LogWarning($"Unknown stat: {node.data.stat}"); break;
         }
     }
 }
