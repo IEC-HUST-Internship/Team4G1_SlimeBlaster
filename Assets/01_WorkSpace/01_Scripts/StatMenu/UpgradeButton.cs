@@ -56,7 +56,7 @@ public class UpgradeButton : MonoBehaviour
             case "hp": playerStats.hp += value; break;
             case "hpLossPerSecond": playerStats.hpLossPerSecond += value; break;
             case "damage": playerStats.damage += value; break;
-            case "attackSize": playerStats.attackSize += value; break;
+            case "attackSize": playerStats.pct_attackSize += value; break;
             case "exp": playerStats.exp += value; break;
             case "baseReflection": playerStats.baseReflection += value; break;
             case "armor": playerStats.armor += value; break;

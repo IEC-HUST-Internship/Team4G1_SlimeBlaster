@@ -6,13 +6,21 @@ public class PlayerStats : MonoBehaviour
     public int hp = 100;
     public int hpLossPerSecond = 0;
     public int damage = 100;
-    public int attackSize = 100;      // Used for box size
+    public int pct_attackSize = 100;      // in % 
     public float attackSpeed = 1f;    // Attacks per second
     public int exp = 0;
     public int baseReflection = 0;
     public int armor = 0;
     public int bossArmor = 0;
     public int bossDamage = 0;
+    public int pct_critRate = 0; // in %
+    public int pct_critDamage = 100; // in %
+
+    public int pct_additionalDamagePerEnemy = 10; // in %
+    public int additionalRedBitsDrop = 5; 
+    public int pct_spawnRate = 100; // in %
+
+
 
     [Header("Currencies")]
     public int redBits = 0;
