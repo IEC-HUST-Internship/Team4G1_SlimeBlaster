@@ -7,6 +7,7 @@ public class EnemySpawner : MonoBehaviour
     public ObjectPool enemyPool;           // Pool that contains prefab
     public PlayerStats playerStats;        // For spawn rate
     public BoxCollider2D targetArea;       // Area enemies move toward
+    public StoreCurrencyReference currencyReference;  // Currency pools reference
     public List<SOEnemyData> enemiesToSpawn;
 
     [Header("Spawn Settings")]
@@ -65,6 +66,7 @@ public class EnemySpawner : MonoBehaviour
                 enemyScript.enemyData = data;
                 enemyScript.pool = enemyPool;
                 enemyScript.spawner = this;
+                enemyScript.currencyReference = currencyReference;
                 activeEnemies.Add(enemyScript);
             }
         }

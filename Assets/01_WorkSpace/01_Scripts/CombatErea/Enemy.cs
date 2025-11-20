@@ -8,8 +8,10 @@ public class Enemy : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 2f;
+    
     [HideInInspector] public ObjectPool pool;
     [HideInInspector] public EnemySpawner spawner;
+    [HideInInspector] public StoreCurrencyReference currencyReference;
 
     public int currentHealth { get; private set; }
     private Camera mainCamera;
@@ -36,6 +38,11 @@ public class Enemy : MonoBehaviour
         }
 
         Invoke(nameof(DisableJustSpawned), spawnIgnoreTime);
+    }
+
+    private void OnDisable()
+    {
+        ReturnToPool();
     }
 
     private void Update()
@@ -89,8 +96,41 @@ public class Enemy : MonoBehaviour
             Die();
     }
 
+    public float GetEnemyMultiplierBaseReflection()
+    {
+        // Return 1 as multiplier per enemy
+        return enemyData.baseReflectionMultiplier;
+    }
+
     private void Die()
     {
+        SpawnCurrency();
         ReturnToPool();
+    }
+
+    private void SpawnCurrency()
+    {
+        if (enemyData == null || currencyReference == null) return;
+
+        // Get the correct currency pool from StoreCurrencyReference
+        ObjectPool selectedPool = currencyReference.GetCurrencyPool(enemyData.currencyType);
+        
+        if (selectedPool == null) return;
+
+        int amount = enemyData.baseCurrencyAmount;
+        
+        for (int i = 0; i < amount; i++)
+        {
+            // Spawn currency at enemy position with slight random offset
+            Vector3 spawnPos = transform.position + (Vector3)Random.insideUnitCircle * 0.5f;
+            GameObject currencyObj = selectedPool.Get(spawnPos, Quaternion.identity);
+            
+            // Set the pool reference so it can return to pool
+            CurrencyControl currencyControl = currencyObj.GetComponent<CurrencyControl>();
+            if (currencyControl != null)
+            {
+                currencyControl.pool = selectedPool;
+            }
+        }
     }
 }

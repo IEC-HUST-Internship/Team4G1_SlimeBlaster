@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-[RequireComponent(typeof(BoxCollider2D))]
 public class PlayerCombatArena : MonoBehaviour
 {
     [Header("Stats")]
@@ -11,6 +10,10 @@ public class PlayerCombatArena : MonoBehaviour
     [Header("Attack Settings")]
     public LayerMask enemyLayer;
     public float flashDuration = 0.1f;
+
+    [Header("Currency Collection")]
+    public LayerMask currencyLayer;
+    public float currencyPickupRadius = 2f;
 
     [Header("Movement Settings")]
     public float moveSpeed = 10f;     // Speed for following mouse/finger
@@ -52,8 +55,25 @@ public class PlayerCombatArena : MonoBehaviour
     private void Update()
     {
         HandleMovement();
+        CheckCurrencyPickup();
         UpdateHealthBar();
         UpdateExpBar();
+    }
+
+    private void CheckCurrencyPickup()
+    {
+        // Detect all currency within pickup radius
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, currencyPickupRadius, currencyLayer);
+
+        foreach (var hit in hits)
+        {
+            CurrencyControl currency = hit.GetComponent<CurrencyControl>();
+            if (currency != null && !currency.IsFlying())
+            {
+                // Start flying towards player (currency will be added after 1 second)
+                currency.StartFlyingToPlayer(transform, playerStats);
+            }
+        }
     }
     
     private void UpdateHealthBar()
@@ -119,6 +139,8 @@ public class PlayerCombatArena : MonoBehaviour
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, transform.localScale, 0f, enemyLayer);
 
         int damage = playerStats.GetStatValue(EnumStat.damage);
+        int baseReflection = playerStats.GetStatValue(EnumStat.baseReflection);
+        float totalMultiplier = 0;
 
         foreach (var hit in hits)
         {
@@ -127,11 +149,38 @@ public class PlayerCombatArena : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+                
+                // Get multiplier from each enemy
+                totalMultiplier += enemy.GetEnemyMultiplierBaseReflection();
             }
+        }
+
+        // Calculate reflection damage: baseReflection * totalMultiplier
+        float reflectionDamage = baseReflection * totalMultiplier;
+        if (reflectionDamage > 0)
+        {
+            TakeDamage((int)reflectionDamage);
         }
 
         StartCoroutine(FlashAlpha());
     }
+    public void TakeDamage(int damage)
+    {
+        currentHp -= damage;
+        currentHp = Mathf.Max(0, currentHp); // Prevent negative HP
+        
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+    private void Die()
+    {
+        // Handle player death
+        Debug.Log("Player died!");
+        // Add death logic here (game over, respawn, etc.)
+    }
+
     private IEnumerator FlashAlpha()
     {
         if (rend == null) yield break;

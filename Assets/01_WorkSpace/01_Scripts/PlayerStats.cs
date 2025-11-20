@@ -2,32 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EnumStat
-{
-    hp,
-    hpLossPerSecond,
-    damage,
-    attackSizePercent,
-    attackSpeed,
-    exp,
-    baseReflection,
-    armor,
-    bossArmor,
-    bossDamage,
-    critRatePercent,
-    critDamagePercent,
-    additionalDamagePerEnemyInAreaPercent,
-    additionalRedBitsDropPerEnemy,
-    spawnRatePercent
-}
-
-public enum EnumCurrency
-{
-    redBits,
-    blueBits,
-    purpleBits
-}
-
 public class PlayerStats : MonoBehaviour
 {
     #region Inspector Variables
@@ -76,7 +50,7 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.attackSizePercent] = 100;
         statsDict[EnumStat.attackSpeed] = 1;
         statsDict[EnumStat.exp] = 0;
-        statsDict[EnumStat.baseReflection] = 0;
+        statsDict[EnumStat.baseReflection] = 1;
         statsDict[EnumStat.armor] = 0;
         statsDict[EnumStat.bossArmor] = 0;
         statsDict[EnumStat.bossDamage] = 0;
