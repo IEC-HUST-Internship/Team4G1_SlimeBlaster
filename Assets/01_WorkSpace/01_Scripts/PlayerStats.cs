@@ -50,7 +50,7 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.attackSizePercent] = 100;
         statsDict[EnumStat.attackSpeed] = 1;
         statsDict[EnumStat.exp] = 0;
-        statsDict[EnumStat.baseReflection] = 1;
+        statsDict[EnumStat.baseReflection] = 5;
         statsDict[EnumStat.armor] = 0;
         statsDict[EnumStat.bossArmor] = 0;
         statsDict[EnumStat.bossDamage] = 0;
@@ -60,9 +60,9 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.additionalRedBitsDropPerEnemy] = 0;
         statsDict[EnumStat.spawnRatePercent] = 100;
 
-        currencyDict[EnumCurrency.redBits] = 1000;
-        currencyDict[EnumCurrency.blueBits] = 1000;
-        currencyDict[EnumCurrency.purpleBits] = 1000;
+        currencyDict[EnumCurrency.redBits] = 0;
+        currencyDict[EnumCurrency.blueBits] = 0;
+        currencyDict[EnumCurrency.purpleBits] = 0;
     }
     private void UpdateValueToInspector()
     {

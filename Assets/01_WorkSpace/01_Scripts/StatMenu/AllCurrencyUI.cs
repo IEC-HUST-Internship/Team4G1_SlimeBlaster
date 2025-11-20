@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class AllCurrency : MonoBehaviour
+public class AllCurrencyUI : MonoBehaviour
 {
     [Header("References")]
     public PlayerStats playerStats;
@@ -10,6 +10,7 @@ public class AllCurrency : MonoBehaviour
     public TextMeshProUGUI redBitsText;
     public TextMeshProUGUI blueBitsText;
     public TextMeshProUGUI purpleBitsText;
+
 
     void Update()
     {

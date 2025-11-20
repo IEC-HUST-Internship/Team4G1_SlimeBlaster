@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 20149bbd0e3dce84aba1dae5bdadedf9
+guid: df3aadec81ce15e47a5ce1f4f824cbd9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7303984280810781722
-    second: blue_slime_0
+      213: 5084621877361619940
+    second: Upgrade_Icon1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blue_slime_0
+      name: Upgrade_Icon1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6e38c39aef803aa90800000000000000
-      internalID: -7303984280810781722
+      spriteID: 4e3b15178a4309640800000000000000
+      internalID: 5084621877361619940
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      blue_slime_0: -7303984280810781722
+      Upgrade_Icon1_0: 5084621877361619940
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

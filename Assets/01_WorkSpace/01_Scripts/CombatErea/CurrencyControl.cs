@@ -19,6 +19,12 @@ public class CurrencyControl : MonoBehaviour
     private float currentSpeed = 0f;
     private float flyTimer = 0f;
     private bool currencyAdded = false;
+    
+    private void OnDisable()
+    {
+        StopFlying();
+        pool?.ReturnToPool(gameObject);
+    }
 
     private void Update()
     {
@@ -90,8 +96,5 @@ public class CurrencyControl : MonoBehaviour
         pool?.ReturnToPool(gameObject);
     }
 
-    private void OnDisable()
-    {
-        StopFlying();
-    }
+
 }

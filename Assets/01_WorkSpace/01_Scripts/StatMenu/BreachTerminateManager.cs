@@ -8,15 +8,22 @@ public class BreachTerminateManager : MonoBehaviour
     public Button breachButton;
     public Button terminateButton;
 
+    [Header("GameOver Buttons")]
+    public Button toHomeButton;
+    public Button restartButton;
+
     [Header("Targets")]
     public List<GameObject> upgradeScenes;
     public List<GameObject> combatScenes;
+    public GameObject gameOverPanel;
 
     private void Awake()
     {
-        // Add listeners for both buttons
+        // Add listeners for buttons
         breachButton.onClick.AddListener(OnBreachClicked);
         terminateButton.onClick.AddListener(OnTerminateClicked);
+        toHomeButton.onClick.AddListener(OnToHomeClicked);
+        restartButton.onClick.AddListener(OnRestartClicked);
     }
 
     private void Start()
@@ -59,5 +66,38 @@ public class BreachTerminateManager : MonoBehaviour
         // ✅ Hide Terminate button, show Breach button
         if (terminateButton != null) terminateButton.gameObject.SetActive(false);
         if (breachButton != null) breachButton.gameObject.SetActive(true);
+    }
+
+    private void OnToHomeClicked()
+    {
+        // Hide GameOver Panel
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        // Switch back to Upgrade Scene (same as Terminate)
+        foreach (var scene in combatScenes)
+            if (scene != null) scene.SetActive(false);
+        
+        foreach (var scene in upgradeScenes)
+            if (scene != null) scene.SetActive(true);
+
+        // Hide Terminate button, show Breach button
+        if (terminateButton != null) terminateButton.gameObject.SetActive(false);
+        if (breachButton != null) breachButton.gameObject.SetActive(true);
+    }
+
+    private void OnRestartClicked()
+    {
+        // Hide GameOver Panel
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        // Restart Combat Scene (disable then enable to trigger OnEnable)
+        foreach (var scene in combatScenes)
+        {
+            if (scene != null)
+            {
+                scene.SetActive(false);
+                scene.SetActive(true);
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: power
   description: '''+[int] damage'
-  icon: {fileID: 0}
+  icon: {fileID: 5084621877361619940, guid: df3aadec81ce15e47a5ce1f4f824cbd9, type: 3}
   stat: 2
   perUpgradeValue: 1
   maxLevel: 15

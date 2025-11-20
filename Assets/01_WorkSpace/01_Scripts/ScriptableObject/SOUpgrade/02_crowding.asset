@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: crowding
   description: '''+[int] SpawenRate'
-  icon: {fileID: 0}
+  icon: {fileID: -547535697438156, guid: 8c3d0961d1ba67042b5760edbdf84317, type: 3}
   stat: 14
   perUpgradeValue: 50
   maxLevel: 15

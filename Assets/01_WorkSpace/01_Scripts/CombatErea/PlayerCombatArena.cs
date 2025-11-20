@@ -24,14 +24,24 @@ public class PlayerCombatArena : MonoBehaviour
 
     [Header("UI")]
     public Image healthBarImage;
-    public Image expBarImage;   
+    public Image expBarImage;
+    public GameObject gameOverPanel;
 
     public SpriteRenderer rend;
     private Camera mainCamera;
+    private bool isDead = false;
 
     private void OnEnable() 
     {
         mainCamera = Camera.main;
+        
+        // Reset player position and state
+        transform.position = Vector3.zero;
+        isDead = false;
+        
+        // Hide death UI
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
         
         // Initialize current stats from PlayerStats
         if (playerStats != null)
@@ -41,10 +51,17 @@ public class PlayerCombatArena : MonoBehaviour
         }
         
         StartCoroutine(AttackRoutine());
+        StartCoroutine(HpLossRoutine());
     }
 
     private void OnDisable()
     {
+        // Move player out of scene
+        transform.position = new Vector3(100f, 0f, 0f);
+        
+        // Stop all coroutines
+        StopAllCoroutines();
+        
         if (rend != null)
         {
             Color color = rend.color;
@@ -54,8 +71,11 @@ public class PlayerCombatArena : MonoBehaviour
     }
     private void Update()
     {
-        HandleMovement();
-        CheckCurrencyPickup();
+        if (!isDead)
+        {
+            HandleMovement();
+            CheckCurrencyPickup();
+        }
         UpdateHealthBar();
         UpdateExpBar();
     }
@@ -130,9 +150,29 @@ public class PlayerCombatArena : MonoBehaviour
         {
             float attackSpeed = Mathf.Max(playerStats.GetStatValue(EnumStat.attackSpeed), 0.01f);
             yield return new WaitForSeconds(1f / attackSpeed);
-            Attack();
+            
+            if (!isDead)
+                Attack();
         }
     }
+
+    private IEnumerator HpLossRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            
+            if (!isDead && playerStats != null)
+            {
+                int hpLoss = playerStats.GetStatValue(EnumStat.hpLossPerSecond);
+                if (hpLoss > 0)
+                {
+                    TakeDamage(hpLoss);
+                }
+            }
+        }
+    }
+
     private void Attack()
     {
         // Detect all 2D colliders inside the box
@@ -176,9 +216,16 @@ public class PlayerCombatArena : MonoBehaviour
     }
     private void Die()
     {
-        // Handle player death
+        isDead = true;
+        
+        // Show death UI
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(true);
+        
+        // Move player out of scene
+        transform.position = new Vector3(100f, 0f, 0f);
+        
         Debug.Log("Player died!");
-        // Add death logic here (game over, respawn, etc.)
     }
 
     private IEnumerator FlashAlpha()
