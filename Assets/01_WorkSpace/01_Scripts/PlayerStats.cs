@@ -6,21 +6,21 @@ public class PlayerStats : MonoBehaviour
 {
     #region Inspector Variables
     [Header("Player Stats (Inspector)")]
-    public int hp = 100;
-    public int hpLossPerSecond = 1;
-    public int damage = 10;
+    public int hp = 100; //ok
+    public int hpLossPerSecond = 1; //ok
+    public int damage = 10; //ok
     public int attackSizePercent = 100;
     public int attackSpeed = 1;
-    public int exp = 0;
-    public int baseReflection = 0;
-    public int armor = 0;
+    public int exp = 0; 
+    public int baseReflection = 0; //ok
+    public int armor = 0; //ok
     public int bossArmor = 0;
     public int bossDamage = 0;
     public int critRatePercent = 5;
     public int critDamagePercent = 150;
     public int additionalDamagePerEnemyInAreaPercent = 0;
     public int additionalRedBitsDropPerEnemy = 0;
-    public int spawnRatePercent = 100;
+    public int spawnRatePercent = 100; //ok
 
     [Header("Currencies (Inspector)")]
     public int redBits = 1000;

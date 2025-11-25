@@ -206,7 +206,11 @@ public class PlayerCombatArena : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-        currentHp -= damage;
+        // Apply armor reduction
+        int armor = playerStats.GetStatValue(EnumStat.armor);
+        int finalDamage = Mathf.Max(1, damage - armor); // Minimum 1 damage
+        
+        currentHp -= finalDamage;
         currentHp = Mathf.Max(0, currentHp); // Prevent negative HP
         
         if (currentHp <= 0)
