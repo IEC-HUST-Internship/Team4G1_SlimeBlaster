@@ -26,6 +26,10 @@ public class PlayerCombatArena : MonoBehaviour
     public Image healthBarImage;
     public Image expBarImage;
     public GameObject gameOverPanel;
+    public GameObject winPanel;
+
+    [Header("Boss")]
+    public Boss bossEnemy;
 
     public SpriteRenderer rend;
     private Camera mainCamera;
@@ -39,9 +43,11 @@ public class PlayerCombatArena : MonoBehaviour
         transform.position = Vector3.zero;
         isDead = false;
         
-        // Hide death UI
+        // Hide UI panels
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+        if (winPanel != null)
+            winPanel.SetActive(false);
         
         // Initialize current stats from PlayerStats
         if (playerStats != null)
@@ -75,9 +81,36 @@ public class PlayerCombatArena : MonoBehaviour
         {
             HandleMovement();
             CheckCurrencyPickup();
+            CheckBossDefeat();
         }
         UpdateHealthBar();
         UpdateExpBar();
+    }
+
+    private void CheckBossDefeat()
+    {
+        // Check if boss is defeated
+        if (bossEnemy != null && bossEnemy.isDefeated)
+        {
+            StartCoroutine(ShowWinAfterDelay());
+            bossEnemy = null; // Prevent checking multiple times
+        }
+    }
+
+    private IEnumerator ShowWinAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        
+        isDead = true;
+        
+        // Move player out of scene
+        transform.position = new Vector3(100f, 0f, 0f);
+        
+        // Show win panel
+        if (winPanel != null)
+            winPanel.SetActive(true);
+        
+        Debug.Log("Player won!");
     }
 
     private void CheckCurrencyPickup()

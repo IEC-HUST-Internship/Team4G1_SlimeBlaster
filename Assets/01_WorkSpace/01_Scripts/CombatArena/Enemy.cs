@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     private float spawnIgnoreTime = 3f;
     private Vector2 moveDirection;
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         mainCamera = Camera.main;
         InitializeEnemy();
@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
         Invoke(nameof(DisableJustSpawned), spawnIgnoreTime);
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         ReturnToPool();
     }
@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour
         CheckOffscreen();
     }
 
-    private void InitializeEnemy()
+    protected void InitializeEnemy()
     {
         if (enemyData != null)
         {
@@ -112,13 +112,13 @@ public class Enemy : MonoBehaviour
         return enemyData.baseReflectionMultiplier * level;
     }
 
-    private void Die()
+    protected virtual void Die()
     {
         SpawnCurrency();
         ReturnToPool();
     }
 
-    private void SpawnCurrency()
+    protected void SpawnCurrency()
     {
         if (enemyData == null || currencyReference == null) return;
 

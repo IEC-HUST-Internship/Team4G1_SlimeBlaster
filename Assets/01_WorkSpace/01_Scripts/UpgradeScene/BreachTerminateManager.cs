@@ -9,8 +9,8 @@ public class BreachTerminateManager : MonoBehaviour
     public Button terminateButton;
 
     [Header("GameOver Buttons")]
-    public Button toHomeButton;
-    public Button restartButton;
+    public List<Button> toHomeButtons;
+    public List<Button> restartButtons;
 
     [Header("Targets")]
     public List<GameObject> upgradeScenes;
@@ -22,8 +22,20 @@ public class BreachTerminateManager : MonoBehaviour
         // Add listeners for buttons
         breachButton.onClick.AddListener(OnBreachClicked);
         terminateButton.onClick.AddListener(OnTerminateClicked);
-        toHomeButton.onClick.AddListener(OnToHomeClicked);
-        restartButton.onClick.AddListener(OnRestartClicked);
+        
+        // Add listeners for all toHome buttons
+        foreach (var button in toHomeButtons)
+        {
+            if (button != null)
+                button.onClick.AddListener(OnToHomeClicked);
+        }
+        
+        // Add listeners for all restart buttons
+        foreach (var button in restartButtons)
+        {
+            if (button != null)
+                button.onClick.AddListener(OnRestartClicked);
+        }
     }
 
     private void Start()

@@ -4,6 +4,7 @@ public class BossSpawner : MonoBehaviour
 {
     [Header("Boss Reference")]
     public GameObject bossEnemy;        // The boss GameObject (hidden at start)
+    public StoreCurrencyReference currencyReference;  // Currency pools reference
     
     [Header("Target")]
     public GameObject targetPosition;   // Where the boss moves to
@@ -71,11 +72,6 @@ public class BossSpawner : MonoBehaviour
                 DestroyBoss();
             }
         }
-        
-        if (bossMoving)
-        {
-            MoveBossToTarget();
-        }
     }
 
     private void SpawnBoss()
@@ -89,19 +85,15 @@ public class BossSpawner : MonoBehaviour
         Vector2 spawnPos = GetRandomPositionOutsideCamera();
         bossEnemy.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0f);
         
-        // Calculate direction once at spawn
-        moveDirection = (targetPosition.transform.position - bossEnemy.transform.position).normalized;
-        
-        // Disable Enemy script if it exists (to prevent conflicting movement)
-        Enemy enemyScript = bossEnemy.GetComponent<Enemy>();
-        if (enemyScript != null)
+        // Assign currency reference and target to boss
+        Boss bossScript = bossEnemy.GetComponent<Boss>();
+        if (bossScript != null)
         {
-            enemyScript.enabled = false;
+            bossScript.currencyReference = currencyReference;
+            bossScript.SetTarget(targetPosition.transform.position);
         }
         
-        bossMoving = true;
-        
-        Debug.Log($"Boss spawned at {spawnPos}, target at {targetPosition.transform.position}, direction: {moveDirection}");
+        Debug.Log($"Boss spawned at {spawnPos}, moving toward {targetPosition.transform.position}");
     }
 
     private void MoveBossToTarget()
