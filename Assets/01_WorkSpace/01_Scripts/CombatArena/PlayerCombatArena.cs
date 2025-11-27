@@ -247,4 +247,17 @@ public class PlayerCombatArena : MonoBehaviour
         // Reset to original alpha
         rend.color = original;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // Draw attack range (box)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position, transform.localScale);
+        
+        // Draw currency pickup range (circle)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, currencyPickupRadius);
+    }
+#endif
 }

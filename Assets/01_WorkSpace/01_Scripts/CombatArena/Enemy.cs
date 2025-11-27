@@ -25,11 +25,17 @@ public class Enemy : MonoBehaviour
         InitializeEnemy();
         justSpawned = true;
 
-        // Pick a random target point inside target area and calculate movement direction
+        // Calculate direction toward center of target area, then move toward opposite side
         if (spawner != null)
         {
-            Vector2 targetPoint = spawner.GetRandomPointInsideTargetArea();
-            moveDirection = (targetPoint - (Vector2)transform.position).normalized;
+            Vector2 targetAreaCenter = spawner.targetArea.bounds.center;
+            Vector2 directionToCenter = (targetAreaCenter - (Vector2)transform.position).normalized;
+            
+            // Pick a point on the opposite side of the target area
+            Bounds bounds = spawner.targetArea.bounds;
+            Vector2 oppositePoint = targetAreaCenter + directionToCenter * (bounds.extents.magnitude);
+            
+            moveDirection = (oppositePoint - (Vector2)transform.position).normalized;
         }
         else
         {
@@ -54,7 +60,10 @@ public class Enemy : MonoBehaviour
     private void InitializeEnemy()
     {
         if (enemyData != null)
-            currentHealth = enemyData.hp;
+        {
+            int level = Level.Instance.GetLevel();
+            currentHealth = enemyData.hp * level;
+        }
     }
 
     private void MoveStraight()
@@ -98,8 +107,9 @@ public class Enemy : MonoBehaviour
 
     public float GetEnemyMultiplierBaseReflection()
     {
-        // Return 1 as multiplier per enemy
-        return enemyData.baseReflectionMultiplier;
+        // Return multiplier scaled by level
+        int level = Level.Instance.GetLevel();
+        return enemyData.baseReflectionMultiplier * level;
     }
 
     private void Die()
@@ -117,7 +127,8 @@ public class Enemy : MonoBehaviour
         
         if (selectedPool == null) return;
 
-        int amount = enemyData.baseCurrencyAmount;
+        int level = Level.Instance.GetLevel();
+        int amount = enemyData.baseCurrencyAmount * level;
         
         for (int i = 0; i < amount; i++)
         {

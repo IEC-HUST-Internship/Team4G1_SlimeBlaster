@@ -84,12 +84,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5632783557099033302}
-  - component: {fileID: 6185352227964527702}
+  - component: {fileID: 3549444197383347623}
   - component: {fileID: 3486340649797994145}
   - component: {fileID: 7487713777205826995}
   - component: {fileID: 4581018765012801027}
   m_Layer: 0
-  m_Name: SimpleEnemy
+  m_Name: BossEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,7 +111,7 @@ Transform:
   - {fileID: 2328577055588868171}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &6185352227964527702
+--- !u!58 &3549444197383347623
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,7 +146,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.95
 --- !u!212 &3486340649797994145
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ SpriteRenderer:
   m_SortingLayerID: 1431183063
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 94dd134d0c8720d4db2a0805683479a4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6f58a542e611d044cb5736e9d4fa3e9e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -268,7 +268,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.79}
+  m_AnchoredPosition: {x: 0, y: 1.12}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &5234965492195427597

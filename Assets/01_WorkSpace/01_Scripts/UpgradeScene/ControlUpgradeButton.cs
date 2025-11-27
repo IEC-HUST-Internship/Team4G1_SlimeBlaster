@@ -4,6 +4,7 @@ public class ControlUpgradeButton : MonoBehaviour
 {
     [Header("Target to Control")]
     public GameObject targetObject; // The object/map to move
+    public GameObject background;   // Background that moves slower (parallax effect)
 
     [Header("Pan Settings")]
     public float panSpeed = 1f;
@@ -43,7 +44,12 @@ public class ControlUpgradeButton : MonoBehaviour
         if (Input.GetMouseButton(0) && isDragging)
         {
             Vector3 delta = Input.mousePosition - lastMousePosition;
-            targetObject.transform.position += new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
+            Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
+            targetObject.transform.position += movement;
+            if (background != null)
+            {
+                background.transform.position += movement * 0.5f;
+            }
             lastMousePosition = Input.mousePosition;
         }
 
@@ -83,7 +89,12 @@ public class ControlUpgradeButton : MonoBehaviour
             else if (touch.phase == TouchPhase.Moved && isDragging)
             {
                 Vector3 delta = (Vector3)touch.position - lastMousePosition;
-                targetObject.transform.position += new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
+                Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
+                targetObject.transform.position += movement;
+                if (background != null)
+                {
+                    background.transform.position += movement * 0.5f;
+                }
                 lastMousePosition = touch.position;
             }
             else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
