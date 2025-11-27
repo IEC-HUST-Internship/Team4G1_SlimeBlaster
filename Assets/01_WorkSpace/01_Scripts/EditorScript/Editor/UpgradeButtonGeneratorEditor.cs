@@ -15,5 +15,20 @@ public class UpgradeButtonGeneratorEditor : Editor
         {
             generator.GenerateButtons();
         }
+
+        if (GUILayout.Button("Set Button Icons"))
+        {
+            generator.SetButtonIcons();
+        }
+
+        if (GUILayout.Button("Rename Buttons"))
+        {
+            generator.RenameButtons();
+        }
+
+        if (GUILayout.Button("Generate Lines"))
+        {
+            generator.GenerateLines();
+        }
     }
 }
