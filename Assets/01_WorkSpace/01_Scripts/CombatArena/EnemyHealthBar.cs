@@ -18,7 +18,7 @@ public class EnemyHealthBar : MonoBehaviour
     {
         if (enemy != null && enemy.enemyData != null)
         {
-            maxHealth = enemy.enemyData.hp;
+            maxHealth = enemy.enemyData.hp * Level.Instance.GetLevel();
         }
     }
 

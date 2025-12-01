@@ -6,6 +6,7 @@ public class Level : Singleton<Level>
 {
     [Header("Level Data")]
     [SerializeField] private int level = 1;
+    [SerializeField] private int unlockedLevel = 1; // Maximum level that can be accessed
 
     [Header("UI References")]
     public Button increaseButton;
@@ -32,16 +33,30 @@ public class Level : Singleton<Level>
 
     public void IncreaseLevel()
     {
-        level++;
-        UpdateLevelText();
-        Debug.Log($"Level increased to: {level}");
+        if (level < unlockedLevel)
+        {
+            level++;
+            UpdateLevelText();
+            Debug.Log($"Level increased to: {level}");
+        }
+        else
+        {
+            Debug.Log($"Cannot increase level. Maximum unlocked level is: {unlockedLevel}");
+        }
     }
 
     public void DecreaseLevel()
     {
-        level--;
-        UpdateLevelText();
-        Debug.Log($"Level decreased to: {level}");
+        if (level > 1)
+        {
+            level--;
+            UpdateLevelText();
+            Debug.Log($"Level decreased to: {level}");
+        }
+        else
+        {
+            Debug.Log("Cannot decrease level below 1");
+        }
     }
 
     private void UpdateLevelText()
@@ -55,5 +70,13 @@ public class Level : Singleton<Level>
     public int GetLevel()
     {
         return level;
+    }
+
+    public void UnlockLevels(int amount)
+    {
+        unlockedLevel += amount;
+        level += amount;
+        UpdateLevelText();
+        Debug.Log($"Unlocked {amount} new levels. Current level: {level}, Max level: {unlockedLevel}");
     }
 }

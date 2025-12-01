@@ -5,14 +5,13 @@ public class Boss : Enemy
 {
     [HideInInspector] public Vector3 targetPosition;
     [HideInInspector] public bool hasTarget = false;
-    [HideInInspector] public bool isDefeated = false;
+    public bool isDefeated = false;
     private Vector2 bossDirection;
     
     protected override void OnEnable()
     {
         // Don't call base.OnEnable() to avoid Enemy's movement setup
         isDefeated = false;
-        
         // Initialize enemy health
         InitializeEnemy();
     }

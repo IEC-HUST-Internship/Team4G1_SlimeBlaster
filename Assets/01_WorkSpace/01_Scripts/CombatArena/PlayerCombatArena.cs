@@ -20,10 +20,10 @@ public class PlayerCombatArena : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 10f;     // Speed for following mouse/finger
 
-    [Header("Boss")]
-    [SerializeField] private Boss bossEnemy;
-
     [SerializeField] private SpriteRenderer rend;
+
+    // Boss resolved from container
+    private Boss bossEnemy;
 
     // Combat Arena Temp Stats
     private int currentHp;
@@ -37,6 +37,12 @@ public class PlayerCombatArena : MonoBehaviour
     private void OnEnable() 
     {
         mainCamera = Camera.main;
+        
+        // Find boss (including inactive objects)
+        if (bossEnemy == null)
+        {
+            bossEnemy = FindObjectOfType<Boss>(true);
+        }
         
         // Reset player position and state
         transform.position = Vector3.zero;
@@ -97,6 +103,12 @@ public class PlayerCombatArena : MonoBehaviour
         
         // Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
+        
+        // Unlock 1 new level when boss is defeated
+        if (Level.Instance != null)
+        {
+            Level.Instance.UnlockLevels(1);
+        }
         
         // Show win UI
         if (playerUI != null)
