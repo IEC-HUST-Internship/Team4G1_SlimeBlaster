@@ -1860,7 +1860,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 176, y: -42.5}
-  m_SizeDelta: {x: 152.01, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &380557006
 MonoBehaviour:
@@ -2171,11 +2171,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1547897219}
-  m_Father: {fileID: 1371879492}
+  m_Father: {fileID: 2068995249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -256.25, y: 0}
   m_SizeDelta: {x: 50, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &435821028
@@ -4075,7 +4075,7 @@ GameObject:
   m_Component:
   - component: {fileID: 987891590}
   m_Layer: 5
-  m_Name: GameObject (1)
+  m_Name: PinkBit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4306,7 +4306,6 @@ GameObject:
   - component: {fileID: 1017213527}
   - component: {fileID: 1017213526}
   - component: {fileID: 1017213525}
-  - component: {fileID: 1017213528}
   m_Layer: 5
   m_Name: UpgradeBtn
   m_TagString: Untagged
@@ -4417,32 +4416,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1017213523}
   m_CullTransparentMesh: 1
---- !u!114 &1017213528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1017213523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 15
-  m_ChildAlignment: 4
-  m_Spacing: 20
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1 &1031504480
 GameObject:
   m_ObjectHideFlags: 0
@@ -5899,7 +5872,7 @@ GameObject:
   - component: {fileID: 1317506342}
   - component: {fileID: 1317506341}
   m_Layer: 5
-  m_Name: RedBitTxt
+  m_Name: YellowBitIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6188,8 +6161,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 435821027}
+  m_Children: []
   m_Father: {fileID: 2068995249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
@@ -7879,7 +7851,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1811791196}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: BlueBit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8571,7 +8543,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937919612}
   m_Layer: 5
-  m_Name: GameObject (2)
+  m_Name: YellowBit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8747,9 +8719,9 @@ RectTransform:
   - {fileID: 1827747113}
   m_Father: {fileID: 1017213524}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 63.995003, y: -42.5}
   m_SizeDelta: {x: 32, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2051159172
@@ -8979,6 +8951,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1371879492}
+  - {fileID: 435821027}
   - {fileID: 144515306}
   m_Father: {fileID: 544221134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
