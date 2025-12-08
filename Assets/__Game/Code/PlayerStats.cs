@@ -9,23 +9,25 @@ public class PlayerStats : MonoBehaviour
     public int hp = 100; //ok
     public int hpLossPerSecond = 1; //ok
     public int damage = 10; //ok
-    public int attackSizePercent = 100;
+    public int attackSizePercent = 100;//ok
     public int attackSpeed = 1;
     public int exp = 0; 
     public int baseReflection = 0; //ok
     public int armor = 0; //ok
     public int bossArmor = 0;
-    public int bossDamage = 0;
+    public int bossDamage = 0; //ok
     public int critRatePercent = 5;
     public int critDamagePercent = 150;
     public int additionalDamagePerEnemyInAreaPercent = 0;
-    public int additionalRedBitsDropPerEnemy = 0;
+    public int additionalBlueBitsDropPerEnemy = 0;  //ok
+    public int additionalPinkBitsDropPerEnemy = 0; //ok
+    public int additionalYellowBitsDropPerEnemy = 0;  //ok
     public int spawnRatePercent = 100; //ok
 
     [Header("Currencies (Inspector)")]
     public int blueBits = 1000;
-    public int redBits = 1000;
     public int pinkBits = 1000;
+    public int yellowBits = 1000;
     #endregion
 
     // Runtime dictionaries
@@ -57,12 +59,14 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.critRatePercent] = 5;
         statsDict[EnumStat.critDamagePercent] = 150;
         statsDict[EnumStat.additionalDamagePerEnemyInAreaPercent] = 0;
-        statsDict[EnumStat.additionalRedBitsDropPerEnemy] = 0;
+        statsDict[EnumStat.additionalBlueBitsDropPerEnemy] = 0;
+        statsDict[EnumStat.additionalPinkBitsDropPerEnemy] = 0;
+        statsDict[EnumStat.additionalYellowBitsDropPerEnemy] = 0;
         statsDict[EnumStat.spawnRatePercent] = 100;
 
-        currencyDict[EnumCurrency.blueBits] = 10000000;
-        currencyDict[EnumCurrency.pinkBits] = 10000000;
-        currencyDict[EnumCurrency.redBits] = 10000000;
+        currencyDict[EnumCurrency.blueBits] = 1000;
+        currencyDict[EnumCurrency.pinkBits] = 1000;
+        currencyDict[EnumCurrency.yellowBits] = 1000;
     }
     private void UpdateValueToInspector()
     {
@@ -80,12 +84,14 @@ public class PlayerStats : MonoBehaviour
         critRatePercent = statsDict[EnumStat.critRatePercent];
         critDamagePercent = statsDict[EnumStat.critDamagePercent];
         additionalDamagePerEnemyInAreaPercent = statsDict[EnumStat.additionalDamagePerEnemyInAreaPercent];
-        additionalRedBitsDropPerEnemy = statsDict[EnumStat.additionalRedBitsDropPerEnemy];
+        additionalBlueBitsDropPerEnemy = statsDict[EnumStat.additionalBlueBitsDropPerEnemy];
+        additionalPinkBitsDropPerEnemy = statsDict[EnumStat.additionalPinkBitsDropPerEnemy];
+        additionalYellowBitsDropPerEnemy = statsDict[EnumStat.additionalYellowBitsDropPerEnemy];
         spawnRatePercent = statsDict[EnumStat.spawnRatePercent];
 
         blueBits = currencyDict[EnumCurrency.blueBits];
-        redBits = currencyDict[EnumCurrency.redBits];
         pinkBits = currencyDict[EnumCurrency.pinkBits];
+        yellowBits = currencyDict[EnumCurrency.yellowBits];
     }
 
     // Runtime methods

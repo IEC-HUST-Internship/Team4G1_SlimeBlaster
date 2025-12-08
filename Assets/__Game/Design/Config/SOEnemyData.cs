@@ -7,7 +7,7 @@ public class SOEnemyData : ScriptableObject
     public int hp = 100;
     public float baseReflectionMultiplier = 1f;
     public int exp = 10;
-    public EnumCurrency currencyType = EnumCurrency.redBits;
+    public EnumCurrency currencyType = EnumCurrency.yellowBits;
     public int baseCurrencyAmount = 1;
 
     [Header("Spawn Settings")]

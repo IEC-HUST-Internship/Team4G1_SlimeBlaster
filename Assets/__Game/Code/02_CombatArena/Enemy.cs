@@ -127,9 +127,29 @@ public class Enemy : MonoBehaviour
         if (selectedPool == null) return;
 
         int level = Level.Instance.GetLevel();
-        int amount = enemyData.baseCurrencyAmount * level;
+        int baseAmount = enemyData.baseCurrencyAmount * level;
         
-        for (int i = 0; i < amount; i++)
+        // Add additional currency drops based on the currency type
+        int additionalAmount = 0;
+        if (spawner != null && spawner.playerStats != null)
+        {
+            switch (enemyData.currencyType)
+            {
+                case EnumCurrency.blueBits:
+                    additionalAmount = spawner.playerStats.GetStatValue(EnumStat.additionalBlueBitsDropPerEnemy);
+                    break;
+                case EnumCurrency.pinkBits:
+                    additionalAmount = spawner.playerStats.GetStatValue(EnumStat.additionalPinkBitsDropPerEnemy);
+                    break;
+                case EnumCurrency.yellowBits:
+                    additionalAmount = spawner.playerStats.GetStatValue(EnumStat.additionalYellowBitsDropPerEnemy);
+                    break;
+            }
+        }
+        
+        int totalAmount = baseAmount + additionalAmount;
+        
+        for (int i = 0; i < totalAmount; i++)
         {
             // Spawn currency at enemy position with slight random offset
             Vector3 spawnPos = transform.position + (Vector3)Random.insideUnitCircle * 0.5f;

@@ -14,7 +14,9 @@ public enum EnumStat
     critRatePercent,
     critDamagePercent,
     additionalDamagePerEnemyInAreaPercent,
-    additionalRedBitsDropPerEnemy,
+    additionalBlueBitsDropPerEnemy,
+    additionalPinkBitsDropPerEnemy,
+    additionalYellowBitsDropPerEnemy,
     spawnRatePercent
 }
 
@@ -22,5 +24,5 @@ public enum EnumCurrency
 {
     blueBits,
     pinkBits,
-    redBits
+    yellowBits
 }

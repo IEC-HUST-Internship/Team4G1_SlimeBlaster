@@ -10,7 +10,7 @@ public class PlayerCombatArena : MonoBehaviour
     [SerializeField] private PlayerCombatUI playerUI;
 
     [Header("Attack Settings")]
-    [SerializeField] private Vector2 attackRange = new Vector2(5f, 5f);
+    [SerializeField] private Vector2 baseAttackRange = new Vector2(5f, 5f);
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private float flashDuration = 0.1f;
 
@@ -21,43 +21,55 @@ public class PlayerCombatArena : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 10f;     // Speed for following mouse/finger
 
-    [SerializeField] private SpriteRenderer rend;
+    [Header("Debug")]
 
-    // Boss resolved from container
+    [SerializeField] private GameObject Sprite;
+    [SerializeField] private SpriteRenderer rend;
+    
+    [SerializeField, TextArea(20, 20)] private string DebugField = "";
+    // 👑 Boss resolved from container
     private Boss bossEnemy;
 
-    // Combat Arena Temp Stats
+    // 🎮 Combat Arena Temp Stats
     private int currentHp;
     private int currentExp;
     private Camera mainCamera;
     private bool isDead = false;
 
-    // Track collected currency during this run
+    // 💰 Track collected currency during this run
     private Dictionary<EnumCurrency, int> collectedCurrency = new Dictionary<EnumCurrency, int>();
 
     private void OnEnable() 
     {
         mainCamera = Camera.main;
         
-        // Find boss (including inactive objects)
+        // 🔍 Find boss (including inactive objects)
         if (bossEnemy == null)
         {
             bossEnemy = FindObjectOfType<Boss>(true);
             bossEnemy.isDefeated = false;
         }
         
-        // Reset player position and state
+        // 🔄 Reset player position and state
         transform.position = Vector3.zero;
         isDead = false;
         
-        // Reset collected currency
+        // 💸 Reset collected currency
         collectedCurrency.Clear();
         
-        // Initialize current stats from PlayerStats
+        // 📋 Initialize current stats from PlayerStats
         if (playerStats != null)
         {
             currentHp = playerStats.GetStatValue(EnumStat.hp);
             currentExp = playerStats.GetStatValue(EnumStat.exp);
+            
+            // 🔍 Apply attackSizePercent to sprite scale
+            int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
+            float sizeMultiplier = attackSizePercent / 100f;
+            if (Sprite != null)
+            {
+                Sprite.transform.localScale = Vector3.one * sizeMultiplier;
+            }
         }
         
         StartCoroutine(AttackRoutine());
@@ -66,10 +78,10 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void OnDisable()
     {
-        // Move player out of scene
+        // 🚫 Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
         
-        // Stop all coroutines
+        // ⏹️ Stop all coroutines
         StopAllCoroutines();
         
         if (rend != null)
@@ -91,11 +103,11 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void CheckBossDefeat()
     {
-        // Check if boss is defeated
+        // 🏆 Check if boss is defeated
         if (bossEnemy != null && bossEnemy.isDefeated)
         {
             ShowWin();
-            bossEnemy = null; // Prevent checking multiple times
+            bossEnemy = null; // ✅ Prevent checking multiple times
         }
     }
 
@@ -103,16 +115,16 @@ public class PlayerCombatArena : MonoBehaviour
     {
         isDead = true;
         
-        // Move player out of scene
+        // 🚫 Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
         
-        // Unlock 1 new level when boss is defeated
+        // 🔓 Unlock 1 new level when boss is defeated
         if (Level.Instance != null)
         {
             Level.Instance.UnlockLevels(1);
         }
         
-        // Show win UI
+        // 🎉 Show win UI
         if (playerUI != null)
             playerUI.ShowWin();
         
@@ -121,7 +133,7 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void CheckCurrencyPickup()
     {
-        // Detect all currency within pickup radius
+        // 💰 Detect all currency within pickup radius
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, currencyPickupRadius, currencyLayer);
 
         foreach (var hit in hits)
@@ -129,13 +141,13 @@ public class PlayerCombatArena : MonoBehaviour
             CurrencyControl currency = hit.GetComponent<CurrencyControl>();
             if (currency != null && !currency.IsFlying())
             {
-                // Track collected currency for this run
+                // 📊 Track collected currency for this run
                 EnumCurrency currencyType = currency.currencyType;
                 if (!collectedCurrency.ContainsKey(currencyType))
                     collectedCurrency[currencyType] = 0;
                 collectedCurrency[currencyType] += currency.currencyAmount;
                 
-                // Start flying towards player (currency will be added after 1 second)
+                // 🚀 Start flying towards player (currency will be added after 1 second)
                 currency.StartFlyingToPlayer(transform, playerStats);
             }
         }
@@ -146,16 +158,16 @@ public class PlayerCombatArena : MonoBehaviour
         Vector3 targetPos = transform.position;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
-        // PC: follow mouse
+        // 🖱️ PC: follow mouse
         if (Input.GetMouseButton(0))
         {
             Vector3 mousePos = Input.mousePosition;
             mousePos.z = Mathf.Abs(mainCamera.transform.position.z);
             targetPos = mainCamera.ScreenToWorldPoint(mousePos);
-            targetPos.z = 0f; // Keep player on Z=0 plane
+            targetPos.z = 0f; // 📏 Keep player on Z=0 plane
         }
 #elif UNITY_IOS || UNITY_ANDROID
-        // Mobile: follow first touch
+        // 📱 Mobile: follow first touch
         if (Input.touchCount > 0)
         {
             Vector3 touchPos = Input.GetTouch(0).position;
@@ -165,7 +177,7 @@ public class PlayerCombatArena : MonoBehaviour
         }
 #endif
 
-        // Smooth movement
+        // 🎯 Smooth movement
         transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed * Time.deltaTime);
     }
     private IEnumerator AttackRoutine()
@@ -199,40 +211,128 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void Attack()
     {
-        // Detect all 2D colliders inside the box
-        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, attackRange, 0f, enemyLayer);
+        // 📐 Get attackSizePercent and calculate actual attack range
+        int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
+        float sizeMultiplier = attackSizePercent / 100f;
+        Vector2 actualAttackRange = baseAttackRange * sizeMultiplier;
+        
+        // 🎯 Detect all 2D colliders inside the box
+        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, actualAttackRange, 0f, enemyLayer);
 
-        int damage = playerStats.GetStatValue(EnumStat.damage);
+        int baseDamage = playerStats.GetStatValue(EnumStat.damage);
         int baseReflection = playerStats.GetStatValue(EnumStat.baseReflection);
+        int additionalDamagePerEnemyPercent = playerStats.GetStatValue(EnumStat.additionalDamagePerEnemyInAreaPercent);
         float totalMultiplier = 0;
 
+        // 🔢 Count valid enemies hit for damage calculation
+        int enemyCount = 0;
         foreach (var hit in hits)
         {
-            // Apply damage if enemy has Enemy script
             Enemy enemy = hit.GetComponent<Enemy>();
             if (enemy != null)
             {
-                enemy.TakeDamage(damage);
+                enemyCount++;
+            }
+        }
+
+        // 🧮 Calculate final damage with additionalDamagePerEnemyInAreaPercent
+        // 📝 Formula: baseDamage * (1 + (additionalDamagePerEnemyPercent * enemyCount / 100))
+        float damageMultiplier = 1f + (additionalDamagePerEnemyPercent * enemyCount / 100f);
+        int finalDamage = Mathf.RoundToInt(baseDamage * damageMultiplier);
+
+        bool hitBoss = false;
+        int damageDealtToSingleEnemy = 0;
+        int totalDamageDealtToAllEnemies = 0;
+        
+        foreach (var hit in hits)
+        {
+            // ⚔️ Apply damage if enemy has Enemy script
+            Enemy enemy = hit.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                // 👑 Check if this is a boss and apply boss damage bonus
+                if (enemy is Boss)
+                {
+                    hitBoss = true;
+                    int bossDamage = playerStats.GetStatValue(EnumStat.bossDamage);
+                    int bossFinalDamage = finalDamage + bossDamage;
+                    enemy.TakeDamage(bossFinalDamage);
+                    damageDealtToSingleEnemy = bossFinalDamage; // 💾 Store damage dealt to boss
+                    totalDamageDealtToAllEnemies += bossFinalDamage; // 📊 Accumulate total damage
+                }
+                else
+                {
+                    enemy.TakeDamage(finalDamage);
+                    if (damageDealtToSingleEnemy == 0) // 💾 Store first normal enemy damage
+                    {
+                        damageDealtToSingleEnemy = finalDamage;
+                    }
+                    totalDamageDealtToAllEnemies += finalDamage; // 📊 Accumulate total damage
+                }
                 
-                // Get multiplier from each enemy
+                // 🔄 Get multiplier from each enemy
                 totalMultiplier += enemy.GetEnemyMultiplierBaseReflection();
             }
         }
 
-        // Calculate reflection damage: baseReflection * totalMultiplier
+        // 🔮 Calculate reflection damage: baseReflection * totalMultiplier
         float reflectionDamage = baseReflection * totalMultiplier;
-        if (reflectionDamage > 0)
+        int damageTakenFromBoss = 0;
+        int damageTakenFromEnemy = 0;
+        int damageTakenFromSingleEnemy = 0;
+        
+        // 🎯 Calculate reflection damage separately for boss and normal enemies
+        float bossReflectionDamage = 0;
+        float normalEnemyReflectionDamage = 0;
+        int bossCount = 0;
+        int normalEnemyCount = 0;
+        
+        foreach (var hit in hits)
         {
-            TakeDamage((int)reflectionDamage);
+            Enemy enemy = hit.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                float enemyReflection = baseReflection * enemy.GetEnemyMultiplierBaseReflection();
+                
+                if (enemy is Boss)
+                {
+                    bossReflectionDamage += enemyReflection;
+                    bossCount++;
+                }
+                else
+                {
+                    normalEnemyReflectionDamage += enemyReflection;
+                    normalEnemyCount++;
+                }
+            }
         }
+        
+        // 💥 Take damage from boss reflection if hit boss
+        if (bossReflectionDamage > 0)
+        {
+            damageTakenFromBoss = TakeDamageFromBoss((int)bossReflectionDamage);
+        }
+        
+        // 💥 Take damage from normal enemy reflection if hit enemies
+        if (normalEnemyReflectionDamage > 0)
+        {
+            damageTakenFromEnemy = TakeDamage((int)normalEnemyReflectionDamage);
+        }
+        
+        // 🧮 Calculate average damage from single enemy
+        int totalDamageTaken = damageTakenFromBoss + damageTakenFromEnemy;
+        damageTakenFromSingleEnemy = enemyCount > 0 ? Mathf.RoundToInt((float)totalDamageTaken / enemyCount) : 0;
+
+        // 📊 Update debug info
+        UpdateDebugField(enemyCount, damageDealtToSingleEnemy, totalDamageDealtToAllEnemies, damageTakenFromBoss, damageTakenFromEnemy, damageTakenFromSingleEnemy);
 
         StartCoroutine(FlashAlpha());
     }
-    public void TakeDamage(int damage)
+    public int TakeDamage(int damage)
     {
-        // Apply armor reduction
+        // 🛡️ Apply armor reduction
         int armor = playerStats.GetStatValue(EnumStat.armor);
-        int finalDamage = Mathf.Max(1, damage - armor); // Minimum 1 damage
+        int finalDamage = Mathf.Max(1, damage - armor); // ⚠️ Minimum 1 damage
         
         currentHp -= finalDamage;
         currentHp = Mathf.Max(0, currentHp); // Prevent negative HP
@@ -241,22 +341,81 @@ public class PlayerCombatArena : MonoBehaviour
         {
             Die();
         }
+        
+        return finalDamage; // Return actual damage taken
     }
+    
+    public int TakeDamageFromBoss(int damage)
+    {
+        // 🛡️ Apply armor + bossArmor reduction when taking reflection damage from boss
+        int armor = playerStats.GetStatValue(EnumStat.armor);
+        int bossArmor = playerStats.GetStatValue(EnumStat.bossArmor);
+        int totalArmor = armor + bossArmor;
+        int finalDamage = Mathf.Max(1, damage - totalArmor); // ⚠️ Minimum 1 damage
+        
+        currentHp -= finalDamage;
+        currentHp = Mathf.Max(0, currentHp); // Prevent negative HP
+        
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+        
+        return finalDamage; // ↩️ Return actual damage taken
+    }
+    
+    // 📊 Cached debug values to preserve non-zero stats
+    private int lastEnemyCount = 0;
+    private int lastDamagePerEnemy = 0;
+    private int lastTotalDamageToAllEnemies = 0;
+    private int lastDamageTakenFromBoss = 0;
+    private int lastDamageTakenFromEnemy = 0;
+    private int lastDamageTakenFromSingleEnemy = 0;
+    
+    /// <summary>
+    /// 📊 Updates the DebugField with detailed combat statistics
+    /// Shows: enemies hit, damage dealt, and damage taken breakdown
+    /// </summary>
+    /// <param name="enemyCount">👥 Total number of enemies hit in the attack</param>
+    /// <param name="damagePerEnemy">⚔️ Damage dealt to a single enemy</param>
+    /// <param name="totalDamageToAllEnemies">💥 Total damage dealt to all enemies</param>
+    /// <param name="damageTakenFromBoss">🦴 Total damage taken from boss reflection</param>
+    /// <param name="damageTakenFromEnemy">👹 Total damage taken from normal enemy reflection</param>
+    /// <param name="damageTakenFromSingleEnemy">💔 Average damage taken from one enemy</param>
+    private void UpdateDebugField(int enemyCount, int damagePerEnemy, int totalDamageToAllEnemies, int damageTakenFromBoss, int damageTakenFromEnemy, int damageTakenFromSingleEnemy)
+    {
+        // 🔄 Keep previous values if current values are 0
+        if (enemyCount != 0) lastEnemyCount = enemyCount;
+        if (damagePerEnemy != 0) lastDamagePerEnemy = damagePerEnemy;
+        if (totalDamageToAllEnemies != 0) lastTotalDamageToAllEnemies = totalDamageToAllEnemies;
+        if (damageTakenFromBoss != 0) lastDamageTakenFromBoss = damageTakenFromBoss;
+        if (damageTakenFromEnemy != 0) lastDamageTakenFromEnemy = damageTakenFromEnemy;
+        if (damageTakenFromSingleEnemy != 0) lastDamageTakenFromSingleEnemy = damageTakenFromSingleEnemy;
+        
+        // 🎯 Build debug string with detailed combat statistics
+        DebugField = $"👥 Enemies Hit: {lastEnemyCount}\n" +
+                     $"⚔️ Damage to 1 Enemy: {lastDamagePerEnemy}\n" +
+                     $"💥 Total Damage to All: {lastTotalDamageToAllEnemies}\n" +
+                     $"🦴 Damage taken from Boss: {lastDamageTakenFromBoss}\n" +
+                     $"👹 Damage taken from all Enemies: {lastDamageTakenFromEnemy}\n" +
+                     $"💔 Damage taken from 1 Enemy: {lastDamageTakenFromSingleEnemy}";
+    }
+    
     private void Die()
     {
         isDead = true;
         
-        // Show lose UI
+        // 💀 Show lose UI
         if (playerUI != null)
             playerUI.ShowLose();
         
-        // Move player out of scene
+        // 🚫 Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
         
         Debug.Log("Player died!");
     }
 
-    // Getter methods for UI
+    // 📥 Getter methods for UI
     public int GetCurrentHp() => currentHp;
     public int GetCurrentExp() => currentExp;
     public Dictionary<EnumCurrency, int> GetCollectedCurrency() => collectedCurrency;
@@ -267,24 +426,31 @@ public class PlayerCombatArena : MonoBehaviour
 
         Color original = rend.color;
 
-        // Set alpha to 0.4 (keep original color)
+        // ✨ Set alpha to 0.4 (keep original color)
         Color flashColor = new Color(original.r, original.g, original.b, 0.4f);
         rend.color = flashColor;
 
         yield return new WaitForSeconds(flashDuration);
 
-        // Reset to original alpha
+        // 🔄 Reset to original alpha
         rend.color = original;
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        // Draw attack range (box)
+        // 📦 Draw attack range (box)
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position, attackRange);
+        Vector2 rangeToShow = baseAttackRange;
+        if (Application.isPlaying && playerStats != null)
+        {
+            int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
+            float sizeMultiplier = attackSizePercent / 100f;
+            rangeToShow = baseAttackRange * sizeMultiplier;
+        }
+        Gizmos.DrawWireCube(transform.position, rangeToShow);
         
-        // Draw currency pickup range (circle)
+        // ⭕ Draw currency pickup range (circle)
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, currencyPickupRadius);
     }
