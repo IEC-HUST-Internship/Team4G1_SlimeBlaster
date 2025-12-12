@@ -16,6 +16,12 @@ public class UIController : MonoBehaviour
     public Button resourceButton;
     public GameObject resourcePanel;
 
+    [Header("⚙️ Settings Panel")]
+    public GameObject settingPanel;
+    public Button settingButton;
+    public Button resumeButton;
+    public Button terminateButton;
+
     [Header("Upgrade Popup Panel")]
     public GameObject upgradePopupPanel;
     public GameObject popupContentPanel; // The inner panel with upgrade info
@@ -62,8 +68,10 @@ public class UIController : MonoBehaviour
     public Color maxLevelFlashColor = Color.yellow;
 
     private bool isPanelOpen = false;
+    private bool isSettingPanelOpen = false;
     private Vector3 originalPosition;
     private Vector3 popupOriginalPosition;
+    private Vector3 settingPanelOriginalScale;
     private NodeInstance currentNodeInstance;
     private UpgradeButton currentUpgradeButton;
     private Color originalMoneyTextColor;
@@ -92,6 +100,28 @@ public class UIController : MonoBehaviour
         if (confirmUpgradeButton != null)
         {
             confirmUpgradeButton.onClick.AddListener(ConfirmUpgrade);
+        }
+
+        // ⚙️ Setup setting panel
+        if (settingButton != null)
+        {
+            settingButton.onClick.AddListener(ToggleSettingPanel);
+        }
+
+        if (resumeButton != null)
+        {
+            resumeButton.onClick.AddListener(CloseSettingPanel);
+        }
+
+        if (terminateButton != null)
+        {
+            terminateButton.onClick.AddListener(CloseSettingPanel);
+        }
+
+        if (settingPanel != null)
+        {
+            settingPanelOriginalScale = settingPanel.transform.localScale;
+            settingPanel.SetActive(false);
         }
 
         // Store original money text color
@@ -353,6 +383,46 @@ public class UIController : MonoBehaviour
         }
     }
 
+    // ⚙️ Toggle setting panel (open/close)
+    private void ToggleSettingPanel()
+    {
+        if (isSettingPanelOpen)
+        {
+            CloseSettingPanel();
+        }
+        else
+        {
+            OpenSettingPanel();
+        }
+    }
+
+    // ⚙️ Open setting panel
+    private void OpenSettingPanel()
+    {
+        if (settingPanel != null)
+        {
+            settingPanel.SetActive(true);
+            settingPanel.transform.localScale = Vector3.zero;
+            settingPanel.transform.DOScale(settingPanelOriginalScale, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+            Time.timeScale = 0f;
+            isSettingPanelOpen = true;
+        }
+    }
+
+    // ⚙️ Close setting panel
+    private void CloseSettingPanel()
+    {
+        if (settingPanel != null)
+        {
+            settingPanel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
+            {
+                settingPanel.SetActive(false);
+                Time.timeScale = 1f;
+            });
+            isSettingPanelOpen = false;
+        }
+    }
+
     private void OnDestroy()
     {
         if (resourceButton != null)
@@ -363,6 +433,21 @@ public class UIController : MonoBehaviour
         if (confirmUpgradeButton != null)
         {
             confirmUpgradeButton.onClick.RemoveListener(ConfirmUpgrade);
+        }
+
+        if (settingButton != null)
+        {
+            settingButton.onClick.RemoveListener(ToggleSettingPanel);
+        }
+
+        if (resumeButton != null)
+        {
+            resumeButton.onClick.RemoveListener(CloseSettingPanel);
+        }
+
+        if (terminateButton != null)
+        {
+            terminateButton.onClick.RemoveListener(CloseSettingPanel);
         }
     }
 }
