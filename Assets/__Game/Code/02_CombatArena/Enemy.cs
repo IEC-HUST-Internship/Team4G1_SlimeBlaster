@@ -11,13 +11,13 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public ObjectPool pool;
     [HideInInspector] public EnemySpawner spawner;
     [HideInInspector] public StoreCurrencyReference currencyReference;
+    [HideInInspector] public Vector2 targetPosition;
 
     public int currentHealth { get; private set; }
     private Camera mainCamera;
     private SlimeAnimation slimeAnim;
     private bool justSpawned = true;
     private float spawnIgnoreTime = 3f;
-    private Vector2 moveDirection;
 
     protected virtual void OnEnable()
     {
@@ -25,19 +25,6 @@ public class Enemy : MonoBehaviour
         slimeAnim = GetComponent<SlimeAnimation>();
         InitializeEnemy();
         justSpawned = true;
-
-        // Move toward a random point inside the target area
-        if (spawner != null)
-        {
-            Vector2 targetPoint = spawner.GetRandomPointInsideTargetArea();
-            moveDirection = (targetPoint - (Vector2)transform.position).normalized;
-        }
-        else
-        {
-            // Fallback: random direction
-            moveDirection = Random.insideUnitCircle.normalized;
-        }
-
         Invoke(nameof(DisableJustSpawned), spawnIgnoreTime);
     }
 
@@ -48,7 +35,7 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        MoveStraight();
+        MoveToTarget();
         CheckOffscreen();
     }
 
@@ -61,9 +48,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void MoveStraight()
+    private void MoveToTarget()
     {
-        transform.position += (Vector3)(moveDirection * moveSpeed * Time.deltaTime);
+        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+        transform.position += (Vector3)(direction * moveSpeed * Time.deltaTime);
     }
 
     private void CheckOffscreen()

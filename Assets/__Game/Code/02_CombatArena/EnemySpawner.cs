@@ -72,6 +72,7 @@ public class EnemySpawner : MonoBehaviour
                 enemyScript.pool = entry.enemyPool;
                 enemyScript.spawner = this;
                 enemyScript.currencyReference = currencyReference;
+                enemyScript.targetPosition = GetRandomPointInsideTargetArea();
                 activeEnemies.Add(enemyScript);
             }
         }

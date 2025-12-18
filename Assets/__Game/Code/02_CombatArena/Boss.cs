@@ -3,10 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Boss : Enemy
 {
-    [HideInInspector] public Vector3 targetPosition;
-    [HideInInspector] public bool hasTarget = false;
     public bool isDefeated = false;
-    private Vector2 bossDirection;
     
     protected override void OnEnable()
     {
@@ -18,12 +15,17 @@ public class Boss : Enemy
         // Don't call base.OnDisable() to prevent returning to pool
     }
     
-    // Boss inherits all functionality from Enemy
-    // Override Die() to hide instead of returning to pool
-    
-    protected override void Die()
+    // Set target position (uses base Enemy's targetPosition)
+    public void SetTarget(Vector3 target)
     {
-        // Spawn currency (inherited from Enemy)
+        targetPosition = target;
+    }
+    
+    // Boss inherits movement from Enemy base class
+    
+    protected virtual void Die()
+    {
+        // Spawn currency
         SpawnCurrency();
         
         // Mark as defeated
@@ -33,23 +35,5 @@ public class Boss : Enemy
         gameObject.SetActive(false);
         
         Debug.Log("Boss defeated!");
-    }
-    
-    // Set target and calculate direction
-    public void SetTarget(Vector3 target)
-    {
-        targetPosition = target;
-        bossDirection = (targetPosition - transform.position).normalized;
-        hasTarget = true;
-    }
-    
-    // Boss movement instead of Enemy movement
-    private void Update()
-    {
-        if (hasTarget)
-        {
-            // Move in straight line toward target
-            transform.position += (Vector3)bossDirection * moveSpeed * Time.deltaTime;
-        }
     }
 }
