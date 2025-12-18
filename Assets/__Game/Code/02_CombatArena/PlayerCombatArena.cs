@@ -124,6 +124,17 @@ public class PlayerCombatArena : MonoBehaviour
             Level.Instance.UnlockLevels(1);
         }
         
+        // 💎 Give player 1 pink bit as reward
+        if (playerStats != null)
+        {
+            playerStats.AddCurrency(EnumCurrency.pinkBits, 1);
+            
+            // Track in collected currency for UI display
+            if (!collectedCurrency.ContainsKey(EnumCurrency.pinkBits))
+                collectedCurrency[EnumCurrency.pinkBits] = 0;
+            collectedCurrency[EnumCurrency.pinkBits] += 1;
+        }
+        
         // 🎉 Show win UI
         if (playerUI != null)
             playerUI.ShowWin();

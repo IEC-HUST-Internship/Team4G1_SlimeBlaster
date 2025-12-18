@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3cea06f9bca6014aa2e909bf67b17e5, type: 3}
   m_Name: BossPinkSlime
   m_EditorClassIdentifier: 
-  hp: 200
+  hp: 20
   baseReflectionMultiplier: 1
   exp: 50
   currencyType: 1
-  baseCurrencyAmount: 1
+  baseCurrencyAmount: 0
   spawnAmount: 1
   spawnInterval: 2
   maxCapacity: 10

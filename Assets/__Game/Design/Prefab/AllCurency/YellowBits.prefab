@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9218225514089549097}
   - component: {fileID: 5459955025279380942}
   m_Layer: 0
-  m_Name: RedBits
+  m_Name: YellowBits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

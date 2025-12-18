@@ -8,6 +8,7 @@ public class Boss : Enemy
     protected override void OnEnable()
     {
         InitializeEnemy();
+        isDefeated = false;
     }
     
     protected override void OnDisable()
@@ -23,7 +24,7 @@ public class Boss : Enemy
     
     // Boss inherits movement from Enemy base class
     
-    protected virtual void Die()
+    protected override void Die()
     {
         // Spawn currency
         SpawnCurrency();
