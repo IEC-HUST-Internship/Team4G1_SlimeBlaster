@@ -18,7 +18,9 @@ public class PlayerCombatUI : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Image healthBarImage;
+    [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Image expBarImage;
+    [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private GameObject gameOverAndWinPanel;
     [SerializeField] private GameObject winText;
     [SerializeField] private GameObject loseText;
@@ -48,30 +50,51 @@ public class PlayerCombatUI : MonoBehaviour
     {
         UpdateHealthBar();
         UpdateExpBar();
+        UpdateLevelText();
     }
 
     private void UpdateHealthBar()
     {
         if (healthBarImage != null && playerStats != null && playerCombat != null)
         {
-            int maxHp = playerStats.GetStatValue(EnumStat.hp);
+            int baseHpValue = playerStats.GetStatValue(EnumStat.baseHp);
+            int hpValue = playerStats.GetStatValue(EnumStat.hp);
+            int maxHp = baseHpValue + hpValue;
             int currentHp = playerCombat.GetCurrentHp();
             if (maxHp > 0)
             {
                 float fillAmount = (float)currentHp / maxHp;
                 healthBarImage.fillAmount = Mathf.Clamp01(fillAmount);
             }
+
+            // Update health text display
+            if (healthText != null)
+                healthText.text = $"{currentHp}/{maxHp}";
         }
     }
 
     private void UpdateExpBar()
     {
-        if (expBarImage != null && playerCombat != null)
+        if (expBarImage != null && playerStats != null)
         {
-            int currentExp = playerCombat.GetCurrentExp();
-            // Assuming max exp is 100 for now (you can change this logic)
-            float fillAmount = (float)currentExp / 100f;
-            expBarImage.fillAmount = Mathf.Clamp01(fillAmount);
+            int currentExp = playerStats.GetStatValue(EnumStat.exp);
+            int currentLevel = playerStats.GetStatValue(EnumStat.level);
+            int expRequired = currentLevel * 100; // Same formula as PlayerStats
+            
+            if (expRequired > 0)
+            {
+                float fillAmount = (float)currentExp / expRequired;
+                expBarImage.fillAmount = Mathf.Clamp01(fillAmount);
+            }
+        }
+    }
+
+    private void UpdateLevelText()
+    {
+        if (levelText != null && playerStats != null)
+        {
+            int currentLevel = playerStats.GetStatValue(EnumStat.level);
+            levelText.text = $"Lv.{currentLevel}";
         }
     }
 

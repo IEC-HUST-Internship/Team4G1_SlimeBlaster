@@ -29,6 +29,7 @@ public class Level : Singleton<Level>
         }
         
         UpdateLevelText();
+        UpdateButtonVisibility();
     }
 
     public void IncreaseLevel()
@@ -37,6 +38,7 @@ public class Level : Singleton<Level>
         {
             level++;
             UpdateLevelText();
+            UpdateButtonVisibility();
             Debug.Log($"Level increased to: {level}");
         }
         else
@@ -51,6 +53,7 @@ public class Level : Singleton<Level>
         {
             level--;
             UpdateLevelText();
+            UpdateButtonVisibility();
             Debug.Log($"Level decreased to: {level}");
         }
         else
@@ -67,6 +70,21 @@ public class Level : Singleton<Level>
         }
     }
 
+    private void UpdateButtonVisibility()
+    {
+        // Show increase button only if level can be increased
+        if (increaseButton != null)
+        {
+            increaseButton.gameObject.SetActive(level < unlockedLevel);
+        }
+
+        // Show decrease button only if level can be decreased
+        if (decreaseButton != null)
+        {
+            decreaseButton.gameObject.SetActive(level > 1);
+        }
+    }
+
     public int GetLevel()
     {
         return level;
@@ -77,6 +95,7 @@ public class Level : Singleton<Level>
         unlockedLevel += amount;
         level += amount;
         UpdateLevelText();
+        UpdateButtonVisibility();
         Debug.Log($"Unlocked {amount} new levels. Current level: {level}, Max level: {unlockedLevel}");
     }
 }

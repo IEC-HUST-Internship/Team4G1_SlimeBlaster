@@ -60,7 +60,9 @@ public class PlayerCombatArena : MonoBehaviour
         // 📋 Initialize current stats from PlayerStats
         if (playerStats != null)
         {
-            currentHp = playerStats.GetStatValue(EnumStat.hp);
+            int baseHpValue = playerStats.GetStatValue(EnumStat.baseHp);
+            int hpValue = playerStats.GetStatValue(EnumStat.hp);
+            currentHp = baseHpValue + hpValue;
             currentExp = playerStats.GetStatValue(EnumStat.exp);
             
             // 🔍 Apply attackSizePercent to sprite scale
@@ -230,7 +232,10 @@ public class PlayerCombatArena : MonoBehaviour
         // 🎯 Detect all 2D colliders inside the box
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, actualAttackRange, 0f, enemyLayer);
 
-        int baseDamage = playerStats.GetStatValue(EnumStat.damage);
+        int baseDamageValue = playerStats.GetStatValue(EnumStat.baseDamage);
+        int damageValue = playerStats.GetStatValue(EnumStat.damage);
+        int totalBaseDamage = baseDamageValue + damageValue;
+        
         int baseReflection = playerStats.GetStatValue(EnumStat.baseReflection);
         int additionalDamagePerEnemyPercent = playerStats.GetStatValue(EnumStat.additionalDamagePerEnemyInAreaPercent);
         float totalMultiplier = 0;
@@ -247,9 +252,9 @@ public class PlayerCombatArena : MonoBehaviour
         }
 
         // 🧮 Calculate final damage with additionalDamagePerEnemyInAreaPercent
-        // 📝 Formula: baseDamage * (1 + (additionalDamagePerEnemyPercent * enemyCount / 100))
+        // 📝 Formula: (baseDamage + damage) * (1 + (additionalDamagePerEnemyPercent * enemyCount / 100))
         float damageMultiplier = 1f + (additionalDamagePerEnemyPercent * enemyCount / 100f);
-        int finalDamage = Mathf.RoundToInt(baseDamage * damageMultiplier);
+        int finalDamage = Mathf.RoundToInt(totalBaseDamage * damageMultiplier);
 
         bool hitBoss = false;
         int damageDealtToSingleEnemy = 0;
@@ -341,9 +346,11 @@ public class PlayerCombatArena : MonoBehaviour
     }
     public int TakeDamage(int damage)
     {
-        // 🛡️ Apply armor reduction
-        int armor = playerStats.GetStatValue(EnumStat.armor);
-        int finalDamage = Mathf.Max(1, damage - armor); // ⚠️ Minimum 1 damage
+        // 🛡️ Apply armor reduction (baseArmor + armor)
+        int baseArmorValue = playerStats.GetStatValue(EnumStat.baseArmor);
+        int armorValue = playerStats.GetStatValue(EnumStat.armor);
+        int totalArmor = baseArmorValue + armorValue;
+        int finalDamage = Mathf.Max(1, damage - totalArmor); // ⚠️ Minimum 1 damage
         
         currentHp -= finalDamage;
         currentHp = Mathf.Max(0, currentHp); // Prevent negative HP
@@ -358,10 +365,11 @@ public class PlayerCombatArena : MonoBehaviour
     
     public int TakeDamageFromBoss(int damage)
     {
-        // 🛡️ Apply armor + bossArmor reduction when taking reflection damage from boss
-        int armor = playerStats.GetStatValue(EnumStat.armor);
+        // 🛡️ Apply baseArmor + armor + bossArmor reduction when taking reflection damage from boss
+        int baseArmorValue = playerStats.GetStatValue(EnumStat.baseArmor);
+        int armorValue = playerStats.GetStatValue(EnumStat.armor);
         int bossArmor = playerStats.GetStatValue(EnumStat.bossArmor);
-        int totalArmor = armor + bossArmor;
+        int totalArmor = baseArmorValue + armorValue + bossArmor;
         int finalDamage = Mathf.Max(1, damage - totalArmor); // ⚠️ Minimum 1 damage
         
         currentHp -= finalDamage;

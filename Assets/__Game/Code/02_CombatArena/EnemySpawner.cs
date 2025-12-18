@@ -8,13 +8,22 @@ public struct EnemySpawnEntry
     public SOEnemyData enemyData;
 }
 
+[System.Serializable]
+public class LevelSpawnConfig
+{
+    public int level;
+    public List<EnemySpawnEntry> enemiesForThisLevel;
+}
+
 public class EnemySpawner : MonoBehaviour
 {
     [Header("References")]
     public PlayerStats playerStats;        // For spawn rate
     public BoxCollider2D targetArea;       // Area enemies move toward
     public StoreCurrencyReference currencyReference;  // Currency pools reference
-    public List<EnemySpawnEntry> EnemyData;
+
+    [Header("Level Configurations")]
+    public List<LevelSpawnConfig> levelConfigs;
 
     [Header("Spawn Settings")]
     public float spawnBuffer = 0.5f;       // How far outside camera to spawn
@@ -22,17 +31,63 @@ public class EnemySpawner : MonoBehaviour
     private Camera mainCamera;
     private float timer;
     private List<Enemy> activeEnemies = new List<Enemy>();
+    private List<EnemySpawnEntry> currentLevelEnemies = new List<EnemySpawnEntry>();
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        Debug.Log($"EnemySpawner Awake - levelConfigs count: {levelConfigs?.Count ?? 0}");
+    }
+
+    private void OnEnable()
+    {
+        LoadCurrentLevelEnemies();
+    }
+
+    private void LoadCurrentLevelEnemies()
+    {
+        currentLevelEnemies.Clear();
+
+        if (Level.Instance == null)
+        {
+            Debug.LogWarning("Level.Instance is null");
+            return;
+        }
+
+        int currentLevel = Level.Instance.GetLevel();
+        Debug.Log($"Loading enemies for level {currentLevel}. Total configs: {levelConfigs?.Count ?? 0}");
+
+        // Find the config for current level
+        if (levelConfigs != null)
+        {
+            foreach (var config in levelConfigs)
+            {
+                Debug.Log($"Checking config for level {config.level}, enemies in config: {config.enemiesForThisLevel?.Count ?? 0}");
+                if (config.level == currentLevel)
+                {
+                    if (config.enemiesForThisLevel != null && config.enemiesForThisLevel.Count > 0)
+                    {
+                        // Copy the list to avoid reference issues
+                        currentLevelEnemies = new List<EnemySpawnEntry>(config.enemiesForThisLevel);
+                        Debug.Log($"✓ Loaded {currentLevelEnemies.Count} enemy types for level {currentLevel}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"⚠ Level {currentLevel} config exists but enemiesForThisLevel list is empty or null!");
+                    }
+                    return;
+                }
+            }
+        }
+
+        Debug.LogWarning($"⚠ No spawn configuration found for level {currentLevel}");
     }
 
     private void Update()
     {
         timer += Time.deltaTime;
 
-        foreach (var entry in EnemyData)
+        foreach (var entry in currentLevelEnemies)
         {
             if (Time.timeSinceLevelLoad < entry.enemyData.startTime) continue;
 
@@ -72,6 +127,7 @@ public class EnemySpawner : MonoBehaviour
                 enemyScript.pool = entry.enemyPool;
                 enemyScript.spawner = this;
                 enemyScript.currencyReference = currencyReference;
+                enemyScript.playerStats = playerStats;
                 enemyScript.targetPosition = GetRandomPointInsideTargetArea();
                 activeEnemies.Add(enemyScript);
             }
@@ -81,7 +137,7 @@ public class EnemySpawner : MonoBehaviour
     private float GetMaxInterval()
     {
         float max = 0f;
-        foreach (var entry in EnemyData)
+        foreach (var entry in currentLevelEnemies)
             max = Mathf.Max(max, entry.enemyData.spawnInterval);
         return max;
     }

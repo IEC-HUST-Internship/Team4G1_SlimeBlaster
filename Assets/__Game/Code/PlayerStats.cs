@@ -5,13 +5,19 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     #region Inspector Variables
+    [Header("Base Stats")]
+    public int baseHp = 100;
+    public int baseDamage = 10;
+    public int baseArmor = 0;
+
     [Header("Player Stats (Inspector)")]
     public int hp = 100; //ok
     public int hpLossPerSecond = 1; //ok
     public int damage = 10; //ok
     public int attackSizePercent = 100;//ok
     public int attackSpeed = 1;
-    public int exp = 0; 
+    public int exp = 0;
+    public int level = 1;
     public int baseReflection = 0; //ok
     public int armor = 0; //ok
     public int bossArmor = 0;
@@ -46,12 +52,17 @@ public class PlayerStats : MonoBehaviour
     private void SetDefaultValues()
     {
         // Initialize dictionary with default values
+        statsDict[EnumStat.baseHp] = 100;
+        statsDict[EnumStat.baseDamage] = 10;
+        statsDict[EnumStat.baseArmor] = 0;
+
         statsDict[EnumStat.hp] = 100;
         statsDict[EnumStat.hpLossPerSecond] = 1;
         statsDict[EnumStat.damage] = 10;
         statsDict[EnumStat.attackSizePercent] = 100;
         statsDict[EnumStat.attackSpeed] = 1;
         statsDict[EnumStat.exp] = 0;
+        statsDict[EnumStat.level] = 1;
         statsDict[EnumStat.baseReflection] = 5;
         statsDict[EnumStat.armor] = 0;
         statsDict[EnumStat.bossArmor] = 0;
@@ -71,12 +82,17 @@ public class PlayerStats : MonoBehaviour
     private void UpdateValueToInspector()
     {
         // Sync inspector variables to dictionary values
+        baseHp = statsDict[EnumStat.baseHp];
+        baseDamage = statsDict[EnumStat.baseDamage];
+        baseArmor = statsDict[EnumStat.baseArmor];
+
         hp = statsDict[EnumStat.hp];
         hpLossPerSecond = statsDict[EnumStat.hpLossPerSecond];
         damage = statsDict[EnumStat.damage];
         attackSizePercent = statsDict[EnumStat.attackSizePercent];
         attackSpeed = statsDict[EnumStat.attackSpeed];
         exp = statsDict[EnumStat.exp];
+        level = statsDict[EnumStat.level];
         baseReflection = statsDict[EnumStat.baseReflection];
         armor = statsDict[EnumStat.armor];
         bossArmor = statsDict[EnumStat.bossArmor];
@@ -104,6 +120,41 @@ public class PlayerStats : MonoBehaviour
     {
         int current = GetStatValue(type);
         SetStatValue(type, current + amount);
+        
+        // Check for level up when exp is added
+        if (type == EnumStat.exp)
+        {
+            CheckLevelUp();
+        }
+    }
+
+    private void CheckLevelUp()
+    {
+        int currentExp = GetStatValue(EnumStat.exp);
+        int currentLevel = GetStatValue(EnumStat.level);
+        int expRequired = GetExpRequiredForLevel(currentLevel);
+
+        while (currentExp >= expRequired)
+        {
+            // Level up!
+            currentExp -= expRequired;
+            currentLevel++;
+            
+            SetStatValue(EnumStat.exp, currentExp);
+            SetStatValue(EnumStat.level, currentLevel);
+            
+            Debug.Log($"Level Up! Now level {currentLevel}");
+            
+            // Recalculate for next level
+            expRequired = GetExpRequiredForLevel(currentLevel);
+        }
+    }
+
+    private int GetExpRequiredForLevel(int level)
+    {
+        // Formula: level * 100
+        // Level 1 → 100 exp, Level 2 → 200 exp, Level 3 → 300 exp, etc.
+        return level * 100;
     }
 
     public int GetCurrency(EnumCurrency type)

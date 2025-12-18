@@ -7,6 +7,7 @@ public enum EnumStat
     attackSizePercent,
     attackSpeed,
     exp,
+    level,
     baseReflection,
     armor,
     bossArmor,
@@ -17,7 +18,10 @@ public enum EnumStat
     additionalBlueBitsDropPerEnemy,
     additionalPinkBitsDropPerEnemy,
     additionalYellowBitsDropPerEnemy,
-    spawnRatePercent
+    spawnRatePercent,
+    baseHp,
+    baseDamage,
+    baseArmor
 }
 
 public enum EnumCurrency

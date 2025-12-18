@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public ObjectPool pool;
     [HideInInspector] public EnemySpawner spawner;
     [HideInInspector] public StoreCurrencyReference currencyReference;
+    [HideInInspector] public PlayerStats playerStats;
     [HideInInspector] public Vector2 targetPosition;
 
     public int currentHealth { get; private set; }
@@ -102,8 +103,18 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        GiveExpToPlayer();
         SpawnCurrency();
         ReturnToPool();
+    }
+
+    private void GiveExpToPlayer()
+    {
+        if (enemyData == null || playerStats == null) return;
+
+        int expReward = enemyData.exp;
+        playerStats.AddStat(EnumStat.exp, expReward);
+        Debug.Log($"Player gained {expReward} exp from enemy");
     }
 
     protected void SpawnCurrency()
