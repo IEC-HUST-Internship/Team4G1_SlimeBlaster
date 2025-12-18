@@ -87,7 +87,6 @@ GameObject:
   - component: {fileID: 2635401527009637305}
   - component: {fileID: 4833673297074586489}
   - component: {fileID: 5355071148889528734}
-  - component: {fileID: 1058392532529944322}
   m_Layer: 0
   m_Name: SlimeBorder
   m_TagString: Untagged
@@ -186,17 +185,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!210 &1058392532529944322
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2947396967535650987}
-  m_Enabled: 1
-  m_SortingLayerID: 1431183063
-  m_SortingLayer: 3
-  m_SortingOrder: 0
 --- !u!1 &3667829885869648373
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,6 +291,37 @@ MonoBehaviour:
   - {fileID: 21300000, guid: fb60ccb61ffee384b94c131770084b8a, type: 3}
   - {fileID: 21300000, guid: ba6cd13967c4d0f4abb3e76f80cf1f77, type: 3}
   frameTime: 0.1
+--- !u!1 &3974017952516959568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1332457175881324958}
+  m_Layer: 0
+  m_Name: Feet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1332457175881324958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3974017952516959568}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.01, y: -15.96, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5632783557099033302}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5512600498057060309
 GameObject:
   m_ObjectHideFlags: 0
@@ -570,6 +589,7 @@ GameObject:
   - component: {fileID: 4581018765012801027}
   - component: {fileID: 7435327021471650000}
   - component: {fileID: 5453961987722619322}
+  - component: {fileID: -6107826859941863869}
   m_Layer: 0
   m_Name: BossEnemy
   m_TagString: Boss
@@ -590,6 +610,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2635401527009637305}
+  - {fileID: 1332457175881324958}
   - {fileID: 2328577055588868171}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -695,8 +716,7 @@ MonoBehaviour:
   pool: {fileID: 0}
   spawner: {fileID: 0}
   currencyReference: {fileID: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
-  hasTarget: 0
+  targetPosition: {x: 0, y: 0}
   isDefeated: 0
 --- !u!114 &5453961987722619322
 MonoBehaviour:
@@ -778,11 +798,24 @@ MonoBehaviour:
   mainSpriteRenderer: {fileID: 4833673297074586489}
   liquidSpriteRenderer: {fileID: 6490702776139504071}
   hollowedSpriteRenderer: {fileID: 6095631809757449150}
+  sortingGroup: {fileID: -6107826859941863869}
+  feet: {fileID: 1332457175881324958}
   frameChangeDuration: 0.1
   blinkDuration: 0.4
   hurtDuration: 0.6
   blinkMinInterval: 4
   blinkMaxInterval: 5
+--- !u!210 &-6107826859941863869
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7570439101151105090}
+  m_Enabled: 1
+  m_SortingLayerID: 1431183063
+  m_SortingLayer: 3
+  m_SortingOrder: 0
 --- !u!1 &7692305340677514862
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,7 +849,7 @@ RectTransform:
   m_Children:
   - {fileID: 4182191981262402424}
   m_Father: {fileID: 5632783557099033302}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

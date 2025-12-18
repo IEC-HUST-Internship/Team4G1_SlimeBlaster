@@ -16,6 +16,10 @@ public class SlimeAnimation : MonoBehaviour
     public SpriteRenderer liquidSpriteRenderer;
     public SpriteRenderer hollowedSpriteRenderer;
 
+    [Header("Sorting")]
+    public UnityEngine.Rendering.SortingGroup sortingGroup;
+    public Transform feet;
+
     [Header("Animation Settings")]
     [Range(0f, 5f)]
     public float frameChangeDuration = 0.1f; // Time between frame changes
@@ -53,10 +57,21 @@ public class SlimeAnimation : MonoBehaviour
             currentFrame++;
         }
 
+        // Update sorting order based on feet position
+        UpdateSortingOrder();
+
         // Update all animations with synchronized frame
         UpdateSyncedAnimation(hollowed, hollowedSpriteRenderer);
         UpdateSyncedAnimation(inside, liquidSpriteRenderer);
         UpdateMainAnimation();
+    }
+
+    void UpdateSortingOrder()
+    {
+        if (sortingGroup == null || feet == null) return;
+
+        // Lower Y position = higher sorting order (appears in front)
+        sortingGroup.sortingOrder = Mathf.RoundToInt(-feet.position.y * 100);
     }
 
     void UpdateSyncedAnimation(List<Sprite> spriteList, SpriteRenderer renderer)

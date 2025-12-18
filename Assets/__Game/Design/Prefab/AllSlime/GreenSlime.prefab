@@ -182,6 +182,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &820896684730585901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4066921756605787159}
+  m_Layer: 0
+  m_Name: Feet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4066921756605787159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820896684730585901}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -6.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5632783557099033302}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2669738577864458186
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,7 +393,6 @@ GameObject:
   - component: {fileID: 8742086280121076801}
   - component: {fileID: 6059096826792847171}
   - component: {fileID: 5520394893393699070}
-  - component: {fileID: 3042126269198419428}
   m_Layer: 0
   m_Name: SlimeBorder
   m_TagString: Untagged
@@ -461,17 +491,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!210 &3042126269198419428
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5430410222987292927}
-  m_Enabled: 1
-  m_SortingLayerID: 1431183063
-  m_SortingLayer: 3
-  m_SortingOrder: 0
 --- !u!1 &6886292868687114735
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,6 +588,7 @@ GameObject:
   - component: {fileID: 7487713777205826995}
   - component: {fileID: 4581018765012801027}
   - component: {fileID: 2681076376904291765}
+  - component: {fileID: 5370020162657970439}
   m_Layer: 0
   m_Name: GreenSlime
   m_TagString: Untagged
@@ -589,6 +609,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8742086280121076801}
+  - {fileID: 4066921756605787159}
   - {fileID: 2328577055588868171}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -626,6 +647,7 @@ MonoBehaviour:
   pool: {fileID: 0}
   spawner: {fileID: 0}
   currencyReference: {fileID: 0}
+  targetPosition: {x: 0, y: 0}
 --- !u!114 &4581018765012801027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,11 +689,24 @@ MonoBehaviour:
   mainSpriteRenderer: {fileID: 6059096826792847171}
   liquidSpriteRenderer: {fileID: 3531367931267048361}
   hollowedSpriteRenderer: {fileID: 7134955277251930240}
+  sortingGroup: {fileID: 5370020162657970439}
+  feet: {fileID: 4066921756605787159}
   frameChangeDuration: 0.1
   blinkDuration: 0.4
   hurtDuration: 0.6
   blinkMinInterval: 3
   blinkMaxInterval: 5
+--- !u!210 &5370020162657970439
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7570439101151105090}
+  m_Enabled: 1
+  m_SortingLayerID: 1431183063
+  m_SortingLayer: 3
+  m_SortingOrder: 0
 --- !u!1 &7692305340677514862
 GameObject:
   m_ObjectHideFlags: 0
@@ -705,7 +740,7 @@ RectTransform:
   m_Children:
   - {fileID: 4182191981262402424}
   m_Father: {fileID: 5632783557099033302}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
