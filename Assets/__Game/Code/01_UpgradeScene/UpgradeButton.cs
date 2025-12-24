@@ -40,7 +40,33 @@ public class UpgradeButton : MonoBehaviour
             }
         }
 
+        // 📥 Load saved level
+        LoadUpgradeLevel();
+
         UpdateUnlockStatus();
+    }
+
+    /// <summary>
+    /// 📥 Load upgrade level from save data
+    /// </summary>
+    private void LoadUpgradeLevel()
+    {
+        if (SaveSystem.Instance != null && nodeInstance != null && nodeInstance.data != null)
+        {
+            int savedLevel = SaveSystem.Instance.GetUpgradeLevel(nodeInstance.data.upgradeName);
+            
+            if (savedLevel > 0)
+            {
+                // Apply saved level and effects
+                nodeInstance.currentLevel = savedLevel;
+                
+                // Apply all accumulated stat bonuses
+                int totalBonus = nodeInstance.data.perUpgradeValue * savedLevel;
+                playerStats.AddStat(nodeInstance.data.stat, totalBonus);
+                
+                Debug.Log($"📥 Loaded {nodeInstance.data.upgradeName}: Level {savedLevel}");
+            }
+        }
     }
 
     private void OnClick()
@@ -72,6 +98,12 @@ public class UpgradeButton : MonoBehaviour
             nodeInstance.Upgrade();
             ApplyUpgradeEffect();
             Debug.Log($"{nodeInstance.data.upgradeName} upgraded to level {nodeInstance.currentLevel}");
+
+            // 💾 Save the new level
+            if (SaveSystem.Instance != null)
+            {
+                SaveSystem.Instance.UpdateUpgradeLevel(nodeInstance.data.upgradeName, nodeInstance.currentLevel);
+            }
 
             // Update children
             UpdateDependentUnlocks();
