@@ -20,6 +20,7 @@ public class PlayerCombatArena : MonoBehaviour
 
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 10f;     // Speed for following mouse/finger
+    [SerializeField] private float mouseOffset = 1f;    // Player stays this much higher than mouse/touch
 
     [Header("Debug")]
 
@@ -170,25 +171,12 @@ public class PlayerCombatArena : MonoBehaviour
     {
         Vector3 targetPos = transform.position;
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-        // 🖱️ PC: follow mouse
-        if (Input.GetMouseButton(0))
+        // 🎮 Use PlayerInputHandler singleton for input
+        if (PlayerInputHandler.Instance.IsInputActive())
         {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = Mathf.Abs(mainCamera.transform.position.z);
-            targetPos = mainCamera.ScreenToWorldPoint(mousePos);
-            targetPos.z = 0f; // 📏 Keep player on Z=0 plane
+            targetPos = PlayerInputHandler.Instance.GetInputWorldPosition();
+            targetPos.y += mouseOffset; // 📐 Player stays higher than input
         }
-#elif UNITY_IOS || UNITY_ANDROID
-        // 📱 Mobile: follow first touch
-        if (Input.touchCount > 0)
-        {
-            Vector3 touchPos = Input.GetTouch(0).position;
-            touchPos.z = Mathf.Abs(mainCamera.transform.position.z);
-            targetPos = mainCamera.ScreenToWorldPoint(touchPos);
-            targetPos.z = 0f;
-        }
-#endif
 
         // 🎯 Smooth movement
         transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed * Time.deltaTime);

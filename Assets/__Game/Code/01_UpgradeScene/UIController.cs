@@ -134,7 +134,7 @@ public class UIController : MonoBehaviour
     private void Update()
     {
         // Close popup when clicking anywhere except upgrade buttons
-        if (Input.GetMouseButtonDown(0) && popupContentPanel != null)
+        if (PlayerInputHandler.Instance.IsInputDown() && popupContentPanel != null)
         {
             // Check if popup is currently down (visible)
             bool isPopupDown = Mathf.Abs(popupContentPanel.transform.localPosition.y - popupOriginalPosition.y) < 1f;
@@ -160,7 +160,7 @@ public class UIController : MonoBehaviour
         if (popupContentPanel != null)
         {
             RectTransform popupRect = popupContentPanel.GetComponent<RectTransform>();
-            if (popupRect != null && RectTransformUtility.RectangleContainsScreenPoint(popupRect, Input.mousePosition, uiCamera))
+            if (popupRect != null && RectTransformUtility.RectangleContainsScreenPoint(popupRect, PlayerInputHandler.Instance.GetInputScreenPosition(), uiCamera))
             {
                 return true;
             }
@@ -171,7 +171,7 @@ public class UIController : MonoBehaviour
         foreach (var btn in allButtons)
         {
             RectTransform btnRect = btn.GetComponent<RectTransform>();
-            if (btnRect != null && RectTransformUtility.RectangleContainsScreenPoint(btnRect, Input.mousePosition, uiCamera))
+            if (btnRect != null && RectTransformUtility.RectangleContainsScreenPoint(btnRect, PlayerInputHandler.Instance.GetInputScreenPosition(), uiCamera))
             {
                 return true;
             }

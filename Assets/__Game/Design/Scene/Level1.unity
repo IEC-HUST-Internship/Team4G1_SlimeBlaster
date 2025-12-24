@@ -745,7 +745,7 @@ GameObject:
   m_Component:
   - component: {fileID: 124661643}
   - component: {fileID: 124661642}
-  - component: {fileID: 124661641}
+  - component: {fileID: 124661644}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -753,37 +753,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &124661641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 124661640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_MoveRepeatDelay: 0.5
-  m_MoveRepeatRate: 0.1
-  m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_DeselectOnBackgroundClick: 1
-  m_PointerBehavior: 0
-  m_CursorLockBehavior: 0
-  m_ScrollDeltaPerTick: 6
 --- !u!114 &124661642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -814,6 +783,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &124661644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124661640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
 --- !u!1 &144515305
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,7 +1192,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0980110c29adebe458d340a31ddebec2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 10c4ebc125ec3bd4a82e8902ff544467, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2173,6 +2162,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   currencyPickupRadius: 10
   moveSpeed: 10
+  mouseOffset: 12
   Sprite: {fileID: 149068483}
   rend: {fileID: 678149859}
   DebugField: 
@@ -4302,6 +4292,7 @@ GameObject:
   - component: {fileID: 626641878}
   - component: {fileID: 626641880}
   - component: {fileID: 626641879}
+  - component: {fileID: 626641881}
   m_Layer: 5
   m_Name: ChangeSceneUI
   m_TagString: Untagged
@@ -4368,6 +4359,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 626641877}
   m_CullTransparentMesh: 1
+--- !u!114 &626641881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626641877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e64e2ab257582c4cabc730bf11679fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitionImage: {fileID: 1681043807}
+  transitionInSprites:
+  - {fileID: 21300000, guid: a27ee1cfc33b9624c853093d521fec29, type: 3}
+  - {fileID: 21300000, guid: 9ee0c00d3331d3540b738e7e28eb7d26, type: 3}
+  - {fileID: 21300000, guid: 03d24e7c08aab9542b2939562c116d5b, type: 3}
+  - {fileID: 21300000, guid: fc8f933354832ba48a0cb7a5da4c433b, type: 3}
+  - {fileID: 21300000, guid: fadf6a767cb759840a7a8f85d049fae6, type: 3}
+  - {fileID: 21300000, guid: 5e395fd7424cfb443997c468bbf96cb2, type: 3}
+  - {fileID: 21300000, guid: 9cadadb05cbf7614baf06d9a08793762, type: 3}
+  - {fileID: 21300000, guid: 8a2780da7b28ba94bb094c1f9b4313cf, type: 3}
+  - {fileID: 21300000, guid: 69290348588c5dc4e8e745ba5176b38e, type: 3}
+  - {fileID: 21300000, guid: d0d317f5cf3f51843bf16c35c2a04e83, type: 3}
+  - {fileID: 21300000, guid: cdfe9a77fa2bbae4c9023b259d65c838, type: 3}
+  - {fileID: 21300000, guid: 8f5f96c0e872e024b8e479f063bb0a36, type: 3}
+  transitionOutSprites:
+  - {fileID: 21300000, guid: f678ab1ebdc984b4e8228f261199f115, type: 3}
+  - {fileID: 21300000, guid: 7720fe7bfdbc0f64d8545f9635b0d9ab, type: 3}
+  - {fileID: 21300000, guid: 3d65a8086438ab94c94f7f372741d740, type: 3}
+  - {fileID: 21300000, guid: 4ba89ad948e65ac4787489ec86a4538d, type: 3}
+  - {fileID: 21300000, guid: 82393482a8927d94a99495ae68bd3bee, type: 3}
+  - {fileID: 21300000, guid: 12a162fa2e96fa745b46a83dc7f1b081, type: 3}
+  - {fileID: 21300000, guid: 5e7f8a347fac95e4786d426efc59478a, type: 3}
+  - {fileID: 21300000, guid: dff5a42f6b2549f428f9e3616092e88d, type: 3}
+  - {fileID: 21300000, guid: 9775163bb5b24b246ab05c9b43012225, type: 3}
+  - {fileID: 21300000, guid: b15328d81d7a82642bedde43eff377a5, type: 3}
+  - {fileID: 21300000, guid: c64fb83b9f64e9444be959213b74b896, type: 3}
+  - {fileID: 21300000, guid: 7364840ea02c96f45a98f21ca48d03f4, type: 3}
+  frameDuration: 0.01
 --- !u!224 &642996332 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2673644360749213759, guid: a1f99154767733e4ab9e9458fe8ee730, type: 3}
@@ -6966,6 +6997,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1160764149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1160764150}
+  - component: {fileID: 1160764151}
+  m_Layer: 0
+  m_Name: FPSSetup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1160764150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160764149}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1762157846}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1160764151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160764149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c07d669867b6d4ba69637d7a29d2a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetFPS: 60
 --- !u!1 &1162387393
 GameObject:
   m_ObjectHideFlags: 0
@@ -10078,7 +10154,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fadf6a767cb759840a7a8f85d049fae6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7364840ea02c96f45a98f21ca48d03f4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10230,6 +10306,7 @@ Transform:
   - {fileID: 2040432271}
   - {fileID: 991555929}
   - {fileID: 344968025}
+  - {fileID: 1160764150}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

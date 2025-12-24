@@ -35,25 +35,25 @@ public class ControlUpgradeButton : MonoBehaviour
     // PC: Mouse drag to pan
     private void HandleMouseDrag()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (PlayerInputHandler.Instance.IsInputDown())
         {
             isDragging = true;
-            lastMousePosition = Input.mousePosition;
+            lastMousePosition = PlayerInputHandler.Instance.GetInputScreenPosition();
         }
 
-        if (Input.GetMouseButton(0) && isDragging)
+        if (PlayerInputHandler.Instance.IsInputActive() && isDragging)
         {
-            Vector3 delta = Input.mousePosition - lastMousePosition;
+            Vector3 delta = PlayerInputHandler.Instance.GetInputScreenPosition() - lastMousePosition;
             Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
             targetObject.transform.position += movement;
             if (background != null)
             {
                 background.transform.position += movement * 0.5f;
             }
-            lastMousePosition = Input.mousePosition;
+            lastMousePosition = PlayerInputHandler.Instance.GetInputScreenPosition();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (PlayerInputHandler.Instance.IsInputUp())
         {
             isDragging = false;
         }
@@ -62,7 +62,7 @@ public class ControlUpgradeButton : MonoBehaviour
     // PC: Mouse scroll wheel to zoom
     private void HandleMouseZoom()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        float scroll = PlayerInputHandler.Instance.GetScrollWheel();
         if (Mathf.Abs(scroll) > 0.01f)
         {
             Vector3 scale = targetObject.transform.localScale;
@@ -87,27 +87,28 @@ public class ControlUpgradeButton : MonoBehaviour
     // Mobile: Touch drag to pan
     private void HandleTouchDrag()
     {
-        if (Input.touchCount == 1)
+        if (PlayerInputHandler.Instance.GetTouchCount() == 1)
         {
-            Touch touch = Input.GetTouch(0);
+            Touch? touch = PlayerInputHandler.Instance.GetTouch(0);
+            if (!touch.HasValue) return;
 
-            if (touch.phase == TouchPhase.Began)
+            if (touch.Value.phase == TouchPhase.Began)
             {
                 isDragging = true;
-                lastMousePosition = touch.position;
+                lastMousePosition = touch.Value.position;
             }
-            else if (touch.phase == TouchPhase.Moved && isDragging)
+            else if (touch.Value.phase == TouchPhase.Moved && isDragging)
             {
-                Vector3 delta = (Vector3)touch.position - lastMousePosition;
+                Vector3 delta = (Vector3)touch.Value.position - lastMousePosition;
                 Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
                 targetObject.transform.position += movement;
                 if (background != null)
                 {
                     background.transform.position += movement * 0.5f;
                 }
-                lastMousePosition = touch.position;
+                lastMousePosition = touch.Value.position;
             }
-            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            else if (touch.Value.phase == TouchPhase.Ended || touch.Value.phase == TouchPhase.Canceled)
             {
                 isDragging = false;
             }
@@ -117,16 +118,18 @@ public class ControlUpgradeButton : MonoBehaviour
     // Mobile: Pinch to zoom
     private void HandlePinchZoom()
     {
-        if (Input.touchCount == 2)
+        if (PlayerInputHandler.Instance.GetTouchCount() == 2)
         {
-            Touch touch1 = Input.GetTouch(0);
-            Touch touch2 = Input.GetTouch(1);
+            Touch? touch1 = PlayerInputHandler.Instance.GetTouch(0);
+            Touch? touch2 = PlayerInputHandler.Instance.GetTouch(1);
+            
+            if (!touch1.HasValue || !touch2.HasValue) return;
 
-            Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
-            Vector2 touch2PrevPos = touch2.position - touch2.deltaPosition;
+            Vector2 touch1PrevPos = touch1.Value.position - touch1.Value.deltaPosition;
+            Vector2 touch2PrevPos = touch2.Value.position - touch2.Value.deltaPosition;
 
             float prevDistance = (touch1PrevPos - touch2PrevPos).magnitude;
-            float currentDistance = (touch1.position - touch2.position).magnitude;
+            float currentDistance = (touch1.Value.position - touch2.Value.position).magnitude;
 
             float difference = currentDistance - prevDistance;
 

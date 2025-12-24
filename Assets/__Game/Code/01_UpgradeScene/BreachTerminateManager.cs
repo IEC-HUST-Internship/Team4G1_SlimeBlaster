@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class BreachTerminateManager : MonoBehaviour
 {
+    private Transition transition;
+
     [Header("Buttons")]
     public Button breachButton;
     public Button terminateButton;
@@ -19,6 +21,7 @@ public class BreachTerminateManager : MonoBehaviour
 
     private void Awake()
     {
+        transition = GetComponent<Transition>();
         // Add listeners for buttons
         breachButton.onClick.AddListener(OnBreachClicked);
         terminateButton.onClick.AddListener(OnTerminateClicked);
@@ -54,62 +57,78 @@ public class BreachTerminateManager : MonoBehaviour
 
     private void OnBreachClicked()
     {
-        // ✅ Switch to Combat Scene
-        foreach (var scene in upgradeScenes)
-            if (scene != null) scene.SetActive(false);
-        
-        foreach (var scene in combatScenes)
-            if (scene != null) scene.SetActive(true);
+        // 🎬 Play transition, then switch to Combat Scene
+        transition.PlayTransition(() =>
+        {
+            // ✅ Switch to Combat Scene
+            foreach (var scene in upgradeScenes)
+                if (scene != null) scene.SetActive(false);
+            
+            foreach (var scene in combatScenes)
+                if (scene != null) scene.SetActive(true);
 
-        // ✅ Hide Breach button, show Terminate button
-        if (breachButton != null) breachButton.gameObject.SetActive(false);
-        if (terminateButton != null) terminateButton.gameObject.SetActive(true);
+            // ✅ Hide Breach button, show Terminate button
+            if (breachButton != null) breachButton.gameObject.SetActive(false);
+            if (terminateButton != null) terminateButton.gameObject.SetActive(true);
+        });
     }
 
     private void OnTerminateClicked()
     {
-        // ✅ Switch back to Upgrade Scene
-        foreach (var scene in combatScenes)
-            if (scene != null) scene.SetActive(false);
-        
-        foreach (var scene in upgradeScenes)
-            if (scene != null) scene.SetActive(true);
+        // 🎬 Play transition, then switch back to Upgrade Scene
+        transition.PlayTransition(() =>
+        {
+            // ✅ Switch back to Upgrade Scene
+            foreach (var scene in combatScenes)
+                if (scene != null) scene.SetActive(false);
+            
+            foreach (var scene in upgradeScenes)
+                if (scene != null) scene.SetActive(true);
 
-        // ✅ Hide Terminate button, show Breach button
-        if (terminateButton != null) terminateButton.gameObject.SetActive(false);
-        if (breachButton != null) breachButton.gameObject.SetActive(true);
+            // ✅ Hide Terminate button, show Breach button
+            if (terminateButton != null) terminateButton.gameObject.SetActive(false);
+            if (breachButton != null) breachButton.gameObject.SetActive(true);
+        });
     }
 
     private void OnToHomeClicked()
     {
-        // Hide GameOver Panel
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        // 🎬 Play transition, then go to home
+        transition.PlayTransition(() =>
+        {
+            // Hide GameOver Panel
+            if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        // Switch back to Upgrade Scene (same as Terminate)
-        foreach (var scene in combatScenes)
-            if (scene != null) scene.SetActive(false);
-        
-        foreach (var scene in upgradeScenes)
-            if (scene != null) scene.SetActive(true);
+            // Switch back to Upgrade Scene (same as Terminate)
+            foreach (var scene in combatScenes)
+                if (scene != null) scene.SetActive(false);
+            
+            foreach (var scene in upgradeScenes)
+                if (scene != null) scene.SetActive(true);
 
-        // Hide Terminate button, show Breach button
-        if (terminateButton != null) terminateButton.gameObject.SetActive(false);
-        if (breachButton != null) breachButton.gameObject.SetActive(true);
+            // Hide Terminate button, show Breach button
+            if (terminateButton != null) terminateButton.gameObject.SetActive(false);
+            if (breachButton != null) breachButton.gameObject.SetActive(true);
+        });
     }
 
     private void OnRestartClicked()
     {
-        // Hide GameOver Panel
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
-
-        // Restart Combat Scene (disable then enable to trigger OnEnable)
-        foreach (var scene in combatScenes)
+        // 🎬 Play transition, then restart
+        transition.PlayTransition(() =>
         {
-            if (scene != null)
+            // Hide GameOver Panel
+            if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+            // Restart Combat Scene (disable then enable to trigger OnEnable)
+            foreach (var scene in combatScenes)
             {
-                scene.SetActive(false);
-                scene.SetActive(true);
+                if (scene != null)
+                {
+                    scene.SetActive(false);
+                    scene.SetActive(true);
+                }
             }
-        }
+        });
     }
 }
