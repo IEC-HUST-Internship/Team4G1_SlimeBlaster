@@ -34,6 +34,10 @@ public class SlimeAnimation : MonoBehaviour
     [Range(0f, 5f)]
     public float blinkMaxInterval = 1f; // Max time before next blink
 
+    [Header("Glow Settings")]
+    [SerializeField] private float glowAmount = 4f; // Glow intensity when hurt
+    [SerializeField] private float glowDuration = 0.2f; // How long glow lasts
+
     private int currentFrame = 0;
     private float frameTimer = 0f;
     private float blinkTimer = 0f;
@@ -43,10 +47,36 @@ public class SlimeAnimation : MonoBehaviour
     private AnimState currentState = AnimState.Idle;
     private bool isHurtPlaying = false;
     private float stateTimer = 0f;
+    
+    // 🔥 Glow effect using MaterialPropertyBlock (per-object, not shared)
+    private MaterialPropertyBlock glowPropertyBlock;
+    private Coroutine glowCoroutine;
+    private static readonly int GlowAmountID = Shader.PropertyToID("_GlowAmount");
 
     void Start()
     {
         nextBlinkTime = Random.Range(blinkMinInterval, blinkMaxInterval);
+        
+        // 🔥 Initialize MaterialPropertyBlock for per-object glow (only if liquidSpriteRenderer exists)
+        if (liquidSpriteRenderer != null)
+        {
+            glowPropertyBlock = new MaterialPropertyBlock();
+            SetGlow(0f); // Start with no glow
+        }
+    }
+    
+    void OnDisable()
+    {
+        // 🔥 Reset glow when disabled (only if liquidSpriteRenderer exists)
+        if (liquidSpriteRenderer != null)
+        {
+            if (glowCoroutine != null)
+            {
+                StopCoroutine(glowCoroutine);
+                glowCoroutine = null;
+            }
+            SetGlow(0f);
+        }
     }
 
     void Update()
@@ -183,6 +213,34 @@ public class SlimeAnimation : MonoBehaviour
             currentState = AnimState.Hurt;
             stateTimer = 0f;
             isHurtPlaying = true;
+            
+            // 🔥 Trigger glow effect (only if liquidSpriteRenderer exists)
+            if (liquidSpriteRenderer != null)
+            {
+                if (glowCoroutine != null)
+                    StopCoroutine(glowCoroutine);
+                glowCoroutine = StartCoroutine(GlowRoutine());
+            }
         }
+    }
+    
+    // 🔥 Glow effect coroutine
+    private IEnumerator GlowRoutine()
+    {
+        SetGlow(glowAmount); // Turn on glow (4)
+        yield return new WaitForSeconds(glowDuration); // Wait 0.2s
+        SetGlow(0f); // Turn off glow
+        glowCoroutine = null;
+    }
+    
+    // 🔥 Set glow using MaterialPropertyBlock (only affects THIS object)
+    private void SetGlow(float amount)
+    {
+        if (liquidSpriteRenderer == null || glowPropertyBlock == null) return;
+        
+        // Get existing property block first to preserve other properties
+        liquidSpriteRenderer.GetPropertyBlock(glowPropertyBlock);
+        glowPropertyBlock.SetFloat(GlowAmountID, amount);
+        liquidSpriteRenderer.SetPropertyBlock(glowPropertyBlock);
     }
 }

@@ -25,7 +25,8 @@ public enum EnumStat
     baseArmor,
     addHealthPerEnemyHit,  // 💚 Heal HP per enemy hit
     addHealthPerEnemyKill,  // 💚 Heal HP per enemy killed
-    currencyPickupRadiusIncreasePercent  // 🧲 Increase pickup radius by %
+    currencyPickupRadiusIncreasePercent,  // 🧲 Increase pickup radius by %
+    additionalAttackSpeedIncreasePercent  // ⚔️ Attack speed bonus % (50 = 1.5x, 120 = 2.2x)
 }
 
 public enum EnumCurrency

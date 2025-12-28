@@ -16,11 +16,11 @@ public class PlayerStats : MonoBehaviour
     public int damage = 10; //ok
     public int attackSizePercent = 100;//ok
     public int attackSpeed = 1;//ok
-    public int exp = 0;
-    public int level = 1;
+    public int exp = 0;//ok
+    public int level = 1;//ok
     public int baseReflection = 0; //ok
     public int armor = 0; //ok
-    public int bossArmor = 0;
+    public int bossArmor = 0;//ok
     public int bossDamage = 0; //ok
     public int critRatePercent = 5;
     public int critDamagePercent = 150;
@@ -31,8 +31,9 @@ public class PlayerStats : MonoBehaviour
     public int additionalGreenBitsDropPerEnemy = 0;  //ok
     public int spawnRatePercent = 100; //ok
     public int addHealthPerEnemyHit = 0; //ok
-    public int addHealthPerEnemyKill = 0;
-    public int currencyPickupRadiusIncreasePercent = 0;
+    public int addHealthPerEnemyKill = 0;//ok
+    public int currencyPickupRadiusIncreasePercent = 0;//ok
+    public int additionalAttackSpeedIncreasePercent = 10;//ok
 
     [Header("Currencies (Inspector)")]
     public int blueBits = 1000;
@@ -97,6 +98,7 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.addHealthPerEnemyHit] = 0;
         statsDict[EnumStat.addHealthPerEnemyKill] = 0;
         statsDict[EnumStat.currencyPickupRadiusIncreasePercent] = 0;
+        statsDict[EnumStat.additionalAttackSpeedIncreasePercent] = 0;
 
         currencyDict[EnumCurrency.blueBits] = 1000;
         currencyDict[EnumCurrency.pinkBits] = 1000;
@@ -132,6 +134,7 @@ public class PlayerStats : MonoBehaviour
         addHealthPerEnemyHit = statsDict[EnumStat.addHealthPerEnemyHit];
         addHealthPerEnemyKill = statsDict[EnumStat.addHealthPerEnemyKill];
         currencyPickupRadiusIncreasePercent = statsDict[EnumStat.currencyPickupRadiusIncreasePercent];
+        additionalAttackSpeedIncreasePercent = statsDict[EnumStat.additionalAttackSpeedIncreasePercent];
 
         blueBits = currencyDict[EnumCurrency.blueBits];
         pinkBits = currencyDict[EnumCurrency.pinkBits];

@@ -206,12 +206,17 @@ public class PlayerCombatArena : MonoBehaviour
     {
         while (true)
         {
-            // 🎮 Get attackSpeed from PlayerStats (minimum 0.01 to prevent division by zero)
-            float attackSpeed = Mathf.Max(playerStats.GetStatValue(EnumStat.attackSpeed), 0.01f);
+            // 🎮 Get base attackSpeed from PlayerStats (minimum 0.01 to prevent division by zero)
+            float baseAttackSpeed = Mathf.Max(playerStats.GetStatValue(EnumStat.attackSpeed), 0.01f);
             
-            // ⏱️ Wait time between attacks = 1 / attackSpeed
-            // Example: attackSpeed=2 means wait 0.5 seconds between attacks
-            yield return new WaitForSeconds(1f / attackSpeed);
+            // ⚔️ Apply additionalAttackSpeedIncreasePercent bonus
+            // Formula: effectiveSpeed = baseSpeed × (1 + bonus% / 100)
+            // Example: 50% bonus → 1 × 1.5 = 1.5, 120% bonus → 1 × 2.2 = 2.2
+            float bonusPercent = playerStats.GetStatValue(EnumStat.additionalAttackSpeedIncreasePercent);
+            float effectiveAttackSpeed = baseAttackSpeed * (1f + bonusPercent / 100f);
+            
+            // ⏱️ Wait time between attacks = 1 / effectiveAttackSpeed
+            yield return new WaitForSeconds(1f / effectiveAttackSpeed);
             
             if (!isDead)
                 Attack();
