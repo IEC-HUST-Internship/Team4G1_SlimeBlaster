@@ -17257,46 +17257,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 487596981}
     m_Modifications:
-    - target: {fileID: -6107826859941863869, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1576
-      objectReference: {fileID: 0}
-    - target: {fileID: 2635401527009637305, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2635401527009637305, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4520302869245987937, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 1d4f3828f2637a2449fe6af348e49be6, type: 3}
-    - target: {fileID: 4520302869245987937, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_MaskAlphaCutoff
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4833673297074586489, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 16cf6654fa1ce654c9e9f5614681a62c, type: 3}
-    - target: {fileID: 4833673297074586489, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4833673297074586489, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4833673297074586489, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4833673297074586489, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 5632783557099033302, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -17341,25 +17301,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6095631809757449150, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: dfd0e50579427184cbe19db47241db7e, type: 3}
-    - target: {fileID: 6490702776139504071, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: ed6094a9ec901884fa55615ea659237d, type: 3}
-    - target: {fileID: 6490702776139504071, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 223261ef0c5bc294a9c566a09a0fb503, type: 2}
     - target: {fileID: 7570439101151105090, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
       propertyPath: m_Name
       value: BossEnemy
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3486340649797994145, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
-    - {fileID: 5355071148889528734, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad2b6ab59d1a1f24ba13d970337a3a1a, type: 3}
 --- !u!4 &2042253923 stripped
 Transform:

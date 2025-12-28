@@ -13,7 +13,7 @@ public class SlimeAnimation : MonoBehaviour
     public List<Sprite> spriteMask;
 
     [Header("Sprite Renderers")]
-    public SpriteRenderer mainSpriteRenderer; // Shared by idle, blink, hurt
+    public SpriteRenderer mainSpriteRenderer; // Border - has glow effect
     public SpriteRenderer liquidSpriteRenderer;
     public SpriteRenderer hollowedSpriteRenderer;
     public SpriteMask spriteMaskRenderer;
@@ -50,18 +50,35 @@ public class SlimeAnimation : MonoBehaviour
     
     // 🔥 Glow effect using MaterialPropertyBlock (per-object, not shared)
     private MaterialPropertyBlock glowPropertyBlock;
+    private MaterialPropertyBlock mainPropertyBlock;
     private Coroutine glowCoroutine;
     private static readonly int GlowAmountID = Shader.PropertyToID("_GlowAmount");
 
     void Start()
     {
         nextBlinkTime = Random.Range(blinkMinInterval, blinkMaxInterval);
-        
-        // 🔥 Initialize MaterialPropertyBlock for per-object glow (only if liquidSpriteRenderer exists)
-        if (liquidSpriteRenderer != null)
+        InitializePropertyBlocks();
+    }
+    
+    void OnEnable()
+    {
+        // 🔥 Re-initialize property blocks when re-enabled (for pooled objects)
+        InitializePropertyBlocks();
+    }
+    
+    // 🔥 Initialize MaterialPropertyBlocks for both renderers
+    private void InitializePropertyBlocks()
+    {
+        if (liquidSpriteRenderer != null && glowPropertyBlock == null)
         {
             glowPropertyBlock = new MaterialPropertyBlock();
-            SetGlow(0f); // Start with no glow
+            SetGlow(0f);
+        }
+        
+        if (mainSpriteRenderer != null && mainPropertyBlock == null)
+        {
+            mainPropertyBlock = new MaterialPropertyBlock();
+            SetMainGlow(0f);
         }
     }
     
@@ -76,6 +93,12 @@ public class SlimeAnimation : MonoBehaviour
                 glowCoroutine = null;
             }
             SetGlow(0f);
+        }
+        
+        // 🔥 Reset main/border glow when disabled
+        if (mainSpriteRenderer != null)
+        {
+            SetMainGlow(0f);
         }
     }
 
@@ -214,8 +237,8 @@ public class SlimeAnimation : MonoBehaviour
             stateTimer = 0f;
             isHurtPlaying = true;
             
-            // 🔥 Trigger glow effect (only if liquidSpriteRenderer exists)
-            if (liquidSpriteRenderer != null)
+            // 🔥 Trigger glow effect (if either renderer exists)
+            if (liquidSpriteRenderer != null || mainSpriteRenderer != null)
             {
                 if (glowCoroutine != null)
                     StopCoroutine(glowCoroutine);
@@ -227,9 +250,11 @@ public class SlimeAnimation : MonoBehaviour
     // 🔥 Glow effect coroutine
     private IEnumerator GlowRoutine()
     {
-        SetGlow(glowAmount); // Turn on glow (4)
+        SetMainGlow(glowAmount); // Turn on main/border glow
+        SetGlow(glowAmount); // Turn on liquid glow
         yield return new WaitForSeconds(glowDuration); // Wait 0.2s
-        SetGlow(0f); // Turn off glow
+        SetMainGlow(0f); // Turn off main/border glow
+        SetGlow(0f); // Turn off liquid glow
         glowCoroutine = null;
     }
     
@@ -242,5 +267,16 @@ public class SlimeAnimation : MonoBehaviour
         liquidSpriteRenderer.GetPropertyBlock(glowPropertyBlock);
         glowPropertyBlock.SetFloat(GlowAmountID, amount);
         liquidSpriteRenderer.SetPropertyBlock(glowPropertyBlock);
+    }
+    
+    // 🔥 Set main/border glow using MaterialPropertyBlock (only affects THIS object)
+    private void SetMainGlow(float amount)
+    {
+        if (mainSpriteRenderer == null || mainPropertyBlock == null) return;
+        
+        // Get existing property block first to preserve other properties
+        mainSpriteRenderer.GetPropertyBlock(mainPropertyBlock);
+        mainPropertyBlock.SetFloat(GlowAmountID, amount);
+        mainSpriteRenderer.SetPropertyBlock(mainPropertyBlock);
     }
 }

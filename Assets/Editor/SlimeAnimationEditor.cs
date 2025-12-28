@@ -7,6 +7,13 @@ public class SlimeAnimationEditor : Editor
     private bool isPlaying = false;
     private int previewFrame = 0;
     private double lastUpdateTime = 0;
+    
+    // 🔥 Hurt glow preview in Edit mode
+    private bool isHurtGlowing = false;
+    private double hurtStartTime = 0;
+    private static readonly int GlowAmountID = Shader.PropertyToID("_GlowAmount");
+    private MaterialPropertyBlock liquidPropertyBlock;
+    private MaterialPropertyBlock mainPropertyBlock;
 
     public override void OnInspectorGUI()
     {
@@ -29,6 +36,38 @@ public class SlimeAnimationEditor : Editor
             isPlaying = false;
         }
         EditorGUILayout.EndHorizontal();
+        
+        // 🔥 Hurt button (works in Edit mode AND Play mode)
+        EditorGUILayout.Space(5);
+        if (GUILayout.Button("🔥 Hurt", GUILayout.Height(30)))
+        {
+            if (Application.isPlaying)
+            {
+                slimeAnim.Hurt();
+            }
+            else
+            {
+                // Edit mode: manually trigger glow preview
+                TriggerHurtGlow(slimeAnim);
+            }
+        }
+        
+        // 🔥 Update hurt glow in Edit mode
+        if (isHurtGlowing && !Application.isPlaying)
+        {
+            double elapsed = EditorApplication.timeSinceStartup - hurtStartTime;
+            if (elapsed >= 0.2) // glowDuration
+            {
+                // Turn off glow
+                SetEditorGlow(slimeAnim, 0f);
+                isHurtGlowing = false;
+            }
+            else
+            {
+                EditorUtility.SetDirty(target);
+                Repaint();
+            }
+        }
 
         // Frame slider
         EditorGUILayout.Space(5);
@@ -116,5 +155,46 @@ public class SlimeAnimationEditor : Editor
     private void OnDisable()
     {
         isPlaying = false;
+        
+        // 🔥 Reset glow when editor closes
+        if (isHurtGlowing)
+        {
+            SlimeAnimation slimeAnim = (SlimeAnimation)target;
+            SetEditorGlow(slimeAnim, 0f);
+            isHurtGlowing = false;
+        }
+    }
+    
+    // 🔥 Trigger hurt glow in Edit mode
+    private void TriggerHurtGlow(SlimeAnimation slimeAnim)
+    {
+        if (liquidPropertyBlock == null)
+            liquidPropertyBlock = new MaterialPropertyBlock();
+        if (mainPropertyBlock == null)
+            mainPropertyBlock = new MaterialPropertyBlock();
+        
+        SetEditorGlow(slimeAnim, 4f); // glowAmount
+        isHurtGlowing = true;
+        hurtStartTime = EditorApplication.timeSinceStartup;
+    }
+    
+    // 🔥 Set glow on both renderers in Edit mode
+    private void SetEditorGlow(SlimeAnimation slimeAnim, float amount)
+    {
+        if (slimeAnim.liquidSpriteRenderer != null)
+        {
+            slimeAnim.liquidSpriteRenderer.GetPropertyBlock(liquidPropertyBlock);
+            liquidPropertyBlock.SetFloat(GlowAmountID, amount);
+            slimeAnim.liquidSpriteRenderer.SetPropertyBlock(liquidPropertyBlock);
+        }
+        
+        if (slimeAnim.mainSpriteRenderer != null)
+        {
+            slimeAnim.mainSpriteRenderer.GetPropertyBlock(mainPropertyBlock);
+            mainPropertyBlock.SetFloat(GlowAmountID, amount);
+            slimeAnim.mainSpriteRenderer.SetPropertyBlock(mainPropertyBlock);
+        }
+        
+        SceneView.RepaintAll();
     }
 }
