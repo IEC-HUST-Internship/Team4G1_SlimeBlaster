@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class EnemyHealthBar : MonoBehaviour
 {
     [Header("UI")]
-    public Image healthBarImage;
     public GameObject liquidMask;
     
     [Header("Liquid Mask Settings")]
@@ -29,12 +28,6 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void Update()
     {
-        if (enemy != null && healthBarImage != null && maxHealth > 0)
-        {
-            float fillAmount = (float)enemy.currentHealth / maxHealth;
-            healthBarImage.fillAmount = Mathf.Clamp01(fillAmount);
-        }
-
         // 💧 Update liquidMask y position based on health percentage
         if (liquidMask != null && enemy != null && maxHealth > 0)
         {

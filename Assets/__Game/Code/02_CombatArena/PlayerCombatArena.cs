@@ -8,6 +8,7 @@ public class PlayerCombatArena : MonoBehaviour
     [Header("References")]
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private PlayerCombatUI playerUI;
+    [SerializeField] private PlayerEffect playerEffect;
 
     [Header("Attack Settings")]
     [SerializeField] private Vector2 baseAttackRange = new Vector2(5f, 5f);
@@ -373,6 +374,7 @@ public class PlayerCombatArena : MonoBehaviour
         UpdateDebugField(enemyCount, damageDealtToSingleEnemy, totalDamageDealtToAllEnemies, damageTakenFromBoss, damageTakenFromEnemy, damageTakenFromSingleEnemy);
 
         StartCoroutine(FlashAlpha());
+        playerEffect.PlayerAttackEffect();
     }
     public int TakeDamage(int damage)
     {

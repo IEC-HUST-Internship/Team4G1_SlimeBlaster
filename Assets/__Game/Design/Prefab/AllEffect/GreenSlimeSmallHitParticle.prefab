@@ -9750,7 +9750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 578050398969592688}
   m_Layer: 0
-  m_Name: GreenSlimeHitParticle 1
+  m_Name: GreenSlimeSmallHitParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

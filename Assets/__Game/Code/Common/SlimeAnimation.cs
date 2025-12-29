@@ -61,6 +61,9 @@ public class SlimeAnimation : MonoBehaviour
     private Coroutine glowCoroutine;
     private static readonly int GlowAmountID = Shader.PropertyToID("_GlowAmount");
 
+    [Header("Hit / Death Particle Effects")]
+    public List<ParticleSystem> hitParticles;
+
     void Start()
     {
         nextBlinkTime = Random.Range(blinkMinInterval, blinkMaxInterval);
@@ -243,7 +246,7 @@ public class SlimeAnimation : MonoBehaviour
             currentState = AnimState.Hurt;
             stateTimer = 0f;
             isHurtPlaying = true;
-
+            PlayParticles();
             // 🔥 Trigger glow effect (if either renderer exists)
             if (liquidSpriteRenderer != null || mainSpriteRenderer != null)
             {
@@ -293,6 +296,7 @@ public class SlimeAnimation : MonoBehaviour
         transform.DOKill();
 
         // Sequence: Scale up, flash white, then deactivate
+        PlayParticles();
         Sequence deathSeq = DOTween.Sequence();
         deathSeq.Append(transform.DOScale(transform.localScale * deathScaleMultiplier, deathScaleDuration).SetEase(deathEase));
         deathSeq.Join(DOTween.To(() => mainSpriteRenderer.color, x => mainSpriteRenderer.color = x, Color.white, deathFlashDuration).SetLoops(2, LoopType.Yoyo)); // Flash white twice
@@ -302,4 +306,18 @@ public class SlimeAnimation : MonoBehaviour
             onComplete?.Invoke(); // Call the callback if provided
         });
     }
+
+    private void PlayParticles()
+    {
+        if (hitParticles == null) return;
+
+        foreach (var ps in hitParticles)
+        {
+            if (ps == null) continue;
+
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
+        }
+    }
+
 }
