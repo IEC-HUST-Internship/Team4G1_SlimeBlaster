@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpLossInterval: 2
   expPerLevelMultiplier: 100
-  enemyHealthMultiplier: 1
-  enemyReflectionMultiplier: 1
-  enemyCurrencyMultiplier: 1
+  enemyHealthMultiplier: 1.5
+  enemyReflectionMultiplier: 1.5
+  enemyCurrencyMultiplier: 1.5
   minDamageAfterArmor: 1
   minAttackSpeed: 0.01
   maxAttackSizeCount: 10

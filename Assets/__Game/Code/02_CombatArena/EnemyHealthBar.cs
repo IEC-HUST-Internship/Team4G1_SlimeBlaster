@@ -11,7 +11,6 @@ public class EnemyHealthBar : MonoBehaviour
     public float maxY = 10.5f; // Y position at 100% health
 
     private Enemy enemy;
-    private int maxHealth;
 
     private void Awake()
     {
@@ -20,18 +19,15 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void OnEnable()
     {
-        if (enemy != null && enemy.enemyData != null)
-        {
-            maxHealth = enemy.enemyData.hp * Stage.Instance.GetStage();
-        }
+        // maxHealth is now stored in Enemy, no need to calculate here
     }
 
     private void Update()
     {
         // 💧 Update liquidMask y position based on health percentage
-        if (liquidMask != null && enemy != null && maxHealth > 0)
+        if (liquidMask != null && enemy != null && enemy.maxHealth > 0)
         {
-            float healthPercent = (float)enemy.currentHealth / maxHealth;
+            float healthPercent = (float)enemy.currentHealth / enemy.maxHealth;
             float targetY = Mathf.Lerp(minY, maxY, healthPercent);
             Vector3 position = liquidMask.transform.localPosition;
             position.y = targetY;

@@ -19,11 +19,11 @@ MonoBehaviour:
     - fcd64cde8dd583b4b931665655a3dfa3
     - b4c84938aa962a941ac7cc894ec836fe
     values:
-    - colorIndex: 0
+    - colorIndex: 7
       iconNameOrGuid: cs Script Icon
-    - colorIndex: 0
+    - colorIndex: 9
       iconNameOrGuid: PrefabModel Icon
-    - colorIndex: 0
+    - colorIndex: 4
       iconNameOrGuid: AudioClip Icon
-    - colorIndex: 0
+    - colorIndex: 1
       iconNameOrGuid: AnimationClip Icon

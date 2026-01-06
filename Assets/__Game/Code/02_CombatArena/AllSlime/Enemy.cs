@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public PlayerStats playerStats;
     [HideInInspector] public Vector2 targetPosition;
 
+    public int maxHealth { get; private set; }
     public int currentHealth { get; private set; }
     protected SlimeAnimation slimeAnim;
     
@@ -57,7 +58,8 @@ public class Enemy : MonoBehaviour
         {
             int stage = Stage.Instance.GetStage();
             float healthMult = GameConfig.Instance != null ? GameConfig.Instance.enemyHealthMultiplier : 1f;
-            currentHealth = Mathf.RoundToInt(enemyData.hp * stage * healthMult);
+            maxHealth = Mathf.RoundToInt(enemyData.hp * stage * healthMult);
+            currentHealth = maxHealth;
         }
     }
 

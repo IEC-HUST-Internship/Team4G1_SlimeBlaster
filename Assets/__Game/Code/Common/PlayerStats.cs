@@ -6,8 +6,8 @@ public class PlayerStats : MonoBehaviour
 {
     #region Inspector Variables
     [Header("Base Stats")]
-    public int baseHp = 100;
-    public int baseDamage = 10;
+    public int baseHp = 0;
+    public int baseDamage = 0;
     public int baseArmor = 0;
 
     [Header("Player Stats (Inspector)")]
@@ -74,8 +74,8 @@ public class PlayerStats : MonoBehaviour
     private void SetDefaultValues()
     {
         // Initialize dictionary with default values
-        statsDict[EnumStat.baseHp] = 100;
-        statsDict[EnumStat.baseDamage] = 10;
+        statsDict[EnumStat.baseHp] = 0;
+        statsDict[EnumStat.baseDamage] = 0;
         statsDict[EnumStat.baseArmor] = 0;
 
         statsDict[EnumStat.hp] = 100;

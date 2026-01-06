@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 13
   perUpgradeValue: 5
   maxLevel: 5
-  costFormula: 50+1*(n-1)
+  costFormula: 10+1*(n-1)
   costUnit: 0
   description1: 
   description2: 
