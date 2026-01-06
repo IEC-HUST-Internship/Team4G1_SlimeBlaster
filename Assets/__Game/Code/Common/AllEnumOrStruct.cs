@@ -4,7 +4,7 @@ public enum EnumStat
     hp,
     hpLossPerSecond,
     damage,
-    attackSizePercent,
+    attackSizeCount,
     attackSpeed,
     exp,
     level,
@@ -34,5 +34,6 @@ public enum EnumCurrency
     blueBits,
     pinkBits,
     yellowBits,
-    greenBits
+    greenBits,
+    xpBits  // 🌟 Earned on level up (+1 per level)
 }

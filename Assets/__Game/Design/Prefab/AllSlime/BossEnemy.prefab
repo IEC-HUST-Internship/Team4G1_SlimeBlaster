@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3079086097189768355}
   - {fileID: 4584493767939518332}
   m_Father: {fileID: 5632783557099033302}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4833673297074586489
 SpriteRenderer:
@@ -487,8 +487,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 2506471793023510242}
   - {fileID: 2635401527009637305}
+  - {fileID: 2506471793023510242}
   - {fileID: 1332457175881324958}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -649,7 +649,7 @@ MonoBehaviour:
   glowDuration: 0.2
   deathScaleMultiplier: 1.25
   deathScaleDuration: 0
-  deathFlashDuration: 0.1
+  deathFlashDuration: 0.2
   deathEase: 27
   particleGroups:
   - particles:
@@ -674,6 +674,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5632783557099033302}
     m_Modifications:
+    - target: {fileID: 2182870463511074980, guid: cd369e540c0e51f4f99f92540e0d6a90, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3810806711578897332, guid: cd369e540c0e51f4f99f92540e0d6a90, type: 3}
       propertyPath: m_Name
       value: PinkSlimeHitParticle

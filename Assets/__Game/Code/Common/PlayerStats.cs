@@ -14,7 +14,7 @@ public class PlayerStats : MonoBehaviour
     public int hp = 100; //ok
     public int hpLossPerSecond = 1; //ok
     public int damage = 10; //ok
-    public int attackSizePercent = 100;//ok
+    public int attackSizeCount = 0;//ok
     public int attackSpeed = 1;//ok
     public int exp = 0;//ok
     public int level = 1;//ok
@@ -40,6 +40,7 @@ public class PlayerStats : MonoBehaviour
     public int pinkBits = 1000;
     public int yellowBits = 1000;
     public int greenBits = 1000;
+    public int xpBits = 0;  // 🌟 Earned on level up
     #endregion
 
     // Runtime dictionaries
@@ -60,7 +61,8 @@ public class PlayerStats : MonoBehaviour
             currencyDict[EnumCurrency.blueBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.blueBits);
             currencyDict[EnumCurrency.pinkBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.pinkBits);
             currencyDict[EnumCurrency.greenBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.greenBits);
-            Debug.Log($"📥 Currencies loaded: Y={currencyDict[EnumCurrency.yellowBits]}, B={currencyDict[EnumCurrency.blueBits]}, P={currencyDict[EnumCurrency.pinkBits]}, G={currencyDict[EnumCurrency.greenBits]}");
+            currencyDict[EnumCurrency.xpBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.xpBits);
+            Debug.Log($"📥 Currencies loaded: Y={currencyDict[EnumCurrency.yellowBits]}, B={currencyDict[EnumCurrency.blueBits]}, P={currencyDict[EnumCurrency.pinkBits]}, G={currencyDict[EnumCurrency.greenBits]}, XP={currencyDict[EnumCurrency.xpBits]}");
         }
     }
     
@@ -79,7 +81,7 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.hp] = 100;
         statsDict[EnumStat.hpLossPerSecond] = 1;
         statsDict[EnumStat.damage] = 10;
-        statsDict[EnumStat.attackSizePercent] = 100;
+        statsDict[EnumStat.attackSizeCount] = 0; // Count 0-14 (0=size 15, 14=size 23.24)
         statsDict[EnumStat.attackSpeed] = 1;
         statsDict[EnumStat.exp] = 0;
         statsDict[EnumStat.level] = 1;
@@ -104,6 +106,7 @@ public class PlayerStats : MonoBehaviour
         currencyDict[EnumCurrency.pinkBits] = 1000;
         currencyDict[EnumCurrency.yellowBits] = 1000;
         currencyDict[EnumCurrency.greenBits] = 1000;
+        currencyDict[EnumCurrency.xpBits] = 0;
     }
     private void UpdateValueToInspector()
     {
@@ -115,7 +118,7 @@ public class PlayerStats : MonoBehaviour
         hp = statsDict[EnumStat.hp];
         hpLossPerSecond = statsDict[EnumStat.hpLossPerSecond];
         damage = statsDict[EnumStat.damage];
-        attackSizePercent = statsDict[EnumStat.attackSizePercent];
+        attackSizeCount = statsDict[EnumStat.attackSizeCount];
         attackSpeed = statsDict[EnumStat.attackSpeed];
         exp = statsDict[EnumStat.exp];
         level = statsDict[EnumStat.level];
@@ -140,6 +143,7 @@ public class PlayerStats : MonoBehaviour
         pinkBits = currencyDict[EnumCurrency.pinkBits];
         yellowBits = currencyDict[EnumCurrency.yellowBits];
         greenBits = currencyDict[EnumCurrency.greenBits];
+        xpBits = currencyDict[EnumCurrency.xpBits];
     }
 
     // Runtime methods
@@ -175,7 +179,10 @@ public class PlayerStats : MonoBehaviour
             SetStatValue(EnumStat.exp, currentExp);
             SetStatValue(EnumStat.level, currentLevel);
             
-            Debug.Log($"Level Up! Now level {currentLevel}");
+            // 🌟 Grant +1 XpBits on level up
+            AddCurrency(EnumCurrency.xpBits, 1);
+            
+            Debug.Log($"Level Up! Now level {currentLevel} (+1 XpBits)");
             
             // Recalculate for next level
             expRequired = GetExpRequiredForLevel(currentLevel);
@@ -184,9 +191,9 @@ public class PlayerStats : MonoBehaviour
 
     private int GetExpRequiredForLevel(int level)
     {
-        // Formula: level * 100
-        // Level 1 → 100 exp, Level 2 → 200 exp, Level 3 → 300 exp, etc.
-        return level * 100;
+        // Formula: level × expPerLevelMultiplier
+        int multiplier = GameConfig.Instance != null ? GameConfig.Instance.expPerLevelMultiplier : 100;
+        return level * multiplier;
     }
 
     public int GetCurrency(EnumCurrency type)

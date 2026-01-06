@@ -1,16 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 public class PlayerEffect : MonoBehaviour
 {
     [Header("Player Renderers")]
-    public SpriteRenderer playerBorder;
-    public SpriteRenderer playerBackground;
+    public List<GameObject> playerParts = new List<GameObject>();
 
-    [Header("Glow Settings")]
-    public float glowAmount = 4f;
-    public float glowDuration = 0.2f;
+    [Header("Attack Size Sprites (15 sizes: 100%, 110%, 120%... 240%)")]
+    public List<Sprite> borderSprites = new List<Sprite>();
+    public List<Sprite> backgroundSprites = new List<Sprite>();
+    
+    [Header("Sprite Renderers for Size Change")]
+    public SpriteRenderer borderRenderer;
+    public SpriteRenderer backgroundRenderer;
 
     [Header("Attack Color")]
     public Color attackColor = Color.cyan;
@@ -30,29 +34,33 @@ public class PlayerEffect : MonoBehaviour
     public int punchVibrato = 10;
     public float punchElasticity = 0.9f;
 
-    private MaterialPropertyBlock borderBlock;
-    private MaterialPropertyBlock backgroundBlock;
+    private List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+    private List<MaterialPropertyBlock> propertyBlocks = new List<MaterialPropertyBlock>();
 
-    private static readonly int GlowAmountID = Shader.PropertyToID("_GlowAmount");
     private static readonly int ColorID = Shader.PropertyToID("_Color");
-
-    private Coroutine glowCoroutine;
     private Vector3 originalScale;
     private Quaternion originalRotation;
     private Sequence scaleSequence;
 
-    void Awake()
+    void OnEnable()
     {
-        if (playerBorder != null)
-            borderBlock = new MaterialPropertyBlock();
-
-        if (playerBackground != null)
-            backgroundBlock = new MaterialPropertyBlock();
+        // 🎨 Collect all SpriteRenderers from playerParts list
+        foreach (var part in playerParts)
+        {
+            if (part != null)
+            {
+                var sr = part.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    spriteRenderers.Add(sr);
+                    propertyBlocks.Add(new MaterialPropertyBlock());
+                }
+            }
+        }
 
         originalScale = transform.localScale;
         originalRotation = transform.rotation;
 
-        ResetGlow();
         ResetColor();
     }
 
@@ -62,16 +70,9 @@ public class PlayerEffect : MonoBehaviour
         scaleSequence?.Kill();
         transform.DOKill(true);
 
-        if (glowCoroutine != null)
-        {
-            StopCoroutine(glowCoroutine);
-            glowCoroutine = null;
-        }
-
         transform.localScale = originalScale;
         transform.rotation = originalRotation;
 
-        ResetGlow();
         ResetColor();
     }
 
@@ -81,66 +82,61 @@ public class PlayerEffect : MonoBehaviour
         // Instant color change
         SetColor(attackColor);
 
-        // Glow
-        if (glowCoroutine != null)
-            StopCoroutine(glowCoroutine);
-
-        glowCoroutine = StartCoroutine(GlowRoutine());
-
         // Scale + Jiggle
         PlayAttackEffect();
     }
 
-    // ================= GLOW =================
-    private IEnumerator GlowRoutine()
+    // ================= ATTACK SIZE =================
+    /// <summary>
+    /// 📐 Set attack size by count (0-14)
+    /// Count 0 = size 15, each count adds 10% area
+    /// Swaps sprites instead of scaling
+    /// </summary>
+    public void SetAttackSizeLevel(int count)
     {
-        SetGlow(glowAmount);
-        yield return new WaitForSeconds(glowDuration);
-        SetGlow(0f);
-
-        // Instant return to normal color
-        ResetColor();
-
-        glowCoroutine = null;
-    }
-
-    private void SetGlow(float amount)
-    {
-        if (playerBorder != null && borderBlock != null)
+        // 🔒 Clamp count to valid range (0-14)
+        int index = Mathf.Clamp(count, 0, 14);
+        
+        Debug.Log($"📐 Setting attack size to count {index}");
+        
+        // 🖼️ Swap border sprite
+        if (borderRenderer != null && borderSprites != null && borderSprites.Count > index)
         {
-            playerBorder.GetPropertyBlock(borderBlock);
-            borderBlock.SetFloat(GlowAmountID, amount);
-            playerBorder.SetPropertyBlock(borderBlock);
+            borderRenderer.sprite = borderSprites[index];
+            Debug.Log($"🖼️ Border sprite set to index {index}");
         }
-
-        if (playerBackground != null && backgroundBlock != null)
+        else
         {
-            playerBackground.GetPropertyBlock(backgroundBlock);
-            backgroundBlock.SetFloat(GlowAmountID, amount);
-            playerBackground.SetPropertyBlock(backgroundBlock);
+            Debug.LogWarning($"⚠️ Cannot set border sprite! renderer={borderRenderer != null}, sprites={borderSprites?.Count ?? 0}, index={index}");
         }
-    }
-
-    private void ResetGlow()
-    {
-        SetGlow(0f);
+        
+        // 🖼️ Swap background sprite
+        if (backgroundRenderer != null && backgroundSprites != null && backgroundSprites.Count > index)
+        {
+            backgroundRenderer.sprite = backgroundSprites[index];
+            Debug.Log($"🖼️ Background sprite set to index {index}");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ Cannot set background sprite! renderer={backgroundRenderer != null}, sprites={backgroundSprites?.Count ?? 0}, index={index}");
+        }
     }
 
     // ================= COLOR =================
     private void SetColor(Color color)
     {
-        if (playerBorder != null && borderBlock != null)
+        // 🎨 Apply color to all SpriteRenderers in the list (instant, no fade)
+        for (int i = 0; i < spriteRenderers.Count; i++)
         {
-            playerBorder.GetPropertyBlock(borderBlock);
-            borderBlock.SetColor(ColorID, color);
-            playerBorder.SetPropertyBlock(borderBlock);
-        }
-
-        if (playerBackground != null && backgroundBlock != null)
-        {
-            playerBackground.GetPropertyBlock(backgroundBlock);
-            backgroundBlock.SetColor(ColorID, color);
-            playerBackground.SetPropertyBlock(backgroundBlock);
+            var sr = spriteRenderers[i];
+            var block = propertyBlocks[i];
+            
+            if (sr != null && block != null)
+            {
+                sr.GetPropertyBlock(block);
+                block.SetColor(ColorID, color);
+                sr.SetPropertyBlock(block);
+            }
         }
     }
 

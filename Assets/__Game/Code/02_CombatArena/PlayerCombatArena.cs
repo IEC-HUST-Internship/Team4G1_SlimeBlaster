@@ -11,9 +11,30 @@ public class PlayerCombatArena : MonoBehaviour
     [SerializeField] private PlayerEffect playerEffect;
 
     [Header("Attack Settings")]
-    [SerializeField] private Vector2 baseAttackRange = new Vector2(5f, 5f);
+    [SerializeField] private Vector2 baseAttackRange = new Vector2(15f, 15f);
     [SerializeField] private LayerMask enemyLayer;
-    [SerializeField] private float flashDuration = 0.1f;
+    
+    // 📐 Pre-calculated attack size multipliers (+10% per level for X and Y)
+    // Formula: 1 + level × 0.1
+    // Level 0 = 100%, Level 14 = 240%
+    private static readonly float[] attackSizeMultipliers = new float[]
+    {
+        1.0f,  // Level 0:  100%
+        1.1f,  // Level 1:  110%
+        1.2f,  // Level 2:  120%
+        1.3f,  // Level 3:  130%
+        1.4f,  // Level 4:  140%
+        1.5f,  // Level 5:  150%
+        1.6f,  // Level 6:  160%
+        1.7f,  // Level 7:  170%
+        1.8f,  // Level 8:  180%
+        1.9f,  // Level 9:  190%
+        2.0f,  // Level 10: 200%
+        2.1f,  // Level 11: 210%
+        2.2f,  // Level 12: 220%
+        2.3f,  // Level 13: 230%
+        2.4f   // Level 14: 240%
+    };
 
     [Header("Currency Collection")]
     [SerializeField] private LayerMask currencyLayer;
@@ -67,12 +88,16 @@ public class PlayerCombatArena : MonoBehaviour
             currentHp = baseHpValue + hpValue;
             currentExp = playerStats.GetStatValue(EnumStat.exp);
             
-            // 🔍 Apply attackSizePercent to sprite scale
-            int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
-            float sizeMultiplier = attackSizePercent / 100f;
-            if (Sprite != null)
+            // 📐 Apply attack size count (0-14) - swaps sprites instead of scaling
+            int attackSizeCount = playerStats.GetStatValue(EnumStat.attackSizeCount);
+            Debug.Log($"🎮 PlayerCombatArena: attackSizeCount = {attackSizeCount}, playerEffect = {playerEffect != null}");
+            if (playerEffect != null)
             {
-                Sprite.transform.localScale = Vector3.one * sizeMultiplier;
+                playerEffect.SetAttackSizeLevel(attackSizeCount);
+            }
+            else
+            {
+                Debug.LogError("❌ playerEffect is NULL! Assign it in Inspector!");
             }
         }
         
@@ -87,13 +112,6 @@ public class PlayerCombatArena : MonoBehaviour
         
         // ⏹️ Stop all coroutines
         StopAllCoroutines();
-        
-        if (rend != null)
-        {
-            Color color = rend.color;
-            color.a = 0f;
-            rend.color = color;
-        }
     }
     private void Update()
     {
@@ -228,7 +246,8 @@ public class PlayerCombatArena : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            float interval = GameConfig.Instance != null ? GameConfig.Instance.hpLossInterval : 1f;
+            yield return new WaitForSeconds(interval);
             
             if (!isDead && playerStats != null)
             {
@@ -243,9 +262,10 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void Attack()
     {
-        // 📐 Get attackSizePercent and calculate actual attack range
-        int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
-        float sizeMultiplier = attackSizePercent / 100f;
+        // 📐 Get attack size count (0-14) and calculate actual attack range
+        // Uses √(1 + count × 0.1) to increase AREA by 10% per count
+        int attackSizeCount = Mathf.Clamp(playerStats.GetStatValue(EnumStat.attackSizeCount), 0, 14);
+        float sizeMultiplier = attackSizeMultipliers[attackSizeCount];
         Vector2 actualAttackRange = baseAttackRange * sizeMultiplier;
         
         // 🎯 Detect all 2D colliders inside the box
@@ -274,6 +294,22 @@ public class PlayerCombatArena : MonoBehaviour
         // 📝 Formula: (baseDamage + damage) * (1 + (additionalDamagePerEnemyPercent * enemyCount / 100))
         float damageMultiplier = 1f + (additionalDamagePerEnemyPercent * enemyCount / 100f);
         int finalDamage = Mathf.RoundToInt(totalBaseDamage * damageMultiplier);
+
+        // 🎲 Critical Hit Calculation
+        // critRatePercent = chance to crit (5 = 5% chance)
+        // critDamagePercent = bonus damage on crit (150 = +150% = 250% total damage)
+        int critRatePercent = playerStats.GetStatValue(EnumStat.critRatePercent);
+        int critDamagePercent = playerStats.GetStatValue(EnumStat.critDamagePercent);
+        bool isCriticalHit = Random.Range(0, 100) < critRatePercent;
+        
+        if (isCriticalHit)
+        {
+            // 💥 Apply crit bonus: finalDamage * (100 + critDamagePercent) / 100
+            // Example: 150% crit damage = 100 + 150 = 250% = 2.5x damage
+            float critMultiplier = (100f + critDamagePercent) / 100f;
+            finalDamage = Mathf.RoundToInt(finalDamage * critMultiplier);
+            Debug.Log($"💥 CRITICAL HIT! Damage boosted to {finalDamage} ({critMultiplier:F2}x)");
+        }
 
         bool hitBoss = false;
         int damageDealtToSingleEnemy = 0;
@@ -373,7 +409,6 @@ public class PlayerCombatArena : MonoBehaviour
         // 📊 Update debug info
         UpdateDebugField(enemyCount, damageDealtToSingleEnemy, totalDamageDealtToAllEnemies, damageTakenFromBoss, damageTakenFromEnemy, damageTakenFromSingleEnemy);
 
-        StartCoroutine(FlashAlpha());
         playerEffect.PlayerAttackEffect();
     }
     public int TakeDamage(int damage)
@@ -492,22 +527,6 @@ public class PlayerCombatArena : MonoBehaviour
         currentHp = Mathf.Min(currentHp, maxHp);
     }
 
-    private IEnumerator FlashAlpha()
-    {
-        if (rend == null) yield break;
-
-        Color original = rend.color;
-
-        // ✨ Set alpha to 0.4 (keep original color)
-        Color flashColor = new Color(original.r, original.g, original.b, 0.4f);
-        rend.color = flashColor;
-
-        yield return new WaitForSeconds(flashDuration);
-
-        // 🔄 Reset to original alpha
-        rend.color = original;
-    }
-
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -516,8 +535,9 @@ public class PlayerCombatArena : MonoBehaviour
         Vector2 rangeToShow = baseAttackRange;
         if (Application.isPlaying && playerStats != null)
         {
-            int attackSizePercent = playerStats.GetStatValue(EnumStat.attackSizePercent);
-            float sizeMultiplier = attackSizePercent / 100f;
+            // Uses √(1 + count × 0.1) to increase AREA by 10% per count
+            int attackSizeCount = Mathf.Clamp(playerStats.GetStatValue(EnumStat.attackSizeCount), 0, 14);
+            float sizeMultiplier = attackSizeMultipliers[attackSizeCount];
             rangeToShow = baseAttackRange * sizeMultiplier;
         }
         Gizmos.DrawWireCube(transform.position, rangeToShow);

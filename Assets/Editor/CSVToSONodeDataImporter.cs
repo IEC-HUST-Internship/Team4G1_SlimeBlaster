@@ -195,7 +195,7 @@ public class CSVToSONodeDataImporter : EditorWindow
             case "addtionaldamage": 
             case "additionaldamage": return EnumStat.additionalDamagePerEnemyInAreaPercent;
             case "attackaoe":
-            case "attacksize": return EnumStat.attackSizePercent;
+            case "attacksize": return EnumStat.attackSizeCount;
             case "armor": return EnumStat.armor;
             case "bossarmor": return EnumStat.bossArmor;
             case "attackspeed": return EnumStat.attackSpeed;

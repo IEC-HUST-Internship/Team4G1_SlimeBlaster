@@ -726,7 +726,7 @@ MonoBehaviour:
   glowDuration: 0.2
   deathScaleMultiplier: 1.25
   deathScaleDuration: 0
-  deathFlashDuration: 0.1
+  deathFlashDuration: 0.2
   deathEase: 27
   particleGroups:
   - particles:

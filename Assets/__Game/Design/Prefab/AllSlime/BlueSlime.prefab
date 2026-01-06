@@ -316,7 +316,7 @@ Transform:
   - {fileID: 5789219939796636020}
   - {fileID: 1694757163925648617}
   m_Father: {fileID: 5632783557099033302}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6059096826792847171
 SpriteRenderer:
@@ -487,8 +487,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 9090215096514824740}
   - {fileID: 8742086280121076801}
+  - {fileID: 9090215096514824740}
   - {fileID: 8881363525663530584}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -624,7 +624,7 @@ MonoBehaviour:
   glowDuration: 0.2
   deathScaleMultiplier: 1.25
   deathScaleDuration: 0
-  deathFlashDuration: 0.1
+  deathFlashDuration: 0.2
   deathEase: 27
   particleGroups:
   - particles:
@@ -696,6 +696,10 @@ PrefabInstance:
     - target: {fileID: 5757817530147047801, guid: 31b13f19d2342964fb8e59503793ec90, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403337971112701243, guid: 31b13f19d2342964fb8e59503793ec90, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31b13f19d2342964fb8e59503793ec90, type: 3}

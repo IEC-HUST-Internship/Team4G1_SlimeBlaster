@@ -56,7 +56,8 @@ public class Enemy : MonoBehaviour
         if (enemyData != null)
         {
             int level = Level.Instance.GetLevel();
-            currentHealth = enemyData.hp * level;
+            float healthMult = GameConfig.Instance != null ? GameConfig.Instance.enemyHealthMultiplier : 1f;
+            currentHealth = Mathf.RoundToInt(enemyData.hp * level * healthMult);
         }
     }
 
@@ -113,7 +114,8 @@ public class Enemy : MonoBehaviour
     {
         // Return multiplier scaled by level
         int level = Level.Instance.GetLevel();
-        return enemyData.baseReflectionMultiplier * level;
+        float reflectMult = GameConfig.Instance != null ? GameConfig.Instance.enemyReflectionMultiplier : 1f;
+        return enemyData.baseReflectionMultiplier * level * reflectMult;
     }
 
     protected virtual void Die()
@@ -160,7 +162,8 @@ public class Enemy : MonoBehaviour
         if (selectedPool == null) return;
 
         int level = Level.Instance.GetLevel();
-        int baseAmount = enemyData.baseCurrencyAmount * level;
+        float currencyMult = GameConfig.Instance != null ? GameConfig.Instance.enemyCurrencyMultiplier : 1f;
+        int baseAmount = Mathf.RoundToInt(enemyData.baseCurrencyAmount * level * currencyMult);
         
         // Add additional currency drops based on the currency type
         int additionalAmount = 0;
