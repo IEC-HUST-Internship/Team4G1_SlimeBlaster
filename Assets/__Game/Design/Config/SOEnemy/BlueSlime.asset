@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: BlueSlime
   m_EditorClassIdentifier: 
   hp: 30
-  baseReflectionMultiplier: 1
+  baseReflectionMultiplier: 0.3
   exp: 10
   currencyType: 0
   baseCurrencyAmount: 1
   spawnAmount: 1
   spawnInterval: 4
-  maxCapacity: 10
+  maxCapacity: 25
   startTime: 0

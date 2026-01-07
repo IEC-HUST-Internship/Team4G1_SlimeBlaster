@@ -43,6 +43,13 @@ public class PlayerCombatArena : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 10f;     // Speed for following mouse/finger
     [SerializeField] private float mouseOffset = 1f;    // Player stays this much higher than mouse/touch
+    
+    [Header("Movement Bounds")]
+    [SerializeField] private bool limitMovement = true;  // Enable/disable movement limits
+    [SerializeField] private Vector2 boundsCenter = Vector2.zero;  // Center of the movement area
+    [SerializeField] private Vector2 boundsSize = new Vector2(10f, 18f);  // Width and Height of allowed area
+    [SerializeField] private bool showBoundsGizmo = true;  // Show bounds in Scene view
+    [SerializeField] private Color boundsGizmoColor = Color.green;  // Gizmo color
 
     [Header("Debug")]
 
@@ -205,37 +212,54 @@ public class PlayerCombatArena : MonoBehaviour
             targetPos.y += mouseOffset; // 📐 Player stays higher than input
         }
 
+        // 🛡️ Clamp target position within movement bounds
+        if (limitMovement)
+        {
+            float minX = boundsCenter.x - boundsSize.x / 2f;
+            float maxX = boundsCenter.x + boundsSize.x / 2f;
+            float minY = boundsCenter.y - boundsSize.y / 2f;
+            float maxY = boundsCenter.y + boundsSize.y / 2f;
+            
+            targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
+            targetPos.y = Mathf.Clamp(targetPos.y, minY, maxY);
+        }
+
         // 🎯 Smooth movement
         transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed * Time.deltaTime);
     }
     
     /// <summary>
-    /// ⚔️ Attack Routine - Continuously attacks based on attackSpeed stat
+    /// ⚔️ Attack Routine - Continuously attacks based on secondPerAttack stat
     /// 
-    /// 📊 How attackSpeed works:
-    /// - attackSpeed = 1  → Attack every 1.0 second  (1/1 = 1.0s)
-    /// - attackSpeed = 2  → Attack every 0.5 second  (1/2 = 0.5s)
-    /// - attackSpeed = 4  → Attack every 0.25 second (1/4 = 0.25s)
-    /// - attackSpeed = 10 → Attack every 0.1 second  (1/10 = 0.1s)
+    /// 📊 How secondPerAttack works:
+    /// - secondPerAttack = 2  → Attack every 2.0 seconds
+    /// - secondPerAttack = 1  → Attack every 1.0 second
+    /// - secondPerAttack = 3  → Attack every 3.0 seconds
     /// 
-    /// 🔢 Formula: waitTime = 1 / attackSpeed
-    /// Higher attackSpeed = faster attacks!
+    /// 📊 How additionalAttackSpeedIncreasePercent works:
+    /// - 0%   → No change (2 sec stays 2 sec)
+    /// - 50%  → 50% faster (2 × 0.5 = 1 sec)
+    /// - 75%  → 75% faster (2 × 0.25 = 0.5 sec)
+    /// 
+    /// 🔢 Formula: waitTime = secondPerAttack × (1 - bonus% / 100)
+    /// Higher bonus% = faster attacks!
     /// </summary>
     private IEnumerator AttackRoutine()
     {
         while (true)
         {
-            // 🎮 Get base attackSpeed from PlayerStats (minimum 0.01 to prevent division by zero)
-            float baseAttackSpeed = Mathf.Max(playerStats.GetStatValue(EnumStat.attackSpeed), 0.01f);
+            // 🎮 Get base secondPerAttack from PlayerStats
+            float baseSeconds = playerStats.GetStatValue(EnumStat.secondPerAttack);
             
-            // ⚔️ Apply additionalAttackSpeedIncreasePercent bonus
-            // Formula: effectiveSpeed = baseSpeed × (1 + bonus% / 100)
-            // Example: 50% bonus → 1 × 1.5 = 1.5, 120% bonus → 1 × 2.2 = 2.2
+            // ⚔️ Apply additionalAttackSpeedIncreasePercent to REDUCE wait time
+            // Formula: effectiveTime = baseSeconds × (1 - bonus% / 100)
+            // Example: 50% bonus → 2 × 0.5 = 1 sec, 75% bonus → 2 × 0.25 = 0.5 sec
             float bonusPercent = playerStats.GetStatValue(EnumStat.additionalAttackSpeedIncreasePercent);
-            float effectiveAttackSpeed = baseAttackSpeed * (1f + bonusPercent / 100f);
+            float multiplier = Mathf.Max(0.01f, 1f - bonusPercent / 100f);  // Clamp to min 0.01 (99% max reduction)
+            float effectiveSeconds = baseSeconds * multiplier;
             
-            // ⏱️ Wait time between attacks = 1 / effectiveAttackSpeed
-            yield return new WaitForSeconds(1f / effectiveAttackSpeed);
+            // ⏱️ Wait time between attacks
+            yield return new WaitForSeconds(Mathf.Max(0.05f, effectiveSeconds));  // Min 0.05 sec
             
             if (!isDead)
                 Attack();
@@ -533,7 +557,21 @@ public class PlayerCombatArena : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        // 📦 Draw attack range (box)
+        // �️ Draw movement bounds (green)
+        if (showBoundsGizmo)
+        {
+            Gizmos.color = boundsGizmoColor;
+            Vector3 center = new Vector3(boundsCenter.x, boundsCenter.y, 0);
+            Vector3 size = new Vector3(boundsSize.x, boundsSize.y, 0);
+            Gizmos.DrawWireCube(center, size);
+            
+            Color fillColor = boundsGizmoColor;
+            fillColor.a = 0.1f;
+            Gizmos.color = fillColor;
+            Gizmos.DrawCube(center, size);
+        }
+        
+        // �📦 Draw attack range (box)
         Gizmos.color = Color.red;
         Vector2 rangeToShow = baseAttackRange;
         if (Application.isPlaying && playerStats != null)

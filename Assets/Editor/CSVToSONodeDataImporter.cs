@@ -198,7 +198,8 @@ public class CSVToSONodeDataImporter : EditorWindow
             case "attacksize": return EnumStat.attackSizeCount;
             case "armor": return EnumStat.armor;
             case "bossarmor": return EnumStat.bossArmor;
-            case "attackspeed": return EnumStat.attackSpeed;
+            case "attackspeed": 
+            case "secondperattack": return EnumStat.secondPerAttack;
             case "damageagaintboss":
             case "damageagainstboss": return EnumStat.bossDamage;
             default:

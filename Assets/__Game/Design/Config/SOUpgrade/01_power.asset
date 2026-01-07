@@ -16,9 +16,10 @@ MonoBehaviour:
   description: '''+[int] damage'
   icon: {fileID: 21300000, guid: 9cdcd99168f5ca844b9b98488eca7d56, type: 3}
   stat: 2
-  perUpgradeValue: 1
-  maxLevel: 15
+  perUpgradeValue: 2
+  maxLevel: 10
   costFormula: 1+1*(n-1)
   costUnit: 0
+  unlockRequirementLevel: 0
   description1: Increase Damage
   description2: +1

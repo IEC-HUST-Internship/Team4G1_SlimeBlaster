@@ -13,12 +13,12 @@ public class PlayerStats : MonoBehaviour
     [Header("Player Stats (Inspector)")]
     public int hp = 100; //ok
     public int hpLossPerSecond = 1; //ok
-    public int damage = 10; //ok
+    public int damage = 15; //ok
     public int attackSizeCount = 0;//ok
-    public int attackSpeed = 1;//ok
+    public int secondPerAttack = 2;//ok
     public int exp = 0;//ok
     public int level = 1;//ok
-    public int baseReflection = 0; //ok
+    public int baseReflection = 10; //ok
     public int armor = 0; //ok
     public int bossArmor = 0;//ok
     public int bossDamage = 0; //ok
@@ -80,12 +80,12 @@ public class PlayerStats : MonoBehaviour
 
         statsDict[EnumStat.hp] = 100;
         statsDict[EnumStat.hpLossPerSecond] = 1;
-        statsDict[EnumStat.damage] = 10;
+        statsDict[EnumStat.damage] = 15;
         statsDict[EnumStat.attackSizeCount] = 0; // Count 0-14 (0=size 15, 14=size 23.24)
-        statsDict[EnumStat.attackSpeed] = 1;
+        statsDict[EnumStat.secondPerAttack] = 2;  // Attack every 2 seconds by default
         statsDict[EnumStat.exp] = 0;
         statsDict[EnumStat.level] = 1;
-        statsDict[EnumStat.baseReflection] = 5;
+        statsDict[EnumStat.baseReflection] = 10;
         statsDict[EnumStat.armor] = 0;
         statsDict[EnumStat.bossArmor] = 0;
         statsDict[EnumStat.bossDamage] = 0;
@@ -119,7 +119,7 @@ public class PlayerStats : MonoBehaviour
         hpLossPerSecond = statsDict[EnumStat.hpLossPerSecond];
         damage = statsDict[EnumStat.damage];
         attackSizeCount = statsDict[EnumStat.attackSizeCount];
-        attackSpeed = statsDict[EnumStat.attackSpeed];
+        secondPerAttack = statsDict[EnumStat.secondPerAttack];
         exp = statsDict[EnumStat.exp];
         level = statsDict[EnumStat.level];
         baseReflection = statsDict[EnumStat.baseReflection];

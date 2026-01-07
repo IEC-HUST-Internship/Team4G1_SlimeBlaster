@@ -16,9 +16,10 @@ MonoBehaviour:
   description: '''+[int]% spawn rate'
   icon: {fileID: 21300000, guid: eb11261491eeefa479edb72eadb7ccb2, type: 3}
   stat: 18
-  perUpgradeValue: 200
-  maxLevel: 1
-  costFormula: 1
+  perUpgradeValue: 50
+  maxLevel: 2
+  costFormula: 100+(n*10)
   costUnit: 2
+  unlockRequirementLevel: 1
   description1: 
   description2: 

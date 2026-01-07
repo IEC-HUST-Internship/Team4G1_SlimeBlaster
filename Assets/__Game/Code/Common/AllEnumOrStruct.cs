@@ -5,7 +5,7 @@ public enum EnumStat
     hpLossPerSecond,
     damage,
     attackSizeCount,
-    attackSpeed,
+    secondPerAttack,  // ⏱️ Base seconds between attacks (2 = attack every 2 sec)
     exp,
     level,
     baseReflection,
@@ -26,7 +26,7 @@ public enum EnumStat
     addHealthPerEnemyHit,  // 💚 Heal HP per enemy hit
     addHealthPerEnemyKill,  // 💚 Heal HP per enemy killed
     currencyPickupRadiusIncreasePercent,  // 🧲 Increase pickup radius by %
-    additionalAttackSpeedIncreasePercent  // ⚔️ Attack speed bonus % (50 = 1.5x, 120 = 2.2x)
+    additionalAttackSpeedIncreasePercent  // ⚔️ Reduces secondPerAttack by % (50 = 50% faster)
 }
 
 public enum EnumCurrency

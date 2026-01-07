@@ -26,12 +26,17 @@ public class EnemySpawner : MonoBehaviour
     public List<LevelSpawnConfig> levelConfigs;
 
     [Header("Spawn Settings")]
-    public float spawnBuffer = 0.5f;       // How far outside camera to spawn
+    public float spawnOffsetX = 2f;  // Horizontal distance outside camera to spawn (left/right sides)
+    public float spawnOffsetY = 2f;  // Vertical distance outside camera to spawn (top/bottom sides)
+    
+    [Header("Debug Visualization")]
+    public bool showSpawnGizmos = true;     // Show spawn zones in Scene view
+    public Color gizmoColor = Color.cyan;   // Color for spawn zone gizmos
 
     private Camera mainCamera;
-    private float timer;
     private List<Enemy> activeEnemies = new List<Enemy>();
     private List<EnemySpawnEntry> currentLevelEnemies = new List<EnemySpawnEntry>();
+    private Dictionary<SOEnemyData, float> spawnTimers = new Dictionary<SOEnemyData, float>();  // Per-enemy-type timers
 
     private void Awake()
     {
@@ -41,6 +46,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnEnable()
     {
+        spawnTimers.Clear();  // Reset all timers on start
+        activeEnemies.Clear();  // Clear active enemies list
         LoadCurrentLevelEnemies();
     }
 
@@ -85,20 +92,27 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        timer += Time.deltaTime;
-
         foreach (var entry in currentLevelEnemies)
         {
             if (Time.timeSinceLevelLoad < entry.enemyData.startTime) continue;
 
+            // Initialize timer for this enemy type if not exists
+            if (!spawnTimers.ContainsKey(entry.enemyData))
+                spawnTimers[entry.enemyData] = 0f;
+            
+            // Increment this enemy type's timer
+            spawnTimers[entry.enemyData] += Time.deltaTime;
+            
+            // Calculate adjusted interval based on spawn rate percent
             float adjustedInterval = entry.enemyData.spawnInterval / Mathf.Max(0.01f, playerStats.GetStatValue(EnumStat.spawnRatePercent) / 100f);
-            if (timer >= adjustedInterval)
+            
+            // Only spawn when timer exceeds interval, then RESET this timer
+            if (spawnTimers[entry.enemyData] >= adjustedInterval)
             {
                 SpawnEnemyType(entry);
+                spawnTimers[entry.enemyData] = 0f;  // Reset THIS enemy type's timer
             }
         }
-
-        if (timer >= GetMaxInterval()) timer = 0f;
     }
 
     private void SpawnEnemyType(EnemySpawnEntry entry)
@@ -134,14 +148,6 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private float GetMaxInterval()
-    {
-        float max = 0f;
-        foreach (var entry in currentLevelEnemies)
-            max = Mathf.Max(max, entry.enemyData.spawnInterval);
-        return max;
-    }
-
     private Vector2 GetRandomPositionOutsideCamera()
     {
         Vector2 camPos = mainCamera.transform.position;
@@ -155,18 +161,18 @@ public class EnemySpawner : MonoBehaviour
         {
             case 0: // top
                 spawnPos = new Vector2(Random.Range(camPos.x - camWidth / 2, camPos.x + camWidth / 2),
-                                       camPos.y + camHeight / 2 + spawnBuffer);
+                                       camPos.y + camHeight / 2 + spawnOffsetY);
                 break;
             case 1: // bottom
                 spawnPos = new Vector2(Random.Range(camPos.x - camWidth / 2, camPos.x + camWidth / 2),
-                                       camPos.y - camHeight / 2 - spawnBuffer);
+                                       camPos.y - camHeight / 2 - spawnOffsetY);
                 break;
             case 2: // left
-                spawnPos = new Vector2(camPos.x - camWidth / 2 - spawnBuffer,
+                spawnPos = new Vector2(camPos.x - camWidth / 2 - spawnOffsetX,
                                        Random.Range(camPos.y - camHeight / 2, camPos.y + camHeight / 2));
                 break;
             case 3: // right
-                spawnPos = new Vector2(camPos.x + camWidth / 2 + spawnBuffer,
+                spawnPos = new Vector2(camPos.x + camWidth / 2 + spawnOffsetX,
                                        Random.Range(camPos.y - camHeight / 2, camPos.y + camHeight / 2));
                 break;
         }
@@ -195,5 +201,75 @@ public class EnemySpawner : MonoBehaviour
         {
             activeEnemies.Add(enemy);
         }
+    }
+    
+    private void OnDrawGizmos()
+    {
+        if (!showSpawnGizmos || mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null) return;
+        }
+        
+        Vector2 camPos = mainCamera.transform.position;
+        float camHeight = 2f * mainCamera.orthographicSize;
+        float camWidth = camHeight * mainCamera.aspect;
+        float offsetX = spawnOffsetX;
+        float offsetY = spawnOffsetY;
+        
+        // Draw camera border in white
+        Gizmos.color = Color.white;
+        Vector3 topLeft = new Vector3(camPos.x - camWidth / 2, camPos.y + camHeight / 2, 0);
+        Vector3 topRight = new Vector3(camPos.x + camWidth / 2, camPos.y + camHeight / 2, 0);
+        Vector3 bottomLeft = new Vector3(camPos.x - camWidth / 2, camPos.y - camHeight / 2, 0);
+        Vector3 bottomRight = new Vector3(camPos.x + camWidth / 2, camPos.y - camHeight / 2, 0);
+        
+        Gizmos.DrawLine(topLeft, topRight);
+        Gizmos.DrawLine(topRight, bottomRight);
+        Gizmos.DrawLine(bottomRight, bottomLeft);
+        Gizmos.DrawLine(bottomLeft, topLeft);
+        
+        // Draw spawn zones with custom color
+        Gizmos.color = gizmoColor;
+        
+        // Top spawn zone (uses Y offset)
+        Vector3 topSpawnTL = new Vector3(camPos.x - camWidth / 2, camPos.y + camHeight / 2 + offsetY, 0);
+        Vector3 topSpawnTR = new Vector3(camPos.x + camWidth / 2, camPos.y + camHeight / 2 + offsetY, 0);
+        Vector3 topSpawnBL = new Vector3(camPos.x - camWidth / 2, camPos.y + camHeight / 2, 0);
+        Vector3 topSpawnBR = new Vector3(camPos.x + camWidth / 2, camPos.y + camHeight / 2, 0);
+        Gizmos.DrawLine(topSpawnTL, topSpawnTR);
+        Gizmos.DrawLine(topSpawnTR, topSpawnBR);
+        Gizmos.DrawLine(topSpawnBR, topSpawnBL);
+        Gizmos.DrawLine(topSpawnBL, topSpawnTL);
+        
+        // Bottom spawn zone (uses Y offset)
+        Vector3 bottomSpawnTL = new Vector3(camPos.x - camWidth / 2, camPos.y - camHeight / 2, 0);
+        Vector3 bottomSpawnTR = new Vector3(camPos.x + camWidth / 2, camPos.y - camHeight / 2, 0);
+        Vector3 bottomSpawnBL = new Vector3(camPos.x - camWidth / 2, camPos.y - camHeight / 2 - offsetY, 0);
+        Vector3 bottomSpawnBR = new Vector3(camPos.x + camWidth / 2, camPos.y - camHeight / 2 - offsetY, 0);
+        Gizmos.DrawLine(bottomSpawnTL, bottomSpawnTR);
+        Gizmos.DrawLine(bottomSpawnTR, bottomSpawnBR);
+        Gizmos.DrawLine(bottomSpawnBR, bottomSpawnBL);
+        Gizmos.DrawLine(bottomSpawnBL, bottomSpawnTL);
+        
+        // Left spawn zone (uses X offset)
+        Vector3 leftSpawnTL = new Vector3(camPos.x - camWidth / 2 - offsetX, camPos.y + camHeight / 2, 0);
+        Vector3 leftSpawnTR = new Vector3(camPos.x - camWidth / 2, camPos.y + camHeight / 2, 0);
+        Vector3 leftSpawnBL = new Vector3(camPos.x - camWidth / 2 - offsetX, camPos.y - camHeight / 2, 0);
+        Vector3 leftSpawnBR = new Vector3(camPos.x - camWidth / 2, camPos.y - camHeight / 2, 0);
+        Gizmos.DrawLine(leftSpawnTL, leftSpawnTR);
+        Gizmos.DrawLine(leftSpawnTR, leftSpawnBR);
+        Gizmos.DrawLine(leftSpawnBR, leftSpawnBL);
+        Gizmos.DrawLine(leftSpawnBL, leftSpawnTL);
+        
+        // Right spawn zone (uses X offset)
+        Vector3 rightSpawnTL = new Vector3(camPos.x + camWidth / 2, camPos.y + camHeight / 2, 0);
+        Vector3 rightSpawnTR = new Vector3(camPos.x + camWidth / 2 + offsetX, camPos.y + camHeight / 2, 0);
+        Vector3 rightSpawnBL = new Vector3(camPos.x + camWidth / 2, camPos.y - camHeight / 2, 0);
+        Vector3 rightSpawnBR = new Vector3(camPos.x + camWidth / 2 + offsetX, camPos.y - camHeight / 2, 0);
+        Gizmos.DrawLine(rightSpawnTL, rightSpawnTR);
+        Gizmos.DrawLine(rightSpawnTR, rightSpawnBR);
+        Gizmos.DrawLine(rightSpawnBR, rightSpawnBL);
+        Gizmos.DrawLine(rightSpawnBL, rightSpawnTL);
     }
 }

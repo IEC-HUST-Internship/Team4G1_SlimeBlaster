@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Enhace
   description: +[int]% damage again boss
-  icon: {fileID: 21300000, guid: 0eee331dfd019fb4dbfd1cb8b157d358, type: 3}
+  icon: {fileID: 21300000, guid: f94f5e59f99aea543a68ec209312598b, type: 3}
   stat: 2
   perUpgradeValue: 15
   maxLevel: 5
   costFormula: 1
   costUnit: 4
+  unlockRequirementLevel: 1
   description1: 
   description2: 

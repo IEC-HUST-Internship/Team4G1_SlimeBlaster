@@ -19,6 +19,7 @@ MonoBehaviour:
   perUpgradeValue: 40
   maxLevel: 5
   costFormula: 50+10*(n-1)
-  costUnit: 0
+  costUnit: 3
+  unlockRequirementLevel: 1
   description1: 
   description2: 

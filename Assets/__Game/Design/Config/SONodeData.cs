@@ -18,6 +18,8 @@ public class SONodeData : ScriptableObject
     public string costFormula = "1+1*(n-1)";
     public EnumCurrency costUnit;  // Type-safe dropdown for currency
 
+    [Header("Unlock Requirement")]
+    public int unlockRequirementLevel = 1;  // Required level of parent node to unlock this node
 
     [Header("Upgrade Information")]
     public string description1;

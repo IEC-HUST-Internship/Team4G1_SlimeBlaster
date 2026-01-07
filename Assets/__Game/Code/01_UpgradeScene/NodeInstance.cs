@@ -6,7 +6,6 @@ public class NodeInstance
 {
     public SONodeData data;               // Reference to the blueprint
     public NodeInstance unlockRoot;       // Reference to another NodeInstance it depends on
-    public int unlockRequirementLevel = 1;
 
     public bool unlocked = false;
     public int currentLevel = 0;
@@ -19,7 +18,7 @@ public class NodeInstance
         if (!unlocked) return false;
 
         // Check if unlockRoot meets the requirement
-        if (unlockRoot != null && unlockRoot.currentLevel < unlockRequirementLevel)
+        if (unlockRoot != null && unlockRoot.currentLevel < data.unlockRequirementLevel)
             return false;
 
         return currentLevel < data.maxLevel;
@@ -80,7 +79,7 @@ public class NodeInstance
         }
         else
         {
-            unlocked = unlockRoot.currentLevel >= unlockRequirementLevel;
+            unlocked = unlockRoot.currentLevel >= data.unlockRequirementLevel;
         }
     }
 }

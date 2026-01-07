@@ -13,6 +13,16 @@ public class ControlUpgradeButton : MonoBehaviour
     public float zoomSpeed = 0.1f;
     public float minZoom = 0.5f;
     public float maxZoom = 3f;
+    
+    [Header("Movement Bounds - Target (UI Local Position)")]
+    public bool limitTargetMovement = true;
+    public Vector2 targetMinPosition = new Vector2(-500f, -800f);
+    public Vector2 targetMaxPosition = new Vector2(500f, 800f);
+    
+    [Header("Movement Bounds - Background (UI Local Position)")]
+    public bool limitBackgroundMovement = true;
+    public Vector2 backgroundMinPosition = new Vector2(-250f, -400f);
+    public Vector2 backgroundMaxPosition = new Vector2(250f, 400f);
 
     private Vector3 lastMousePosition;
     private Vector3 dragStartPosition;
@@ -20,6 +30,19 @@ public class ControlUpgradeButton : MonoBehaviour
 
     // For mobile pinch zoom
     private float lastPinchDistance = 0f;
+    
+    // Cached RectTransforms for UI
+    private RectTransform targetRect;
+    private RectTransform backgroundRect;
+    
+    private void Start()
+    {
+        // Cache RectTransforms for UI elements
+        if (targetObject != null)
+            targetRect = targetObject.GetComponent<RectTransform>();
+        if (background != null)
+            backgroundRect = background.GetComponent<RectTransform>();
+    }
 
     private void Update()
     {
@@ -30,6 +53,30 @@ public class ControlUpgradeButton : MonoBehaviour
         HandleMouseZoom();
         HandleTouchDrag();
         HandlePinchZoom();
+        
+        // Clamp positions within bounds
+        ClampPositions();
+    }
+    
+    private void ClampPositions()
+    {
+        // Clamp target object position (using UI anchoredPosition)
+        if (limitTargetMovement && targetRect != null)
+        {
+            Vector2 pos = targetRect.anchoredPosition;
+            pos.x = Mathf.Clamp(pos.x, targetMinPosition.x, targetMaxPosition.x);
+            pos.y = Mathf.Clamp(pos.y, targetMinPosition.y, targetMaxPosition.y);
+            targetRect.anchoredPosition = pos;
+        }
+        
+        // Clamp background position (using UI anchoredPosition)
+        if (limitBackgroundMovement && backgroundRect != null)
+        {
+            Vector2 bgPos = backgroundRect.anchoredPosition;
+            bgPos.x = Mathf.Clamp(bgPos.x, backgroundMinPosition.x, backgroundMaxPosition.x);
+            bgPos.y = Mathf.Clamp(bgPos.y, backgroundMinPosition.y, backgroundMaxPosition.y);
+            backgroundRect.anchoredPosition = bgPos;
+        }
     }
 
     // PC: Mouse drag to pan
@@ -44,12 +91,17 @@ public class ControlUpgradeButton : MonoBehaviour
         if (PlayerInputHandler.Instance.IsInputActive() && isDragging)
         {
             Vector3 delta = PlayerInputHandler.Instance.GetInputScreenPosition() - lastMousePosition;
-            Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
-            targetObject.transform.position += movement;
-            if (background != null)
+            
+            // For UI, move using anchoredPosition instead of world position
+            if (targetRect != null)
             {
-                background.transform.position += movement * 0.5f;
+                targetRect.anchoredPosition += new Vector2(delta.x, delta.y) * panSpeed;
             }
+            if (backgroundRect != null)
+            {
+                backgroundRect.anchoredPosition += new Vector2(delta.x, delta.y) * panSpeed * 0.5f;
+            }
+            
             lastMousePosition = PlayerInputHandler.Instance.GetInputScreenPosition();
         }
 
@@ -100,12 +152,17 @@ public class ControlUpgradeButton : MonoBehaviour
             else if (touch.Value.phase == TouchPhase.Moved && isDragging)
             {
                 Vector3 delta = (Vector3)touch.Value.position - lastMousePosition;
-                Vector3 movement = new Vector3(delta.x, delta.y, 0) * panSpeed * Time.deltaTime;
-                targetObject.transform.position += movement;
-                if (background != null)
+                
+                // For UI, move using anchoredPosition instead of world position
+                if (targetRect != null)
                 {
-                    background.transform.position += movement * 0.5f;
+                    targetRect.anchoredPosition += new Vector2(delta.x, delta.y) * panSpeed;
                 }
+                if (backgroundRect != null)
+                {
+                    backgroundRect.anchoredPosition += new Vector2(delta.x, delta.y) * panSpeed * 0.5f;
+                }
+                
                 lastMousePosition = touch.Value.position;
             }
             else if (touch.Value.phase == TouchPhase.Ended || touch.Value.phase == TouchPhase.Canceled)
@@ -155,3 +212,4 @@ public class ControlUpgradeButton : MonoBehaviour
         }
     }
 }
+

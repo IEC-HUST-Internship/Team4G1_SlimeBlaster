@@ -39,8 +39,11 @@ public class UpgradeButton : MonoBehaviour
                 nodeInstance.unlockRoot = unlockRootButton.nodeInstance;
             }
         }
+    }
 
-        // 📥 Load saved level
+    private void Start()
+    {
+        // 📥 Load saved level (in Start to ensure PlayerStats is initialized first)
         LoadUpgradeLevel();
 
         UpdateUnlockStatus();
@@ -129,7 +132,7 @@ public class UpgradeButton : MonoBehaviour
         else
         {
             // Child node unlocked if root's level >= required level
-            nodeInstance.unlocked = nodeInstance.unlockRoot.currentLevel >= nodeInstance.unlockRequirementLevel;
+            nodeInstance.unlocked = nodeInstance.unlockRoot.currentLevel >= nodeInstance.data.unlockRequirementLevel;
         }
 
         // Enable/disable button interactability based on unlock status

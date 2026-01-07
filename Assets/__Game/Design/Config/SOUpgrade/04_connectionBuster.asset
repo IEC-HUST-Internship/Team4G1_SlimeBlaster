@@ -16,9 +16,10 @@ MonoBehaviour:
   description: attack deals [int]% damage per enemy in area
   icon: {fileID: 21300000, guid: a6b1006f2cf59564493694f089d01918, type: 3}
   stat: 13
-  perUpgradeValue: 5
+  perUpgradeValue: 10
   maxLevel: 5
   costFormula: 10+1*(n-1)
   costUnit: 0
+  unlockRequirementLevel: 5
   description1: 
   description2: 
