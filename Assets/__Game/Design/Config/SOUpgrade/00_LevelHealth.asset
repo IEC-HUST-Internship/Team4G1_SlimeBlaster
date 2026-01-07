@@ -19,6 +19,6 @@ MonoBehaviour:
   perUpgradeValue: 50
   maxLevel: 5
   costFormula: 1
-  costUnit: 0
+  costUnit: 4
   description1: 
   description2: 
