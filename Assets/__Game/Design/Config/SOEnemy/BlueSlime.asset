@@ -18,6 +18,6 @@ MonoBehaviour:
   currencyType: 0
   baseCurrencyAmount: 1
   spawnAmount: 1
-  spawnInterval: 2
+  spawnInterval: 4
   maxCapacity: 10
   startTime: 0

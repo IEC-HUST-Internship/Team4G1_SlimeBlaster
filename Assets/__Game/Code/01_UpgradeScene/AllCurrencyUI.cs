@@ -11,6 +11,7 @@ public class AllCurrencyUI : MonoBehaviour
     public TextMeshProUGUI pinkBitsText;
     public TextMeshProUGUI yellowBitsText;
     public TextMeshProUGUI greenBitsText;
+    public TextMeshProUGUI xpBitsText;
 
 
     void Update()
@@ -29,5 +30,8 @@ public class AllCurrencyUI : MonoBehaviour
 
         if (greenBitsText != null)
             greenBitsText.text = playerStats.greenBits.ToString();
+
+        if (xpBitsText != null)
+            xpBitsText.text = playerStats.xpBits.ToString();
     }
 }

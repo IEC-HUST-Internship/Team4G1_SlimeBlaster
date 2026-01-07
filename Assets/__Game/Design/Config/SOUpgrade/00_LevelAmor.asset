@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a63aeb7295f7fe44db6e18355dd68c2c, type: 3}
-  m_Name: 05_blueBitBoost
+  m_Name: 00_LevelAmor
   m_EditorClassIdentifier: 
-  upgradeName: bitBoost
-  description: red enemies drop +[int] bits
-  icon: {fileID: 21300000, guid: a3b8e14bef44cb44ba1cb753c3c9677d, type: 3}
-  stat: 14
-  perUpgradeValue: 1
+  upgradeName: Enhace
+  description: +[int]% damage again boss
+  icon: {fileID: 21300000, guid: 0eee331dfd019fb4dbfd1cb8b157d358, type: 3}
+  stat: 8
+  perUpgradeValue: 10
   maxLevel: 5
-  costFormula: 50
-  costUnit: 1
+  costFormula: 1
+  costUnit: 4
   description1: 
   description2: 
