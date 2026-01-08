@@ -286,6 +286,16 @@ public class PlayerCombatArena : MonoBehaviour
 
     private void Attack()
     {
+        // 📷 Camera shake on attack (uses Inspector values from CameraShakeManager)
+        if (CameraShakeManager.Instance != null)
+        {
+            CameraShakeManager.Instance.Shake(); // Uses defaultDuration & defaultIntensity from Inspector
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ CameraShakeManager.Instance is NULL! Add CameraShakeManager to scene!");
+        }
+        
         // 📐 Get attack size count (0-14) and calculate actual attack range
         // Uses √(1 + count × 0.1) to increase AREA by 10% per count
         int attackSizeCount = Mathf.Clamp(playerStats.GetStatValue(EnumStat.attackSizeCount), 0, 14);

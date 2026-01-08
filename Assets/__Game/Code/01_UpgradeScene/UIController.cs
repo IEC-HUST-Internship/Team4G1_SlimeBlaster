@@ -68,6 +68,12 @@ public class UIController : MonoBehaviour
     [Header("Max Level Flash")]
     public Color maxLevelFlashColor = Color.yellow;
 
+    [Header("Confirm Button Sprites")]
+    public Sprite confirmSpriteEnoughMoney;   // Green - can afford
+    public Sprite confirmSpriteNotEnough;     // Red - can't afford
+    public Sprite confirmSpriteMaxLevel;      // Yellow - already max
+    private Image confirmButtonImage;
+
     [Header("🍿 Breach Buttons")]
     public Button[] breachButtons;
     public float breachJumpHeight = 30f;
@@ -84,6 +90,7 @@ public class UIController : MonoBehaviour
     private NodeInstance currentNodeInstance;
     private UpgradeButton currentUpgradeButton;
     private Color originalMoneyTextColor;
+    private Vector3 originalMoneyTextPosition;
 
     private void Start()
     {
@@ -133,10 +140,17 @@ public class UIController : MonoBehaviour
             settingPanel.SetActive(false);
         }
 
-        // Store original money text color
+        // Store original money text color and position
         if (moneyText != null)
         {
             originalMoneyTextColor = moneyText.color;
+            originalMoneyTextPosition = moneyText.transform.localPosition;
+        }
+
+        // Cache confirm button image
+        if (confirmUpgradeButton != null)
+        {
+            confirmButtonImage = confirmUpgradeButton.GetComponent<Image>();
         }
 
         // 🍿 Setup breach buttons
@@ -268,17 +282,38 @@ public class UIController : MonoBehaviour
             if (nodeInstance.currentLevel >= nodeInstance.data.maxLevel)
             {
                 moneyText.text = "Max";
+                // Set max level sprite (yellow)
+                if (confirmButtonImage != null && confirmSpriteMaxLevel != null)
+                {
+                    confirmButtonImage.sprite = confirmSpriteMaxLevel;
+                }
             }
             else
             {
                 int cost = nodeInstance.GetCostForNextLevel();
                 int currentMoney = playerStats.GetCurrency(nodeInstance.data.costUnit);
                 moneyText.text = $"<sprite index=0> {currentMoney} / {cost}";
+                
+                // Set sprite based on whether player can afford
+                bool canAfford = playerStats.HasEnoughCurrency(nodeInstance.data.costUnit, cost);
+                if (confirmButtonImage != null)
+                {
+                    if (canAfford && confirmSpriteEnoughMoney != null)
+                    {
+                        confirmButtonImage.sprite = confirmSpriteEnoughMoney;
+                    }
+                    else if (!canAfford && confirmSpriteNotEnough != null)
+                    {
+                        confirmButtonImage.sprite = confirmSpriteNotEnough;
+                    }
+                }
             }
 
-            // Reset money text color
+            // Reset money text color and position
             moneyText.DOKill();
+            moneyText.transform.DOKill();
             moneyText.color = originalMoneyTextColor;
+            moneyText.transform.localPosition = originalMoneyTextPosition;
         }
 
         // Update currency icon sprite based on upgrade cost type
@@ -356,8 +391,9 @@ public class UIController : MonoBehaviour
                         .SetLoops(flashCount * 2, LoopType.Yoyo)
                         .OnComplete(() => moneyText.color = originalMoneyTextColor);
 
-                    // Shake text
-                    moneyText.transform.DOShakePosition(flashDuration, strength: shakeStrength, vibrato: shakeVibrato, randomness: shakeRandomness);
+                    // Shake text and reset to original position when done
+                    moneyText.transform.DOShakePosition(flashDuration, strength: shakeStrength, vibrato: shakeVibrato, randomness: shakeRandomness)
+                        .OnComplete(() => moneyText.transform.localPosition = originalMoneyTextPosition);
                 }
                 return;
             }

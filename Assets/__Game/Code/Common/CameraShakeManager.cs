@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 📷 Camera Shake Manager - Shakes camera and optionally UI canvas
+/// 📷 Camera Shake Manager - Shakes camera and optionally UI backgrounds
 /// Inherits from Singleton for easy global access
 /// Usage: CameraShakeManager.Instance.Shake(0.3f, 0.5f);
 /// </summary>
@@ -9,21 +10,31 @@ public class CameraShakeManager : Singleton<CameraShakeManager>
 {
     [Header("Shake Targets")]
     [SerializeField] private Transform cameraTransform;     // Main camera transform
-    [SerializeField] private RectTransform canvasTransform; // Optional: Canvas to shake UI too
+    [SerializeField] private List<RectTransform> backgroundShake = new List<RectTransform>(); // Screen space overlay UI elements to shake
     
     [Header("Default Settings")]
-    [SerializeField] private float defaultDuration = 0.2f;
-    [SerializeField] private float defaultIntensity = 0.3f;
-    [SerializeField] private bool shakeUI = true;           // Whether to shake canvas/UI
+    [SerializeField] private float defaultDuration = 0.15f;
+    [SerializeField] private float defaultIntensity = 0.5f;  // 🔥 Increased for more visible shake
+    
+    [Header("UI Shake Settings")]
+    [SerializeField] private bool shakeUI = true;           // Whether to shake UI backgrounds
+    [SerializeField] private float uiShakeDuration = 0.15f; // UI shake duration
+    [SerializeField] private float uiShakeIntensity = 15f;  // UI shake intensity (pixels)
     
     private Vector3 originalCameraPos;
-    private Vector3 originalCanvasPos;
+    private List<Vector3> originalBackgroundPositions = new List<Vector3>();
     
+    // Camera shake state
     private float currentDuration = 0f;
     private float currentIntensity = 0f;
     private float maxDuration = 0f;
-    
     private bool isShaking = false;
+    
+    // UI shake state (separate from camera)
+    private float uiCurrentDuration = 0f;
+    private float uiCurrentIntensity = 0f;
+    private float uiMaxDuration = 0f;
+    private bool isUIShaking = false;
 
     protected override void Awake()
     {
@@ -38,41 +49,77 @@ public class CameraShakeManager : Singleton<CameraShakeManager>
         // Store original positions
         if (cameraTransform != null)
             originalCameraPos = cameraTransform.localPosition;
-        if (canvasTransform != null)
-            originalCanvasPos = canvasTransform.localPosition;
+        
+        // Store original positions for all background UI elements
+        StoreOriginalBackgroundPositions();
+    }
+    
+    private void StoreOriginalBackgroundPositions()
+    {
+        originalBackgroundPositions.Clear();
+        foreach (var bg in backgroundShake)
+        {
+            if (bg != null)
+                originalBackgroundPositions.Add(bg.localPosition);
+            else
+                originalBackgroundPositions.Add(Vector3.zero);
+        }
     }
 
     private void Update()
     {
-        if (!isShaking) return;
-        
-        if (currentDuration > 0)
+        // Stop shake when game is paused (Time.timeScale = 0)
+        if (Time.timeScale == 0f)
         {
-            // Calculate shake with falloff (stronger at start, weaker at end)
-            float progress = currentDuration / maxDuration;
-            float currentShake = currentIntensity * progress;
-            
-            // Generate random offset
-            Vector2 shakeOffset = Random.insideUnitCircle * currentShake;
-            
-            // Apply to camera
-            if (cameraTransform != null)
-            {
-                cameraTransform.localPosition = originalCameraPos + (Vector3)shakeOffset;
-            }
-            
-            // Apply to canvas (for UI shake)
-            if (shakeUI && canvasTransform != null)
-            {
-                canvasTransform.localPosition = originalCanvasPos + (Vector3)shakeOffset;
-            }
-            
-            currentDuration -= Time.deltaTime;
-        }
-        else
-        {
-            // Reset positions when shake ends
             StopShake();
+            return;
+        }
+        
+        // Update camera shake
+        if (isShaking)
+        {
+            if (currentDuration > 0)
+            {
+                float progress = currentDuration / maxDuration;
+                float currentShake = currentIntensity * progress;
+                Vector2 shakeOffset = Random.insideUnitCircle * currentShake;
+                
+                if (cameraTransform != null)
+                {
+                    cameraTransform.localPosition = originalCameraPos + (Vector3)shakeOffset;
+                }
+                
+                currentDuration -= Time.deltaTime;
+            }
+            else
+            {
+                StopCameraShake();
+            }
+        }
+        
+        // Update UI shake (separate timing)
+        if (isUIShaking && shakeUI)
+        {
+            if (uiCurrentDuration > 0)
+            {
+                float uiProgress = uiCurrentDuration / uiMaxDuration;
+                float uiCurrentShake = uiCurrentIntensity * uiProgress;
+                Vector2 uiShakeOffset = Random.insideUnitCircle * uiCurrentShake;
+                
+                for (int i = 0; i < backgroundShake.Count; i++)
+                {
+                    if (backgroundShake[i] != null && i < originalBackgroundPositions.Count)
+                    {
+                        backgroundShake[i].localPosition = originalBackgroundPositions[i] + (Vector3)uiShakeOffset;
+                    }
+                }
+                
+                uiCurrentDuration -= Time.deltaTime;
+            }
+            else
+            {
+                StopUIShake();
+            }
         }
     }
 
@@ -91,42 +138,68 @@ public class CameraShakeManager : Singleton<CameraShakeManager>
     /// <param name="intensity">How strong the shake is (units)</param>
     public void Shake(float duration, float intensity)
     {
-        // Allow stacking - use the stronger/longer shake
-        if (isShaking)
+        // Camera shake - just restart with new values
+        if (!isShaking && cameraTransform != null)
         {
-            currentDuration = Mathf.Max(currentDuration, duration);
-            currentIntensity = Mathf.Max(currentIntensity, intensity);
-            maxDuration = Mathf.Max(maxDuration, duration);
-        }
-        else
-        {
-            currentDuration = duration;
-            currentIntensity = intensity;
-            maxDuration = duration;
-            
-            // Store current positions as original
-            if (cameraTransform != null)
-                originalCameraPos = cameraTransform.localPosition;
-            if (canvasTransform != null)
-                originalCanvasPos = canvasTransform.localPosition;
+            originalCameraPos = cameraTransform.localPosition;
         }
         
+        currentDuration = duration;
+        currentIntensity = intensity;
+        maxDuration = duration;
         isShaking = true;
+        
+        // UI shake (uses its own parameters)
+        if (shakeUI)
+        {
+            if (!isUIShaking)
+            {
+                StoreOriginalBackgroundPositions();
+            }
+            
+            uiCurrentDuration = uiShakeDuration;
+            uiCurrentIntensity = uiShakeIntensity;
+            uiMaxDuration = uiShakeDuration;
+            isUIShaking = true;
+        }
     }
 
     /// <summary>
-    /// Immediately stop any active shake
+    /// Stop camera shake only
     /// </summary>
-    public void StopShake()
+    private void StopCameraShake()
     {
         isShaking = false;
         currentDuration = 0f;
         
-        // Reset to original positions
         if (cameraTransform != null)
             cameraTransform.localPosition = originalCameraPos;
-        if (canvasTransform != null)
-            canvasTransform.localPosition = originalCanvasPos;
+    }
+    
+    /// <summary>
+    /// Stop UI shake only
+    /// </summary>
+    private void StopUIShake()
+    {
+        isUIShaking = false;
+        uiCurrentDuration = 0f;
+        
+        for (int i = 0; i < backgroundShake.Count; i++)
+        {
+            if (backgroundShake[i] != null && i < originalBackgroundPositions.Count)
+            {
+                backgroundShake[i].localPosition = originalBackgroundPositions[i];
+            }
+        }
+    }
+
+    /// <summary>
+    /// Immediately stop all shakes
+    /// </summary>
+    public void StopShake()
+    {
+        StopCameraShake();
+        StopUIShake();
     }
 
     /// <summary>
