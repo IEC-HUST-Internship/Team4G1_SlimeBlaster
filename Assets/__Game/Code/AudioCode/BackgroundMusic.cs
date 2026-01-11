@@ -80,6 +80,9 @@ public class BackgroundMusic : MonoBehaviour
     {
         volumeTween?.Kill();
 
+        // Capture current volume before fading (from slider setting)
+        float currentVolume = audioSource.volume;
+
         volumeTween = audioSource
             .DOFade(0f, timeDecreaseVolume)
             .OnComplete(() =>
@@ -87,8 +90,9 @@ public class BackgroundMusic : MonoBehaviour
                 audioSource.clip = nextClip;
                 audioSource.Play();
 
+                // Fade back to the volume that was set by slider, not targetVolume
                 volumeTween = audioSource
-                    .DOFade(targetVolume, timeIncreaseVolume);
+                    .DOFade(currentVolume, timeIncreaseVolume);
             });
     }
 }
