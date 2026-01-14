@@ -4371,6 +4371,7 @@ MonoBehaviour:
   gameOverAndWinPanel: {fileID: 1162387393}
   winText: {fileID: 1351038830}
   loseText: {fileID: 460878161}
+  collectionText: {fileID: 303411315}
   currencyDisplays:
   - currencyType: 0
     currencyParent: {fileID: 0}
@@ -4392,7 +4393,7 @@ MonoBehaviour:
     currencyParent: {fileID: 0}
     iconObject: {fileID: 1577336135}
     amountText: {fileID: 2104134798}
-  countAnimationDuration: 1
+  countAnimationDuration: 0.5
   winLosePopUpDuration: 0.8
   winLoseStartScale: 0
   winLoseOvershootScale: 1.25
@@ -4404,7 +4405,7 @@ MonoBehaviour:
   currencyFinalScale: 1
   currencyEase: 27
   delayAfterWinLose: 0.3
-  delayBetweenCurrencies: 0.15
+  delayBetweenCurrencies: 0.1
 --- !u!114 &318531938
 MonoBehaviour:
   m_ObjectHideFlags: 0

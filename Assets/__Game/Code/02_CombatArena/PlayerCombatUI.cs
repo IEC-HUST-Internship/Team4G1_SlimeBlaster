@@ -27,6 +27,7 @@ public class PlayerCombatUI : MonoBehaviour
     [SerializeField] private GameObject gameOverAndWinPanel;
     [SerializeField] private GameObject winText;
     [SerializeField] private GameObject loseText;
+    [SerializeField] private GameObject collectionText;
 
     [Header("Currency Display")]
     [SerializeField] private List<CurrencyDisplay> currencyDisplays;
@@ -59,6 +60,8 @@ public class PlayerCombatUI : MonoBehaviour
             winText.SetActive(false);
         if (loseText != null)
             loseText.SetActive(false);
+        if (collectionText != null)
+            collectionText.SetActive(false);
         
         // Hide all currency displays
         foreach (var display in currencyDisplays)
@@ -145,7 +148,7 @@ public class PlayerCombatUI : MonoBehaviour
     }
     
     /// <summary>
-    /// 🏆 Sequence: Win text pop up -> currencies pop up one by one with count
+    /// 🏆 Sequence: Win text pop up -> collection text pop up -> currencies pop up one by one with count
     /// </summary>
     private IEnumerator ShowWinSequence()
     {
@@ -158,12 +161,21 @@ public class PlayerCombatUI : MonoBehaviour
         
         yield return new WaitForSeconds(winLosePopUpDuration + delayAfterWinLose);
         
+        // Pop up collection text with smooth animation
+        if (collectionText != null)
+        {
+            collectionText.SetActive(true);
+            PlayWinLosePopUpAnimation(collectionText);
+        }
+        
+        yield return new WaitForSeconds(winLosePopUpDuration + delayAfterWinLose);
+        
         // Show currencies one by one
         yield return StartCoroutine(ShowCurrenciesSequence());
     }
     
     /// <summary>
-    /// 💀 Sequence: Lose text pop up -> currencies pop up one by one with count
+    /// 💀 Sequence: Lose text pop up -> collection text pop up -> currencies pop up one by one with count
     /// </summary>
     private IEnumerator ShowLoseSequence()
     {
@@ -172,6 +184,15 @@ public class PlayerCombatUI : MonoBehaviour
         {
             loseText.SetActive(true);
             PlayWinLosePopUpAnimation(loseText);
+        }
+        
+        yield return new WaitForSeconds(winLosePopUpDuration + delayAfterWinLose);
+        
+        // Pop up collection text with smooth animation
+        if (collectionText != null)
+        {
+            collectionText.SetActive(true);
+            PlayWinLosePopUpAnimation(collectionText);
         }
         
         yield return new WaitForSeconds(winLosePopUpDuration + delayAfterWinLose);
