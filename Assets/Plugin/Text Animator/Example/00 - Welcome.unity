@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -98,8 +97,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 49d28ee43fb9747d884ba6ecfade7616,
-    type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 49d28ee43fb9747d884ba6ecfade7616, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -203,6 +201,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.62, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -241,6 +240,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -255,6 +255,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1911804838}
   m_Father: {fileID: 0}
@@ -295,6 +296,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 903061074}
   m_RootOrder: 0
@@ -356,8 +358,7 @@ MonoBehaviour:
     ^^<speed=1>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1ffb8c3515fb6dc4688eff5a7e48200f, type: 2}
-  m_sharedMaterial: {fileID: 7453642021753212536, guid: 1ffb8c3515fb6dc4688eff5a7e48200f,
-    type: 2}
+  m_sharedMaterial: {fileID: 7453642021753212536, guid: 1ffb8c3515fb6dc4688eff5a7e48200f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -381,7 +382,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.3
+  m_fontSize: 47.4
   m_fontSizeBase: 53.61
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -461,33 +462,30 @@ MonoBehaviour:
     <bounce>Oh,
     how lucky</bounce>.
 
-    An<expl> EXPLOSION</expl>.
-
     <rot>I''m confused</rot>.
 
-    <swing>So
-    happy right now</swing>.
+    <swing>So happy right
+    now</swing>.
 
     Head over the next example scenes to discover more!
 
 
-    <share>I''d
+    I''d
     love to share the projects you create with TextAnimator! Let me know (if you
-    want) aand have a lovely day! ^^</share>
+    want) aand have a lovely day! ^^
 
-    <speed=3>Aaaaaaaaaaaaaand please
-    do not forget to leave a review, it <speed=.1><incr><rainb>really</rainb></incr>
-    <speed=3>helps ^^<speed=1>'
+    <speed=3>Aaaaaaaaaaaaaand please do not
+    forget to leave a review, it <speed=.1><incr><rainb>really</rainb></incr> <speed=3>helps
+    ^^<speed=1>'
   useDynamicScaling: 1
   referenceFontSize: 5
   isResettingTimeOnNewText: 1
   useDefaultDatabases: 1
-  databaseBehaviors: {fileID: 11400000, guid: 143063c9d42da4bb3bdef3e969df1633, type: 2}
-  databaseAppearances: {fileID: 11400000, guid: efcefe34ffbda4c5eb7e39d858738fbc,
-    type: 2}
+  databaseBehaviors: {fileID: 11400000, guid: 51689fd7a44222f44bbc8c01e68bf8c3, type: 2}
+  databaseAppearances: {fileID: 11400000, guid: 6ceb871b2d506a64f893045513dcb149, type: 2}
   useDefaultStyleSheet: 1
   styleSheet: {fileID: 0}
-  databaseActions: {fileID: 11400000, guid: 59963a936d6fb4257a79cffca6bafcbb, type: 2}
+  databaseActions: {fileID: 11400000, guid: 3762b2c37cb6ed94f96cbd6b5337b344, type: 2}
   defaultAppearancesTags:
   - size
   defaultDisappearancesTags: []
@@ -512,8 +510,8 @@ MonoBehaviour:
   triggerEventsOnSkip: 0
   resetTypingSpeedAtStartup: 1
   disappearanceOrientation: 0
-  waitForFullAppearance: 0
-  waitForFullDisappearance: 0
+  triggerShowedAfterEffectsEnd: 0
+  triggerDisappearedAfterEffectsEnd: 0
   onTextShowed:
     m_PersistentCalls:
       m_Calls: []
