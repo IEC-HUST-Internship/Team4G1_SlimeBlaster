@@ -7,8 +7,9 @@ public class BossSpawner : MonoBehaviour
     public GameObject bossEnemy;        // The boss GameObject (hidden at start)
     public StoreCurrencyReference currencyReference;  // Currency pools reference
     
-    [Header("Target")]
-    public GameObject targetPosition;   // Where the boss moves to
+    [Header("Path Points")]
+    public Transform[] pointListA;      // List A of movement points
+    public Transform[] pointListB;      // List B of movement points
     
     [Header("Spawn Settings")]
     public float spawnTime = 30f;       // Time before boss spawns
@@ -29,6 +30,8 @@ public class BossSpawner : MonoBehaviour
     private Vector3 moveDirection;
     private float bossLifeTime = 180f;  // 3 minutes in seconds
     private float bossSpawnedTime = 0f;
+    private Vector3 bossTargetPos;
+    private bool isMovingFromAToB = true;
 
     private void OnEnable()
     {
@@ -89,40 +92,64 @@ public class BossSpawner : MonoBehaviour
 
     private void SpawnBoss()
     {
-        if (bossEnemy == null || targetPosition == null) return;
+        if (bossEnemy == null || pointListA == null || pointListB == null) return;
+        if (pointListA.Length == 0 || pointListB.Length == 0) return;
         
         // Show boss first
         bossEnemy.SetActive(true);
         
-        // Get random position outside camera
-        Vector2 spawnPos = GetRandomPositionOutsideCamera();
-        bossEnemy.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0f);
+        // Randomly choose to move A->B or B->A
+        isMovingFromAToB = Random.value > 0.5f;
         
-        // Assign currency reference and target to boss
+        Transform startPoint, endPoint;
+        
+        if (isMovingFromAToB)
+        {
+            // Pick random from list A as start, random from list B as end
+            startPoint = pointListA[Random.Range(0, pointListA.Length)];
+            endPoint = pointListB[Random.Range(0, pointListB.Length)];
+        }
+        else
+        {
+            // Pick random from list B as start, random from list A as end
+            startPoint = pointListB[Random.Range(0, pointListB.Length)];
+            endPoint = pointListA[Random.Range(0, pointListA.Length)];
+        }
+        
+        bossEnemy.transform.position = startPoint.position;
+        bossTargetPos = endPoint.position;
+        
+        // Calculate move direction
+        moveDirection = (bossTargetPos - bossEnemy.transform.position).normalized;
+        
+        // Assign currency reference to boss
         Boss bossScript = bossEnemy.GetComponent<Boss>();
         if (bossScript != null)
         {
             bossScript.currencyReference = currencyReference;
-            bossScript.SetTarget(targetPosition.transform.position);
+            bossScript.SetTarget(bossTargetPos);
         }
         
-        Debug.Log($"Boss spawned at {spawnPos}, moving toward {targetPosition.transform.position}");
+        Debug.Log($"Boss spawned at {startPoint.position}, moving toward {bossTargetPos}");
     }
 
     private void MoveBossToTarget()
     {
         if (bossEnemy == null || !bossEnemy.activeInHierarchy) return;
         
-        Vector3 oldPos = bossEnemy.transform.position;
-        
-        // Keep moving in straight line
+        // Move toward target
         bossEnemy.transform.position += moveDirection * moveSpeed * Time.deltaTime;
         
-        Vector3 newPos = bossEnemy.transform.position;
+        // Check if reached target
+        float distanceToTarget = Vector3.Distance(bossEnemy.transform.position, bossTargetPos);
+        if (distanceToTarget < 0.5f)
+        {
+            // Boss reached the target, disable it
+            DestroyBoss();
+        }
         
         // Debug to verify movement
         Debug.DrawRay(bossEnemy.transform.position, moveDirection * 2f, Color.red);
-        Debug.DrawLine(oldPos, newPos, Color.green);
     }
 
     private void DestroyBoss()

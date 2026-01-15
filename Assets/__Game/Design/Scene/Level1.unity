@@ -6565,8 +6565,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossEnemy: {fileID: 2042253924}
   currencyReference: {fileID: 991555930}
-  targetPosition: {fileID: 1073533150}
-  spawnTime: 2
+  pointListA: []
+  pointListB: []
+  spawnTime: 80
   moveSpeed: 8
   spawnOffsetX: 10
   spawnOffsetY: -8.77
@@ -8482,9 +8483,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 1227538552}
-  titleOvershootScale: 2.5
+  titleOvershootScale: 2.8
   titleScaleDuration: 0.9
-  delayAfterTitle: 0.2
+  delayAfterTitle: 0.65
   splash: {fileID: 1365131591}
   splashDuration: 0.9
   delayAfterSplash: 0.15

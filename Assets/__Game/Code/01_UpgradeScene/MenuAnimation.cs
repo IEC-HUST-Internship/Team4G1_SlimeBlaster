@@ -8,7 +8,7 @@ public class MenuAnimation : MonoBehaviour
     [SerializeField] private RectTransform title; // e.g., "SlimeBlaster" text
     [SerializeField] private float titleOvershootScale = 1.25f;
     [SerializeField] private float titleScaleDuration = 0.9f;
-    [SerializeField] private float delayAfterTitle = 0.2f;
+    [SerializeField] private float delayAfterTitle = 0.2f; // when splash+slimes begin relative to title start
 
     [Header("Splash")]
     [SerializeField] private RectTransform splash;
@@ -70,12 +70,11 @@ public class MenuAnimation : MonoBehaviour
         if (title != null)
         {
             sequence.Append(title.DOScale(titleStartScale, titleScaleDuration).SetEase(Ease.OutBack));
-            sequence.AppendInterval(delayAfterTitle);
         }
 
         if (splash != null)
         {
-            sequence.Append(splash.DOScale(splashStartScale, splashDuration).SetEase(Ease.OutElastic));
+            sequence.Insert(delayAfterTitle, splash.DOScale(splashStartScale, splashDuration).SetEase(Ease.OutElastic));
             foreach (var slime in slimes)
             {
                 if (slime == null || slime.slime == null)
@@ -86,9 +85,9 @@ public class MenuAnimation : MonoBehaviour
                 sequence.Join(slime.slime.DOAnchorPos(to, slimeMoveDuration).SetEase(Ease.OutBack));
                 sequence.Join(slime.slime.DOScale(slime.endScale, slimeMoveDuration * 0.9f).SetEase(Ease.OutElastic));
             }
-
-            sequence.AppendInterval(delayAfterSplash);
         }
+
+        sequence.AppendInterval(delayAfterSplash);
 
         sequence.OnComplete(StartIdleWobble);
     }
