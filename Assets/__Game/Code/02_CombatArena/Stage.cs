@@ -5,8 +5,8 @@ using TMPro;
 public class Stage : Singleton<Stage>
 {
     [Header("Stage Data")]
-    [SerializeField] private int stage = 1;
-    [SerializeField] private int unlockedStage = 1; // Maximum stage that can be accessed
+    [SerializeField] private int stage = 0;
+    [SerializeField] private int unlockedStage = 0; // Maximum stage that can be accessed
     [SerializeField] private int maxStage = 99; // 🏆 Absolute maximum stage limit
 
     [Header("UI References")]
@@ -66,7 +66,7 @@ public class Stage : Singleton<Stage>
 
     public void DecreaseStage()
     {
-        if (stage > 1)
+        if (stage > 0)
         {
             stage--;
             UpdateStageText();
@@ -85,7 +85,7 @@ public class Stage : Singleton<Stage>
         }
         else
         {
-            Debug.Log("Cannot decrease stage below 1");
+            Debug.Log("Cannot decrease stage below 0");
         }
     }
 
@@ -93,7 +93,7 @@ public class Stage : Singleton<Stage>
     {
         if (stageText != null)
         {
-            stageText.text = $"Stage: {stage}";
+            stageText.text = (stage == 0) ? "Stage Tuto" : $"Stage: {stage}";
         }
     }
 
@@ -108,7 +108,7 @@ public class Stage : Singleton<Stage>
         // Show decrease button only if stage can be decreased
         if (decreaseButton != null)
         {
-            decreaseButton.gameObject.SetActive(stage > 1);
+            decreaseButton.gameObject.SetActive(stage > 0);
         }
     }
 

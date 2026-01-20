@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 0
   perUpgradeValue: 12
   maxLevel: 8
-  costFormula: 6+3*(n-1)
+  costFormula: 35+3*(n-1)
   costUnit: 3
   unlockRequirementLevel: 5
   description1: Greatly expands maximum health

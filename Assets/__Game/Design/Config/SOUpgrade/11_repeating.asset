@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 25
   perUpgradeValue: 5
   maxLevel: 5
-  costFormula: 4+2*(n-1)
+  costFormula: 4+6*(n-1)
   costUnit: 0
   unlockRequirementLevel: 5
   description1: Increases attack speed

@@ -23,6 +23,9 @@ public class BreachTerminateManager : MonoBehaviour
 
     [Header("Audio")]
     public BackgroundMusic backgroundMusic;
+    
+    [Header("📚 Tutorial (Stage 0)")]
+    public List<GameObject> tutorialObjects = new List<GameObject>(); // List of tutorial objects to show (logic + UI)
 
     private void Awake()
     {
@@ -61,6 +64,13 @@ public class BreachTerminateManager : MonoBehaviour
 
         breachButton.gameObject.SetActive(false);
         terminateButton.gameObject.SetActive(false);
+        
+        // 📚 Hide tutorial objects at start
+        foreach (var tutorialObj in tutorialObjects)
+        {
+            if (tutorialObj != null)
+                tutorialObj.SetActive(false);
+        }
 
         // 🎵 Menu music
         if (backgroundMusic != null)
@@ -96,6 +106,7 @@ public class BreachTerminateManager : MonoBehaviour
         // 🔊 Play button click sound
         GlobalSoundManager.PlaySound(SoundType.buttonClick);
         
+        // Normal flow - go to combat with transition
         transition.PlayTransition(() =>
         {
             foreach (var scene in upgradeScenes)
@@ -106,6 +117,16 @@ public class BreachTerminateManager : MonoBehaviour
 
             breachButton.gameObject.SetActive(false);
             terminateButton.gameObject.SetActive(true);
+            
+            // 📚 If stage 0, show tutorial objects (they are in combat scene)
+            if (Stage.Instance != null && Stage.Instance.GetStage() == 0)
+            {
+                foreach (var tutorialObj in tutorialObjects)
+                {
+                    if (tutorialObj != null)
+                        tutorialObj.SetActive(true);
+                }
+            }
 
             // 🎵 Combat music
             if (backgroundMusic != null)

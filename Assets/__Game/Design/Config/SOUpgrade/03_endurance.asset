@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 0
   perUpgradeValue: 20
   maxLevel: 10
-  costFormula: 2+1*(n-1)
+  costFormula: 5+2*(n-1)
   costUnit: 0
   unlockRequirementLevel: 1
   description1: Increases maximum health capacity

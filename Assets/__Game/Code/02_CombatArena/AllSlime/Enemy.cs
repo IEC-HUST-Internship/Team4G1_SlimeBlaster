@@ -63,6 +63,15 @@ public class Enemy : MonoBehaviour
             currentHealth = maxHealth;
         }
     }
+    
+    /// <summary>
+    /// 📚 Set health manually (used for tutorial slime)
+    /// </summary>
+    public void SetHealth(int max, int current)
+    {
+        maxHealth = max;
+        currentHealth = current;
+    }
 
     private void MoveToTarget()
     {

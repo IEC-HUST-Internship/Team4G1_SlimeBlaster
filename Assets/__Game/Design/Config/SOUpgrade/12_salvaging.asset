@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 23
   perUpgradeValue: 5
   maxLevel: 5
-  costFormula: 8+2*(n-1)
+  costFormula: 8+9*(n-1)
   costUnit: 0
   unlockRequirementLevel: 10
   description1: Restores health upon killing an enemy

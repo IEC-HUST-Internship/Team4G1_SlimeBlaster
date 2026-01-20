@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 3
   perUpgradeValue: 1
   maxLevel: 8
-  costFormula: 10+1*(n-1)
+  costFormula: 10+5*(n-1)
   costUnit: 3
   unlockRequirementLevel: 1
   description1: Expands the area of effect for your attacks

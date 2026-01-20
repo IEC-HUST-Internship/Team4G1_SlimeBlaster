@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 22
   perUpgradeValue: 5
   maxLevel: 5
-  costFormula: 15+3*(n-1)
+  costFormula: 30+3*(n-1)
   costUnit: 0
   unlockRequirementLevel: 5
   description1: Restores health on every successful hit

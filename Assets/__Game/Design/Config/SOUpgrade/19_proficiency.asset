@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 2
   perUpgradeValue: 10
   maxLevel: 10
-  costFormula: 10+3*(n-1)
+  costFormula: 50+3*(n-1)
   costUnit: 0
   unlockRequirementLevel: 5
   description1: Deals bonus damage with every shot
