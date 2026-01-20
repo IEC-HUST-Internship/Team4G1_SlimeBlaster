@@ -25091,12 +25091,14 @@ MonoBehaviour:
   - {fileID: 979988663}
   - {fileID: 818689484}
   - {fileID: 1328732596}
+  tutorialForMoney: []
   tutorialSlime: {fileID: 2001782268}
   startPoint: {fileID: 1493617471}
   endPoint: {fileID: 2037727135}
   slimeMoveSpeed: 2
+  slimeMaxHp: 100
   currencyDropAmount: 10
-  currencyType: 2
+  currencyType: 0
   playerStats: {fileID: 1707519697}
   playerCombatUI: {fileID: 318531937}
 --- !u!1 &1500780674
