@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class Stage : Singleton<Stage>
 {
@@ -12,7 +13,7 @@ public class Stage : Singleton<Stage>
     [Header("UI References")]
     public Button increaseButton;
     public Button decreaseButton;
-    public TMP_Text stageText;
+    public List<TMP_Text> stageTexts = new List<TMP_Text>(); // All texts update together
 
     protected override void Awake()
     {
@@ -91,9 +92,12 @@ public class Stage : Singleton<Stage>
 
     private void UpdateStageText()
     {
-        if (stageText != null)
+        foreach (var txt in stageTexts)
         {
-            stageText.text = $"Stage: {stage}";
+            if (txt != null)
+            {
+                txt.text = $"Stage {stage}";
+            }
         }
     }
 

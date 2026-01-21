@@ -18,6 +18,8 @@ MonoBehaviour:
     - 109e9bdd0fcc649c5bc59085c35bdc83
     - fcd64cde8dd583b4b931665655a3dfa3
     - b4c84938aa962a941ac7cc894ec836fe
+    - f21c4ae914f6e094cb50fb8f8a862c62
+    - 0e55739de31214d44baef268841b78b0
     values:
     - colorIndex: 7
       iconNameOrGuid: cs Script Icon
@@ -27,3 +29,7 @@ MonoBehaviour:
       iconNameOrGuid: AudioClip Icon
     - colorIndex: 1
       iconNameOrGuid: AnimationClip Icon
+    - colorIndex: 6
+      iconNameOrGuid: SceneAsset Icon
+    - colorIndex: 10
+      iconNameOrGuid: Settings Icon
