@@ -271,6 +271,38 @@ public class SaveSystem : Singleton<SaveSystem>
             currentSaveData = null;
             Debug.Log("🗑️ Save file deleted!");
         }
+    }    
+    /// <summary>
+    /// 📚 Save tutorial shown state by key
+    /// </summary>
+    public void SaveTutorialShown(string key, bool shown)
+    {
+        if (currentSaveData == null)
+            currentSaveData = LoadGame();
+        
+        if (key == "tutorialCombatShown")
+            currentSaveData.tutorialCombatShown = shown;
+        else if (key == "tutorialUpgradeShown")
+            currentSaveData.tutorialUpgradeShown = shown;
+        
+        SaveGame(currentSaveData);
+        Debug.Log($"📚 Tutorial [{key}] saved: {shown}");
+    }
+    
+    /// <summary>
+    /// 📚 Get tutorial shown state by key
+    /// </summary>
+    public bool GetTutorialShown(string key)
+    {
+        if (currentSaveData == null)
+            currentSaveData = LoadGame();
+        
+        if (key == "tutorialCombatShown")
+            return currentSaveData.tutorialCombatShown;
+        else if (key == "tutorialUpgradeShown")
+            return currentSaveData.tutorialUpgradeShown;
+        
+        return false;
     }
 }
 
@@ -294,6 +326,10 @@ public class SaveData
     public int blueBits = 0;
     public int pinkBits = 0;
     public int greenBits = 0;
+    
+    // 📚 Tutorials
+    public bool tutorialCombatShown = false;
+    public bool tutorialUpgradeShown = false;
 }
 
 /// <summary>

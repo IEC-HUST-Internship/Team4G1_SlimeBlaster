@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
 
     [Header("⚙️ Settings Panel")]
     public GameObject settingPanel;
+    public GameObject settingBlocker; // Full screen blocker to prevent clicks outside settings
     public Button settingButton;
     public Button resumeButton;
     public Button terminateButton;
@@ -80,6 +81,10 @@ public class UIController : MonoBehaviour
     public float breachJumpDuration = 0.15f;
     public int breachJumpCount = 3;
     public Ease breachJumpEase = Ease.OutQuad;
+
+    [Header("🔗 Other Controllers")]
+    public AdsUIController adsUIController;
+    public ControlUpgradeButton controlUpgradeButton;
 
     private bool isPanelOpen = false;
     private Dictionary<Button, bool> breachButtonAnimating = new Dictionary<Button, bool>();
@@ -468,6 +473,10 @@ public class UIController : MonoBehaviour
             // 🔊 Play button click sound
             GlobalSoundManager.PlaySound(SoundType.buttonClick);
             
+            // 🚫 Enable blocker and disable outside buttons
+            if (settingBlocker != null) settingBlocker.SetActive(true);
+            SetOutsideButtonsInteractable(false);
+            
             settingPanel.SetActive(true);
             settingPanel.transform.localScale = Vector3.zero;
             settingPanel.transform.DOScale(settingPanelOriginalScale, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
@@ -491,9 +500,60 @@ public class UIController : MonoBehaviour
             {
                 settingPanel.SetActive(false);
                 Time.timeScale = 1f;
+                
+                // ✅ Disable blocker and enable outside buttons
+                if (settingBlocker != null) settingBlocker.SetActive(false);
+                SetOutsideButtonsInteractable(true);
             });
             isSettingPanelOpen = false;
         }
+    }
+    
+    // 🚫 Enable/disable buttons outside settings panel
+    private void SetOutsideButtonsInteractable(bool interactable)
+    {
+        if (resourceButton != null) resourceButton.interactable = interactable;
+        if (settingButton != null) settingButton.interactable = interactable;
+        if (confirmUpgradeButton != null) confirmUpgradeButton.interactable = interactable;
+        
+        if (breachButtons != null)
+        {
+            foreach (var btn in breachButtons)
+            {
+                if (btn != null) btn.interactable = interactable;
+            }
+        }
+        
+        // 🎬 Disable ads buttons
+        if (adsUIController != null)
+        {
+            if (adsUIController.dailyRewardButton != null)
+            {
+                adsUIController.dailyRewardButton.interactable = interactable;
+                Debug.Log($"Daily Reward Button interactable = {interactable}");
+            }
+            if (adsUIController.noAdsButton != null)
+            {
+                adsUIController.noAdsButton.interactable = interactable;
+                Debug.Log($"No Ads Button interactable = {interactable}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("adsUIController is NOT assigned in UIController!");
+        }
+        
+        // 🔒 Lock upgrade movement
+        if (controlUpgradeButton != null)
+        {
+            controlUpgradeButton.enabled = interactable;
+        }
+    }
+    
+    // 📊 Check if settings panel is open
+    public bool IsSettingPanelOpen()
+    {
+        return isSettingPanelOpen;
     }
 
     // 🍿 Breach button popcorn animation
