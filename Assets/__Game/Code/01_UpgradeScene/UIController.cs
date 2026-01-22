@@ -592,6 +592,75 @@ public class UIController : MonoBehaviour
         });
     }
 
+    private void OnDisable()
+    {
+        ResetAllPanelsToHiddenState();
+    }
+
+    /// <summary>
+    /// Resets all UI panels to their hidden state. Call this when leaving the upgrade scene.
+    /// </summary>
+    public void ResetAllPanelsToHiddenState()
+    {
+        // Kill all DOTween animations
+        if (resourcePanel != null) resourcePanel.transform.DOKill();
+        if (popupContentPanel != null) popupContentPanel.transform.DOKill();
+        if (settingPanel != null) settingPanel.transform.DOKill();
+        if (moneyText != null)
+        {
+            moneyText.DOKill();
+            moneyText.transform.DOKill();
+        }
+        if (confirmUpgradeButton != null) confirmUpgradeButton.transform.DOKill();
+        if (currentUpgradeButton != null) currentUpgradeButton.transform.DOKill();
+
+        // Reset resourcePanel to hidden state (off to the right)
+        if (resourcePanel != null)
+        {
+            resourcePanel.transform.localPosition = new Vector3(originalPosition.x + resourcePanelMoveAmount, originalPosition.y, originalPosition.z);
+        }
+        isPanelOpen = false;
+
+        // Reset popupContentPanel to hidden state (up/off-screen)
+        if (popupContentPanel != null)
+        {
+            popupContentPanel.transform.localPosition = new Vector3(popupOriginalPosition.x, popupOriginalPosition.y + popupMoveAmount, popupOriginalPosition.z);
+        }
+
+        // Reset settingPanel to hidden state (scale zero)
+        if (settingPanel != null)
+        {
+            settingPanel.transform.localScale = Vector3.zero;
+            settingPanel.SetActive(false);
+        }
+        isSettingPanelOpen = false;
+
+        // Reset blocker
+        if (settingBlocker != null) settingBlocker.SetActive(false);
+
+        // Reset money text
+        if (moneyText != null)
+        {
+            moneyText.color = originalMoneyTextColor;
+            moneyText.transform.localPosition = originalMoneyTextPosition;
+        }
+
+        // Reset current button scale
+        if (currentUpgradeButton != null)
+        {
+            currentUpgradeButton.transform.localScale = Vector3.one;
+            currentUpgradeButton.transform.rotation = Quaternion.identity;
+        }
+        currentUpgradeButton = null;
+        currentNodeInstance = null;
+
+        // Ensure time scale is normal
+        Time.timeScale = 1f;
+
+        // Re-enable outside buttons
+        SetOutsideButtonsInteractable(true);
+    }
+
     private void OnDestroy()
     {
         if (resourceButton != null)

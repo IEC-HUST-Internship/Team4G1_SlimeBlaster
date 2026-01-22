@@ -24,6 +24,9 @@ public class BreachTerminateManager : MonoBehaviour
     [Header("Audio")]
     public BackgroundMusic backgroundMusic;
 
+    [Header("UI")]
+    public UIController uiController;
+
     private void Awake()
     {
         transition = GetComponent<Transition>();
@@ -95,6 +98,10 @@ public class BreachTerminateManager : MonoBehaviour
     {
         // 🔊 Play button click sound
         GlobalSoundManager.PlaySound(SoundType.buttonClick);
+
+        // 🎯 Reset UI panels to hidden state before leaving upgrade scene
+        if (uiController != null)
+            uiController.ResetAllPanelsToHiddenState();
         
         transition.PlayTransition(() =>
         {

@@ -15,11 +15,15 @@ public class AdsUIController : MonoBehaviour
     public GameObject noAdsPanel;
     public Button noAdsCloseButton;
     public Button noAdsPurchaseButton;
+    public GameObject noAdsBackground;
 
     [Header("🎬 Animation Settings")]
     public float panelAnimationDuration = 0.3f;
     public Ease panelOpenEase = Ease.OutBack;
     public Ease panelCloseEase = Ease.InBack;
+    public float fadeAnimationDuration = 0.3f;
+    public Ease fadeInEase = Ease.OutQuad;
+    public Ease fadeOutEase = Ease.InQuad;
 
     [Header("🔗 Other Controllers to Disable")]
     public UIController uiController;
@@ -75,6 +79,12 @@ public class AdsUIController : MonoBehaviour
         if (noAdsPurchaseButton != null)
         {
             noAdsPurchaseButton.onClick.AddListener(OnNoAdsPurchase);
+        }
+
+        // Setup No Ads Background
+        if (noAdsBackground != null)
+        {
+            noAdsBackground.SetActive(false);
         }
     }
 
@@ -145,6 +155,10 @@ public class AdsUIController : MonoBehaviour
             // 🔒 Disable outside buttons
             SetOutsideButtonsInteractable(false);
 
+            // Show background
+            if (noAdsBackground != null)
+                noAdsBackground.SetActive(true);
+
             noAdsPanel.SetActive(true);
             noAdsPanel.transform.localScale = Vector3.zero;
             noAdsPanel.transform.DOScale(noAdsPanelOriginalScale, panelAnimationDuration)
@@ -169,6 +183,10 @@ public class AdsUIController : MonoBehaviour
                 .OnComplete(() =>
                 {
                     noAdsPanel.SetActive(false);
+
+                    // Hide background
+                    if (noAdsBackground != null)
+                        noAdsBackground.SetActive(false);
 
                     // ✅ Enable outside buttons
                     SetOutsideButtonsInteractable(true);
