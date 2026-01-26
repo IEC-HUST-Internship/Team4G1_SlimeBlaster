@@ -63,11 +63,29 @@ public class PlayerCombatUI : MonoBehaviour
         if (collectionText != null)
             collectionText.SetActive(false);
         
-        // Hide all currency displays
+        // Hide all currency displays (both parent and icon)
+        HideAllCurrencyDisplays();
+    }
+    
+    private void OnDisable()
+    {
+        // Hide all currency displays when disabled
+        HideAllCurrencyDisplays();
+    }
+    
+    /// <summary>
+    /// 🔒 Hide all currency icons and parents
+    /// </summary>
+    private void HideAllCurrencyDisplays()
+    {
         foreach (var display in currencyDisplays)
         {
+            if (display.currencyParent != null)
+                display.currencyParent.SetActive(false);
             if (display.iconObject != null)
                 display.iconObject.SetActive(false);
+            if (display.amountText != null)
+                display.amountText.text = "";
         }
     }
 

@@ -94,6 +94,12 @@ public class PlayerCombatArena : MonoBehaviour
         // 💸 Reset collected currency
         collectedCurrency.Clear();
         
+        // ⏱️ Reset HP loss to default (1 HP/sec)
+        if (playerStats != null)
+        {
+            playerStats.SetStatValue(EnumStat.hpLossPerSecond, 1);
+        }
+        
         // 📋 Initialize current stats from PlayerStats
         if (playerStats != null)
         {
@@ -123,6 +129,14 @@ public class PlayerCombatArena : MonoBehaviour
     {
         // 🚫 Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
+        
+        // 💾 Save player level and exp
+        if (SaveSystem.Instance != null && playerStats != null)
+        {
+            int level = playerStats.GetStatValue(EnumStat.level);
+            int exp = playerStats.GetStatValue(EnumStat.exp);
+            SaveSystem.Instance.SavePlayerLevelAndExp(level, exp);
+        }
         
         // ⏹️ Stop all coroutines
         StopAllCoroutines();

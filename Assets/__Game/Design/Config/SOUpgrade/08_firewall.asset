@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 8
   perUpgradeValue: 1
   maxLevel: 10
-  costFormula: 8+1*(n-1)
+  costFormula: 10+1*(n-1)
   costUnit: 0
   unlockRequirementLevel: 10
   description1: Increases armor to reduce damage taken

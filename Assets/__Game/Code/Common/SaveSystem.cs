@@ -190,6 +190,37 @@ public class SaveSystem : Singleton<SaveSystem>
         SaveGame(currentSaveData);
         Debug.Log($"💾 Player level saved: {level}");
     }
+    
+    /// <summary>
+    /// 🌟 Save player exp
+    /// </summary>
+    public void SavePlayerExp(int exp)
+    {
+        if (currentSaveData == null)
+        {
+            currentSaveData = LoadGame();
+        }
+
+        currentSaveData.playerExp = exp;
+        SaveGame(currentSaveData);
+        Debug.Log($"💾 Player exp saved: {exp}");
+    }
+    
+    /// <summary>
+    /// 🌟 Save player level and exp together
+    /// </summary>
+    public void SavePlayerLevelAndExp(int level, int exp)
+    {
+        if (currentSaveData == null)
+        {
+            currentSaveData = LoadGame();
+        }
+
+        currentSaveData.playerLevel = level;
+        currentSaveData.playerExp = exp;
+        SaveGame(currentSaveData);
+        Debug.Log($"💾 Player level & exp saved: Lv{level}, Exp{exp}");
+    }
 
     /// <summary>
     /// 📥 Get player level
@@ -202,6 +233,19 @@ public class SaveSystem : Singleton<SaveSystem>
         }
 
         return currentSaveData.playerLevel;
+    }
+    
+    /// <summary>
+    /// 🌟 Get player exp
+    /// </summary>
+    public int GetPlayerExp()
+    {
+        if (currentSaveData == null)
+        {
+            currentSaveData = LoadGame();
+        }
+
+        return currentSaveData.playerExp;
     }
 
     /// <summary>
@@ -218,6 +262,7 @@ public class SaveSystem : Singleton<SaveSystem>
             case EnumCurrency.blueBits: currentSaveData.blueBits = amount; break;
             case EnumCurrency.pinkBits: currentSaveData.pinkBits = amount; break;
             case EnumCurrency.greenBits: currentSaveData.greenBits = amount; break;
+            case EnumCurrency.xpBits: currentSaveData.xpBits = amount; break;
         }
         
         SaveGame(currentSaveData);
@@ -237,9 +282,10 @@ public class SaveSystem : Singleton<SaveSystem>
         currentSaveData.blueBits = playerStats.GetCurrency(EnumCurrency.blueBits);
         currentSaveData.pinkBits = playerStats.GetCurrency(EnumCurrency.pinkBits);
         currentSaveData.greenBits = playerStats.GetCurrency(EnumCurrency.greenBits);
+        currentSaveData.xpBits = playerStats.GetCurrency(EnumCurrency.xpBits);
         
         SaveGame(currentSaveData);
-        Debug.Log($"💰 All currencies saved: Y={currentSaveData.yellowBits}, B={currentSaveData.blueBits}, P={currentSaveData.pinkBits}, G={currentSaveData.greenBits}");
+        Debug.Log($"💰 All currencies saved: Y={currentSaveData.yellowBits}, B={currentSaveData.blueBits}, P={currentSaveData.pinkBits}, G={currentSaveData.greenBits}, XP={currentSaveData.xpBits}");
     }
 
     /// <summary>
@@ -256,6 +302,7 @@ public class SaveSystem : Singleton<SaveSystem>
             case EnumCurrency.blueBits: return currentSaveData.blueBits;
             case EnumCurrency.pinkBits: return currentSaveData.pinkBits;
             case EnumCurrency.greenBits: return currentSaveData.greenBits;
+            case EnumCurrency.xpBits: return currentSaveData.xpBits;
             default: return 0;
         }
     }
@@ -318,14 +365,16 @@ public class SaveData
     public int currentStageSelected = 1;
     public int maxUnlockedStage = 1;
     
-    // 👤 Player level
+    // 👤 Player level and exp
     public int playerLevel = 1;
+    public int playerExp = 0;
     
     // 💰 Currencies
     public int yellowBits = 0;
     public int blueBits = 0;
     public int pinkBits = 0;
     public int greenBits = 0;
+    public int xpBits = 0;
     
     // 📚 Tutorials
     public bool tutorialCombatShown = false;

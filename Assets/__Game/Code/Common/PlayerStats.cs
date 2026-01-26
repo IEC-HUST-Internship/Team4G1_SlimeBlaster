@@ -62,7 +62,13 @@ public class PlayerStats : MonoBehaviour
             currencyDict[EnumCurrency.pinkBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.pinkBits);
             currencyDict[EnumCurrency.greenBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.greenBits);
             currencyDict[EnumCurrency.xpBits] = SaveSystem.Instance.GetCurrency(EnumCurrency.xpBits);
+            
+            // 🌟 Load player level and exp
+            statsDict[EnumStat.level] = SaveSystem.Instance.GetPlayerLevel();
+            statsDict[EnumStat.exp] = SaveSystem.Instance.GetPlayerExp();
+            
             Debug.Log($"📥 Currencies loaded: Y={currencyDict[EnumCurrency.yellowBits]}, B={currencyDict[EnumCurrency.blueBits]}, P={currencyDict[EnumCurrency.pinkBits]}, G={currencyDict[EnumCurrency.greenBits]}, XP={currencyDict[EnumCurrency.xpBits]}");
+            Debug.Log($"🌟 Player loaded: Lv{statsDict[EnumStat.level]}, Exp{statsDict[EnumStat.exp]}");
         }
     }
     
