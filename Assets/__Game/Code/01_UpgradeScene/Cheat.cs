@@ -14,6 +14,9 @@ public class Cheat : MonoBehaviour
     [Header("Level Cheat Buttons")]
     public Button stagePlusButton;
     public Button stageMinusButton;
+    
+    [Header("Save Cheat Buttons")]
+    public Button removeSaveButton;
 
     [Header("Settings")]
     public int currencyAmount = 100;
@@ -32,6 +35,9 @@ public class Cheat : MonoBehaviour
 
         if (stageMinusButton != null)
             stageMinusButton.onClick.AddListener(LockStage);
+        
+        if (removeSaveButton != null)
+            removeSaveButton.onClick.AddListener(RemoveSave);
     }
 
     // ========== CURRENCY CHEATS ==========
@@ -89,5 +95,18 @@ public class Cheat : MonoBehaviour
         currentStage = Mathf.Min(currentStage, maxUnlocked);
         SaveSystem.Instance.SaveStageData(currentStage, maxUnlocked);
         Debug.Log($"[Cheat] Locked stage! Max unlocked stage: {maxUnlocked}");
+    }
+    
+    // ========== SAVE CHEATS ==========
+    public void RemoveSave()
+    {
+        if (SaveSystem.Instance == null)
+        {
+            Debug.LogError("[Cheat] SaveSystem.Instance is NULL!");
+            return;
+        }
+        
+        SaveSystem.Instance.DeleteSave();
+        Debug.Log("[Cheat] 🗑️ Save file deleted! Restart the game to see default values.");
     }
 }

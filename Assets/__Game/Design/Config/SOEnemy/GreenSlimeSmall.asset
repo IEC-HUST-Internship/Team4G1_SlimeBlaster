@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: GreenSlimeSmall
   m_EditorClassIdentifier: 
   hp: 50
-  baseReflectionMultiplier: 1
+  baseReflectionMultiplier: 0.5
   exp: 10
   currencyType: 3
   baseCurrencyAmount: 1
   spawnAmount: 1
-  spawnInterval: 2
+  spawnInterval: 15
   maxCapacity: 10
   startTime: 0

@@ -55,15 +55,25 @@ public class GameConfig : ScriptableObject
     [Tooltip("EXP needed = level × this value (100 = level 1 needs 100, level 2 needs 200...)")]
     public int expPerLevelMultiplier = 100;
 
-    [Header("👾 Enemy Scaling (Per Level)")]
-    [Tooltip("Multiply enemy HP by this for each level (index 0 = level 1, index 1 = level 2, etc.)")]
+    [Header("👾 Enemy Scaling (Per Stage)")]
+    [Tooltip("Multiply enemy HP by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
     public float[] enemyHealthMultipliers = new float[] { 1f, 1f, 1f, 1f, 1f };
     
-    [Tooltip("Multiply enemy reflection by this for each level (index 0 = level 1, index 1 = level 2, etc.)")]
+    [Tooltip("Multiply enemy reflection by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
     public float[] enemyReflectionMultipliers = new float[] { 1f, 1f, 1f, 1f, 1f };
     
-    [Tooltip("Multiply currency drop by this for each level (index 0 = level 1, index 1 = level 2, etc.)")]
+    [Tooltip("Multiply currency drop by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
     public float[] enemyCurrencyMultipliers = new float[] { 1f, 1f, 1f, 1f, 1f };
+    
+    [Header("👑 Boss Scaling (Per Stage)")]
+    [Tooltip("Multiply boss HP by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
+    public float[] bossHealthMultipliers = new float[] { 1f, 1.5f, 2f, 2.5f, 3f };
+    
+    [Tooltip("Multiply boss reflection by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
+    public float[] bossReflectionMultipliers = new float[] { 1f, 1.2f, 1.5f, 1.8f, 2f };
+    
+    [Tooltip("Multiply boss currency drop by this for each stage (index 0 = stage 1, index 1 = stage 2, etc.)")]
+    public float[] bossCurrencyMultipliers = new float[] { 1f, 1.5f, 2f, 2.5f, 3f };
     
     /// <summary>
     /// 🎯 Get enemy health multiplier for the given level (1-based)
@@ -88,14 +98,47 @@ public class GameConfig : ScriptableObject
     }
     
     /// <summary>
-    /// 🎯 Get enemy currency multiplier for the given level (1-based)
-    /// Falls back to last value if level exceeds array length
+    /// 🎯 Get enemy currency multiplier for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
     /// </summary>
-    public float GetEnemyCurrencyMultiplier(int level)
+    public float GetEnemyCurrencyMultiplier(int stage)
     {
         if (enemyCurrencyMultipliers == null || enemyCurrencyMultipliers.Length == 0) return 1f;
-        int index = Mathf.Clamp(level - 1, 0, enemyCurrencyMultipliers.Length - 1);
+        int index = Mathf.Clamp(stage - 1, 0, enemyCurrencyMultipliers.Length - 1);
         return enemyCurrencyMultipliers[index];
+    }
+    
+    /// <summary>
+    /// 👑 Get boss health multiplier for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
+    /// </summary>
+    public float GetBossHealthMultiplier(int stage)
+    {
+        if (bossHealthMultipliers == null || bossHealthMultipliers.Length == 0) return 1f;
+        int index = Mathf.Clamp(stage - 1, 0, bossHealthMultipliers.Length - 1);
+        return bossHealthMultipliers[index];
+    }
+    
+    /// <summary>
+    /// 👑 Get boss reflection multiplier for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
+    /// </summary>
+    public float GetBossReflectionMultiplier(int stage)
+    {
+        if (bossReflectionMultipliers == null || bossReflectionMultipliers.Length == 0) return 1f;
+        int index = Mathf.Clamp(stage - 1, 0, bossReflectionMultipliers.Length - 1);
+        return bossReflectionMultipliers[index];
+    }
+    
+    /// <summary>
+    /// 👑 Get boss currency multiplier for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
+    /// </summary>
+    public float GetBossCurrencyMultiplier(int stage)
+    {
+        if (bossCurrencyMultipliers == null || bossCurrencyMultipliers.Length == 0) return 1f;
+        int index = Mathf.Clamp(stage - 1, 0, bossCurrencyMultipliers.Length - 1);
+        return bossCurrencyMultipliers[index];
     }
 
     [Header("⚔️ Combat")]

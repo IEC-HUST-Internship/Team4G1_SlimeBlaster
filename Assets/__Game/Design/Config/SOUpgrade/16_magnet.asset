@@ -16,10 +16,10 @@ MonoBehaviour:
   description: +[int]% collect area radius
   icon: {fileID: 21300000, guid: 3b5862bacb7103746869bdc1e74ea0b1, type: 3}
   stat: 24
-  perUpgradeValue: 50
+  perUpgradeValue: 25
   maxLevel: 5
   costFormula: 30+6*(n-1)
-  costUnit: 0
+  costUnit: 3
   unlockRequirementLevel: 1
   description1: Increases the collection range for items and bits
   description2: 

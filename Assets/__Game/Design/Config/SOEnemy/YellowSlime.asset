@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3cea06f9bca6014aa2e909bf67b17e5, type: 3}
   m_Name: YellowSlime
   m_EditorClassIdentifier: 
-  hp: 50
-  baseReflectionMultiplier: 1
+  hp: 120
+  baseReflectionMultiplier: 1.25
   exp: 10
   currencyType: 2
   baseCurrencyAmount: 1

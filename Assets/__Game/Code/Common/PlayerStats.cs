@@ -22,7 +22,7 @@ public class PlayerStats : MonoBehaviour
     public int armor = 0; //ok
     public int bossArmor = 0;//ok
     public int bossDamage = 0; //ok
-    public int critRatePercent = 5;
+    public int critRatePercent = 0;
     public int critDamagePercent = 150;
     public int additionalDamagePerEnemyInAreaPercent = 0;
     public int additionalBlueBitsDropPerEnemy = 0;  //ok
@@ -95,7 +95,7 @@ public class PlayerStats : MonoBehaviour
         statsDict[EnumStat.armor] = 0;
         statsDict[EnumStat.bossArmor] = 0;
         statsDict[EnumStat.bossDamage] = 0;
-        statsDict[EnumStat.critRatePercent] = 5;
+        statsDict[EnumStat.critRatePercent] = 0;
         statsDict[EnumStat.critDamagePercent] = 150;
         statsDict[EnumStat.additionalDamagePerEnemyInAreaPercent] = 0;
         statsDict[EnumStat.additionalBlueBitsDropPerEnemy] = 0;

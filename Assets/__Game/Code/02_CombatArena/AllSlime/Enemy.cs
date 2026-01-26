@@ -16,8 +16,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public PlayerStats playerStats;
     [HideInInspector] public Vector2 targetPosition;
 
-    public int maxHealth { get; private set; }
-    public int currentHealth { get; private set; }
+    public int maxHealth { get; protected set; }
+    public int currentHealth { get; protected set; }
     protected SlimeAnimation slimeAnim;
     
     private Camera mainCamera;
@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
         CheckOffscreen();
     }
 
-    protected void InitializeEnemy()
+    protected virtual void InitializeEnemy()
     {
         if (enemyData != null)
         {
@@ -164,7 +164,7 @@ public class Enemy : MonoBehaviour
         Debug.Log($"Player gained {expReward} exp from enemy");
     }
 
-    protected void SpawnCurrency()
+    protected virtual void SpawnCurrency()
     {
         if (enemyData == null || currencyReference == null) return;
 

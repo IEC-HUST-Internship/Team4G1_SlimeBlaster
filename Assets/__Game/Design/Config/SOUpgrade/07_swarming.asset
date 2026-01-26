@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 18
   perUpgradeValue: 50
   maxLevel: 2
-  costFormula: 100+(n*10)
+  costFormula: 200+(n*100)
   costUnit: 2
   unlockRequirementLevel: 1
   description1: Drastically increases the enemy spawn rate

@@ -18,8 +18,8 @@ MonoBehaviour:
   stat: 14
   perUpgradeValue: 1
   maxLevel: 1
-  costFormula: 1
-  costUnit: 1
+  costFormula: 150
+  costUnit: 0
   unlockRequirementLevel: 1
   description1: Red enemies drop more bits when destroyed
   description2: 

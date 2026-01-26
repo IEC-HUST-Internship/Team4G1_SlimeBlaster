@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 12
   perUpgradeValue: 40
   maxLevel: 5
-  costFormula: 50+10*(n-1)
+  costFormula: 15+5*(n-1)
   costUnit: 3
   unlockRequirementLevel: 1
   description1: Increases the damage of critical strikes

@@ -18,8 +18,8 @@ MonoBehaviour:
   stat: 10
   perUpgradeValue: 40
   maxLevel: 5
-  costFormula: 15+6*(n-1)
-  costUnit: 3
+  costFormula: 1
+  costUnit: 1
   unlockRequirementLevel: 5
   description1: Deals extra damage to Bosses
   description2: 
