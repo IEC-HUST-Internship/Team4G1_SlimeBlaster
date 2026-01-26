@@ -16,9 +16,9 @@ MonoBehaviour:
   description: 
   icon: {fileID: 21300000, guid: 19f1045598d48154283846f9a9ba8909, type: 3}
   stat: 8
-  perUpgradeValue: 1
+  perUpgradeValue: 2
   maxLevel: 10
-  costFormula: 10+1*(n-1)
+  costFormula: 10+10*(n-1)
   costUnit: 0
   unlockRequirementLevel: 10
   description1: Increases armor to reduce damage taken

@@ -22,12 +22,34 @@ public class GameConfig : ScriptableObject
         }
     }
 
-    [Header("⏱️ HP Loss Scaling")]
-    [Tooltip("Seconds between each HP loss increase (e.g., 30 = every 30 sec, add more HP loss)")]
-    public float hpLossIncreaseInterval = 30f;
+    [Header("⏱️ HP Loss Scaling (Per Stage)")]
+    [Tooltip("Seconds between each HP loss increase per stage (index 0 = stage 1, etc.)")]
+    public float[] hpLossIncreaseIntervals = new float[] { 30f, 25f, 20f, 15f, 10f };
     
-    [Tooltip("How much HP loss increases each interval (e.g., 1 = +1 HP/sec every interval)")]
-    public int hpLossIncreaseAmount = 1;
+    [Tooltip("How much HP loss increases each interval per stage (index 0 = stage 1, etc.)")]
+    public int[] hpLossIncreaseAmounts = new int[] { 1, 1, 2, 2, 3 };
+    
+    /// <summary>
+    /// ⏱️ Get HP loss increase interval for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
+    /// </summary>
+    public float GetHpLossIncreaseInterval(int stage)
+    {
+        if (hpLossIncreaseIntervals == null || hpLossIncreaseIntervals.Length == 0) return 30f;
+        int index = Mathf.Clamp(stage - 1, 0, hpLossIncreaseIntervals.Length - 1);
+        return hpLossIncreaseIntervals[index];
+    }
+    
+    /// <summary>
+    /// ⏱️ Get HP loss increase amount for the given stage (1-based)
+    /// Falls back to last value if stage exceeds array length
+    /// </summary>
+    public int GetHpLossIncreaseAmount(int stage)
+    {
+        if (hpLossIncreaseAmounts == null || hpLossIncreaseAmounts.Length == 0) return 1;
+        int index = Mathf.Clamp(stage - 1, 0, hpLossIncreaseAmounts.Length - 1);
+        return hpLossIncreaseAmounts[index];
+    }
 
     [Header("📐 EXP Formula")]
     [Tooltip("EXP needed = level × this value (100 = level 1 needs 100, level 2 needs 200...)")]

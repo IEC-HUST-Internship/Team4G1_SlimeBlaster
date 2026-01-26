@@ -290,7 +290,8 @@ public class PlayerCombatArena : MonoBehaviour
     private IEnumerator HpLossRoutine()
     {
         float gameTimeElapsed = 0f;
-        float nextIncreaseTime = GameConfig.Instance != null ? GameConfig.Instance.hpLossIncreaseInterval : 30f;
+        int currentStage = Stage.Instance != null ? Stage.Instance.GetStage() : 1;
+        float nextIncreaseTime = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage) : 30f;
         
         while (true)
         {
@@ -304,15 +305,15 @@ public class PlayerCombatArena : MonoBehaviour
                     float tickInterval = 1f / hpLoss;
                     TakeDamage(1);
                     
-                    // ⏱️ Track time and increase HP loss over time
+                    // ⏱️ Track time and increase HP loss over time (per stage)
                     gameTimeElapsed += tickInterval;
                     if (gameTimeElapsed >= nextIncreaseTime)
                     {
-                        int increaseAmount = GameConfig.Instance != null ? GameConfig.Instance.hpLossIncreaseAmount : 1;
+                        int increaseAmount = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseAmount(currentStage) : 1;
                         playerStats.AddStat(EnumStat.hpLossPerSecond, increaseAmount);
-                        float interval = GameConfig.Instance != null ? GameConfig.Instance.hpLossIncreaseInterval : 30f;
+                        float interval = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage) : 30f;
                         nextIncreaseTime += interval;
-                        Debug.Log($"⏱️ HP Loss increased! Now: {playerStats.GetStatValue(EnumStat.hpLossPerSecond)} HP/sec");
+                        Debug.Log($"⏱️ HP Loss increased! Now: {playerStats.GetStatValue(EnumStat.hpLossPerSecond)} HP/sec (Stage {currentStage})");
                     }
                     
                     yield return new WaitForSeconds(tickInterval);
