@@ -16,9 +16,9 @@ MonoBehaviour:
   description: +[int]% crit damage
   icon: {fileID: 21300000, guid: 33c9039134df0244a9f10f19c5b6aefd, type: 3}
   stat: 11
-  perUpgradeValue: 10
+  perUpgradeValue: 8
   maxLevel: 5
-  costFormula: 15+5*(n-1)
+  costFormula: 15+10*(n-1)
   costUnit: 3
   unlockRequirementLevel: 1
   description1: Increases the chance to deal a critical strike

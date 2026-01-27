@@ -120,6 +120,13 @@ public class Enemy : MonoBehaviour
         float reflectMult = GameConfig.Instance != null ? GameConfig.Instance.GetEnemyReflectionMultiplier(stage) : 1f;
         float baseMultiplier = enemyData.baseReflectionMultiplier * reflectMult;
         
+        // ⏱️ Add flat bonus after 3 minutes (180 seconds)
+        float gameTime = PlayerCombatArena.GameTimeElapsed;
+        if (gameTime > 180f && GameConfig.Instance != null)
+        {
+            baseMultiplier += GameConfig.Instance.enemyReflectionBonusAfter3Min;
+        }
+        
         // 😠 Check for angry multiplier (Boss with PinkSlimeAnimation)
         PinkSlimeAnimation pinkAnim = slimeAnim as PinkSlimeAnimation;
         if (pinkAnim != null && pinkAnim.IsAngry())

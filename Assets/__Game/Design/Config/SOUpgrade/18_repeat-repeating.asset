@@ -16,10 +16,10 @@ MonoBehaviour:
   description: +[int]% attack speed
   icon: {fileID: 21300000, guid: edff149ff2f7b734da4a4eeeac167907, type: 3}
   stat: 25
-  perUpgradeValue: 30
-  maxLevel: 1
-  costFormula: 1
-  costUnit: 1
+  perUpgradeValue: 6
+  maxLevel: 5
+  costFormula: 15+5*(n-1)
+  costUnit: 3
   unlockRequirementLevel: 5
   description1: Significantly boosts attack speed
   description2: 

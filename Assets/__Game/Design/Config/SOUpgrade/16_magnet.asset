@@ -18,7 +18,7 @@ MonoBehaviour:
   stat: 24
   perUpgradeValue: 25
   maxLevel: 5
-  costFormula: 30+6*(n-1)
+  costFormula: 15+6*(n-1)
   costUnit: 3
   unlockRequirementLevel: 1
   description1: Increases the collection range for items and bits

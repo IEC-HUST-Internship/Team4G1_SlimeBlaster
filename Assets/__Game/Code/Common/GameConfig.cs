@@ -29,15 +29,30 @@ public class GameConfig : ScriptableObject
     [Tooltip("How much HP loss increases each interval per stage (index 0 = stage 1, etc.)")]
     public int[] hpLossIncreaseAmounts = new int[] { 1, 1, 2, 2, 3 };
     
+    [Tooltip("After 3 minutes, divide HP loss intervals by this value (makes damage ramp faster)")]
+    public float hpLossIncreaseIntervalsDivideAfter3Min = 2f;
+    
+    [Tooltip("Flat bonus added to enemy reflection after 3 minutes")]
+    public float enemyReflectionBonusAfter3Min = 10f;
+    
     /// <summary>
     /// ⏱️ Get HP loss increase interval for the given stage (1-based)
     /// Falls back to last value if stage exceeds array length
+    /// Pass gameTime to apply the 3-minute speed boost
     /// </summary>
-    public float GetHpLossIncreaseInterval(int stage)
+    public float GetHpLossIncreaseInterval(int stage, float gameTime = 0f)
     {
         if (hpLossIncreaseIntervals == null || hpLossIncreaseIntervals.Length == 0) return 30f;
         int index = Mathf.Clamp(stage - 1, 0, hpLossIncreaseIntervals.Length - 1);
-        return hpLossIncreaseIntervals[index];
+        float interval = hpLossIncreaseIntervals[index];
+        
+        // After 3 minutes (180 seconds), divide interval to make damage ramp faster
+        if (gameTime > 180f && hpLossIncreaseIntervalsDivideAfter3Min > 0f)
+        {
+            interval /= hpLossIncreaseIntervalsDivideAfter3Min;
+        }
+        
+        return interval;
     }
     
     /// <summary>

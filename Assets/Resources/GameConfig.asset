@@ -23,6 +23,7 @@ MonoBehaviour:
   - 5
   - 5
   hpLossIncreaseAmounts: 010000000100000001000000010000000100000001000000010000000100000001000000
+  hpLossIncreaseIntervalsDivideAfter3Min: 100
   expPerLevelMultiplier: 100
   enemyHealthMultipliers:
   - 1

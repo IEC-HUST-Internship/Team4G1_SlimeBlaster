@@ -60,6 +60,11 @@ public class PlayerCombatArena : MonoBehaviour
     // 👑 Boss resolved from container
     private Boss bossEnemy;
 
+    // ⏱️ Static game timer (resets on enable)
+    private static float gameStartTime;
+    public static float GameTimeElapsed => Time.time - gameStartTime;
+    private float lastDebugTime = 0f;
+
     // 🎮 Combat Arena Temp Stats
     private int currentHp;
     private int currentExp;
@@ -73,6 +78,9 @@ public class PlayerCombatArena : MonoBehaviour
     private void OnEnable() 
     {
         mainCamera = Camera.main;
+        
+        // ⏱️ Reset game timer
+        gameStartTime = Time.time;
         
         // 🔍 Find boss (including inactive objects)
         if (bossEnemy == null)
@@ -148,6 +156,13 @@ public class PlayerCombatArena : MonoBehaviour
             HandleMovement();
             CheckCurrencyPickup();
             CheckBossDefeat();
+            
+            // ⏱️ Debug: Log game time every 10 seconds
+            if (GameTimeElapsed - lastDebugTime >= 10f)
+            {
+                lastDebugTime = GameTimeElapsed;
+                Debug.Log($"⏱️ GameTime: {GameTimeElapsed:F0}s / 180s (3min bonus)");
+            }
         }
     }
 
@@ -291,7 +306,7 @@ public class PlayerCombatArena : MonoBehaviour
     {
         float gameTimeElapsed = 0f;
         int currentStage = Stage.Instance != null ? Stage.Instance.GetStage() : 1;
-        float nextIncreaseTime = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage) : 30f;
+        float nextIncreaseTime = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage, gameTimeElapsed) : 30f;
         
         while (true)
         {
@@ -311,7 +326,7 @@ public class PlayerCombatArena : MonoBehaviour
                     {
                         int increaseAmount = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseAmount(currentStage) : 1;
                         playerStats.AddStat(EnumStat.hpLossPerSecond, increaseAmount);
-                        float interval = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage) : 30f;
+                        float interval = GameConfig.Instance != null ? GameConfig.Instance.GetHpLossIncreaseInterval(currentStage, gameTimeElapsed) : 30f;
                         nextIncreaseTime += interval;
                         Debug.Log($"⏱️ HP Loss increased! Now: {playerStats.GetStatValue(EnumStat.hpLossPerSecond)} HP/sec (Stage {currentStage})");
                     }
