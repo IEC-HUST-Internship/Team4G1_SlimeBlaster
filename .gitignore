@@ -99,3 +99,7 @@ InitTestScene*.unity*
 # Mizu custom project modifications
 /MizuGitCommand.txt
 /.github
+
+# Firebase large files
+Assets/Firebase/Plugins/x86_64/*.bundle
+Assets/Firebase/Plugins/x86_64/*.so
