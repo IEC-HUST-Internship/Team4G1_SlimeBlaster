@@ -1,11 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// ⏱️ Cheat: Change Time Scale
+/// ⏱️ Cheat: Change Time Scale (Editor Only)
 /// Attach to any GameObject to control game speed from Inspector
 /// </summary>
 public class ChangeTimeScale : MonoBehaviour
 {
+#if UNITY_EDITOR
     [Header("⏱️ Time Scale Control")]
     [Range(0f, 10f)]
     [Tooltip("Drag to change game speed (1 = normal, 0 = paused, 2 = 2x speed)")]
@@ -22,6 +23,7 @@ public class ChangeTimeScale : MonoBehaviour
 
     private void OnEnable()
     {
+        lastTimeScale = timeScale;
         Time.timeScale = timeScale;
     }
 
@@ -59,7 +61,7 @@ public class ChangeTimeScale : MonoBehaviour
             timeScale = 10f;
         }
         
-        // Apply time scale if changed
+        // Apply time scale only if changed
         if (!Mathf.Approximately(timeScale, lastTimeScale))
         {
             Time.timeScale = timeScale;
@@ -67,13 +69,5 @@ public class ChangeTimeScale : MonoBehaviour
             MizuLog.General($"⏱️ Time Scale: {timeScale:F1}x");
         }
     }
-
-    private void Update()
-    {
-        // Keep time scale in sync if changed externally
-        if (!Mathf.Approximately(Time.timeScale, timeScale))
-        {
-            Time.timeScale = timeScale;
-        }
-    }
+#endif
 }
