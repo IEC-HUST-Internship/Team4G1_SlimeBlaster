@@ -29,7 +29,6 @@ public class UIController : MonoBehaviour
     public GameObject popupContentPanel; // The inner panel with upgrade info
     public TMP_Text nameText;
     public TMP_Text description1Text;
-    public TMP_Text description2Text;
     public TMP_Text levelText;
     public TMP_Text moneyText;
     public Button confirmUpgradeButton;
@@ -269,11 +268,6 @@ public class UIController : MonoBehaviour
         if (description1Text != null)
         {
             description1Text.text = nodeInstance.data.description1;
-        }
-
-        if (description2Text != null)
-        {
-            description2Text.text = nodeInstance.data.description2;
         }
 
         if (levelText != null)

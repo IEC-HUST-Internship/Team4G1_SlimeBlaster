@@ -22,6 +22,6 @@ public class SONodeData : ScriptableObject
     public int unlockRequirementLevel = 1;  // Required level of parent node to unlock this node
 
     [Header("Upgrade Information")]
+    [TextArea(8, 10)]
     public string description1;
-    public string description2;
 }
