@@ -17,7 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: abd8de44a1885ed45a77bfff71f96b44, type: 3}
   stat: 8
   perUpgradeValue: 10
-  maxLevel: 5
+  maxLevel: 100
   costFormula: 1
   costUnit: 4
   unlockRequirementLevel: 1

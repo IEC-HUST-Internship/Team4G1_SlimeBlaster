@@ -26,6 +26,14 @@ public class UIStageControl : MonoBehaviour
     public float errorShakeDuration = 0.3f;
     public float errorShakeStrength = 10f;
     
+    [Header("🔒 Locked Stage Notification")]
+    public GameObject startLockStageNotification; // Shows when trying to play locked stage
+    public TMP_Text startText; // The always-visible start text that also flashes
+    public float notificationDuration = 3f;
+    public Color flashColor = Color.red;
+    public int flashCount = 3;
+    public float flashSpeed = 0.15f;
+    
     [Header("🎬 Slide Animation")]
     public float slideDuration = 0.3f;
     public Ease slideEase = Ease.OutQuad;
@@ -61,6 +69,10 @@ public class UIStageControl : MonoBehaviour
     
     private Camera uiCamera;
     private bool isInitialized = false;
+    
+    // Notification state
+    private Coroutine notificationCoroutine;
+    private Color startTextOriginalColor;
     
     private void Start()
     {
@@ -123,6 +135,13 @@ public class UIStageControl : MonoBehaviour
         UpdateArrowVisibility();
         UpdateLockedStates();
         UpdatePlayButtonColor();
+        
+        // Cache start text color and hide notification
+        if (startText != null)
+            startTextOriginalColor = startText.color;
+        
+        if (startLockStageNotification != null)
+            startLockStageNotification.SetActive(false);
         
         // Cache current unlocked stage
         if (Stage.Instance != null)
@@ -427,13 +446,146 @@ public class UIStageControl : MonoBehaviour
     /// </summary>
     private void PlayLockedErrorEffect()
     {
-        if (playButton == null) return;
-        
-        RectTransform buttonRect = playButton.GetComponent<RectTransform>();
-        if (buttonRect != null)
+        // Stop any ongoing notification
+        if (notificationCoroutine != null)
         {
-            buttonRect.DOKill();
-            buttonRect.DOShakeAnchorPos(errorShakeDuration, errorShakeStrength, 20, 90, false, true);
+            StopCoroutine(notificationCoroutine);
+            ResetNotificationState();
+        }
+        
+        // Start new notification sequence
+        notificationCoroutine = StartCoroutine(ShowLockedNotification());
+    }
+    
+    /// <summary>
+    /// 🔔 Show locked stage notification with flash and jiggle effects
+    /// </summary>
+    private IEnumerator ShowLockedNotification()
+    {
+        // Show notification
+        if (startLockStageNotification != null)
+        {
+            startLockStageNotification.SetActive(true);
+            
+            RectTransform notificationRect = startLockStageNotification.GetComponent<RectTransform>();
+            if (notificationRect != null)
+            {
+                // Reset scale/position before animating
+                notificationRect.DOKill();
+                notificationRect.localScale = Vector3.one;
+                
+                // Jiggle the notification
+                notificationRect.DOShakeAnchorPos(errorShakeDuration * flashCount, errorShakeStrength, 20, 90, false, true);
+            }
+            
+            // Flash notification red
+            Image notificationImage = startLockStageNotification.GetComponent<Image>();
+            TMP_Text notificationText = startLockStageNotification.GetComponentInChildren<TMP_Text>();
+            
+            if (notificationImage != null)
+            {
+                Color originalColor = notificationImage.color;
+                notificationImage.DOKill();
+                
+                // Flash sequence
+                Sequence flashSeq = DOTween.Sequence();
+                for (int i = 0; i < flashCount; i++)
+                {
+                    flashSeq.Append(notificationImage.DOColor(flashColor, flashSpeed));
+                    flashSeq.Append(notificationImage.DOColor(originalColor, flashSpeed));
+                }
+            }
+            
+            if (notificationText != null)
+            {
+                Color originalTextColor = notificationText.color;
+                notificationText.DOKill();
+                
+                // Flash sequence
+                Sequence flashSeq = DOTween.Sequence();
+                for (int i = 0; i < flashCount; i++)
+                {
+                    flashSeq.Append(notificationText.DOColor(flashColor, flashSpeed));
+                    flashSeq.Append(notificationText.DOColor(originalTextColor, flashSpeed));
+                }
+            }
+        }
+        
+        // Flash the start text (always visible)
+        if (startText != null)
+        {
+            RectTransform startTextRect = startText.GetComponent<RectTransform>();
+            if (startTextRect != null)
+            {
+                startTextRect.DOKill();
+                startTextRect.localScale = Vector3.one;
+                startTextRect.DOShakeAnchorPos(errorShakeDuration * flashCount, errorShakeStrength * 0.8f, 20, 90, false, true);
+            }
+            
+            startText.DOKill();
+            
+            // Flash sequence
+            Sequence flashSeq = DOTween.Sequence();
+            for (int i = 0; i < flashCount; i++)
+            {
+                flashSeq.Append(startText.DOColor(flashColor, flashSpeed));
+                flashSeq.Append(startText.DOColor(startTextOriginalColor, flashSpeed));
+            }
+        }
+        
+        // Wait for duration
+        yield return new WaitForSeconds(notificationDuration);
+        
+        // Reset and hide
+        ResetNotificationState();
+        notificationCoroutine = null;
+    }
+    
+    /// <summary>
+    /// 🔄 Reset notification and text states to normal
+    /// </summary>
+    private void ResetNotificationState()
+    {
+        // Hide notification
+        if (startLockStageNotification != null)
+        {
+            startLockStageNotification.SetActive(false);
+            
+            // Kill all tweens and reset
+            RectTransform notificationRect = startLockStageNotification.GetComponent<RectTransform>();
+            if (notificationRect != null)
+            {
+                notificationRect.DOKill();
+                notificationRect.localScale = Vector3.one;
+                notificationRect.anchoredPosition = Vector2.zero;
+            }
+            
+            Image notificationImage = startLockStageNotification.GetComponent<Image>();
+            if (notificationImage != null)
+            {
+                notificationImage.DOKill();
+            }
+            
+            TMP_Text notificationText = startLockStageNotification.GetComponentInChildren<TMP_Text>();
+            if (notificationText != null)
+            {
+                notificationText.DOKill();
+            }
+        }
+        
+        // Reset start text
+        if (startText != null)
+        {
+            startText.DOKill();
+            startText.color = startTextOriginalColor;
+            
+            RectTransform startTextRect = startText.GetComponent<RectTransform>();
+            if (startTextRect != null)
+            {
+                startTextRect.DOKill();
+                startTextRect.localScale = Vector3.one;
+                startTextRect.anchoredPosition = Vector2.zero;
+            }
         }
     }
     
@@ -493,6 +645,60 @@ public class UIStageControl : MonoBehaviour
         
         UpdateSelection(true);
         UpdateArrowVisibility();
+    }
+    
+    // ========== SELECTION & ANIMATION ==========
+    
+    /// <summary>
+    /// 🔄 Called when object becomes active - refresh unlock states and navigate to newest unlocked level
+    /// </summary>
+    private void OnEnable()
+    {
+        if (!isInitialized) return;
+        
+        // Reset notification state when enabled
+        if (notificationCoroutine != null)
+        {
+            StopCoroutine(notificationCoroutine);
+            notificationCoroutine = null;
+        }
+        ResetNotificationState();
+        
+        // Always refresh when enabled - get fresh data from Stage singleton
+        if (Stage.Instance != null)
+        {
+            int currentUnlockedStage = Stage.Instance.GetUnlockedStage();
+            
+            // Always update to ensure sync with Stage singleton
+            cachedUnlockedStage = currentUnlockedStage;
+            
+            // Refresh all locked states
+            UpdateLockedStates();
+            
+            // 🎯 Navigate to newest unlocked level (0-based index)
+            int newestUnlockedIndex = Mathf.Clamp(currentUnlockedStage - 1, 0, stageImages.Count - 1);
+            currentIndex = newestUnlockedIndex;
+            selectedStage = currentUnlockedStage;
+            
+            // Update current stage unlock status
+            isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
+            UpdatePlayButtonColor();
+            UpdateSelection(false);
+        }
+    }
+    
+    /// <summary>
+    /// 🔄 Called when object becomes inactive - clean up notification
+    /// </summary>
+    private void OnDisable()
+    {
+        // Stop and reset notification when disabled
+        if (notificationCoroutine != null)
+        {
+            StopCoroutine(notificationCoroutine);
+            notificationCoroutine = null;
+        }
+        ResetNotificationState();
     }
     
     // ========== SELECTION & ANIMATION ==========
@@ -608,36 +814,6 @@ public class UIStageControl : MonoBehaviour
         // Update cached value
         if (Stage.Instance != null)
             cachedUnlockedStage = Stage.Instance.GetUnlockedStage();
-    }
-    
-    /// <summary>
-    /// 🔄 Called when object becomes active - refresh unlock states and navigate to newest unlocked level
-    /// </summary>
-    private void OnEnable()
-    {
-        if (!isInitialized) return;
-        
-        // Always refresh when enabled - get fresh data from Stage singleton
-        if (Stage.Instance != null)
-        {
-            int currentUnlockedStage = Stage.Instance.GetUnlockedStage();
-            
-            // Always update to ensure sync with Stage singleton
-            cachedUnlockedStage = currentUnlockedStage;
-            
-            // Refresh all locked states
-            UpdateLockedStates();
-            
-            // 🎯 Navigate to newest unlocked level (0-based index)
-            int newestUnlockedIndex = Mathf.Clamp(currentUnlockedStage - 1, 0, stageImages.Count - 1);
-            currentIndex = newestUnlockedIndex;
-            selectedStage = currentUnlockedStage;
-            
-            // Update current stage unlock status
-            isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-            UpdatePlayButtonColor();
-            UpdateSelection(false);
-        }
     }
     
     private void OnDestroy()
