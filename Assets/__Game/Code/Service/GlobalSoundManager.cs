@@ -36,7 +36,10 @@ public enum SoundType// enum just array of number 0,1,2,... but with names
     clickEnoughMoney,
 
     [InspectorName("🔘 Button Click")]
-    buttonClick
+    buttonClick,
+
+    [InspectorName("💰 Currency Collect")]
+    currencyCollect
 }
 
 

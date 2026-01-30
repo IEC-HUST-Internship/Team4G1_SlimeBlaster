@@ -74,6 +74,9 @@ public class PlayerCombatArena : MonoBehaviour
 
     // 💰 Track collected currency during this run
     private Dictionary<EnumCurrency, int> collectedCurrency = new Dictionary<EnumCurrency, int>();
+    
+    // 🌟 Track starting level to calculate xpBits earned from level ups
+    private int startingLevel;
 
     private void OnEnable() 
     {
@@ -101,6 +104,12 @@ public class PlayerCombatArena : MonoBehaviour
         
         // 💸 Reset collected currency
         collectedCurrency.Clear();
+        
+        // 🌟 Store starting level to track level ups this run
+        if (playerStats != null)
+        {
+            startingLevel = playerStats.GetStatValue(EnumStat.level);
+        }
         
         // ⏱️ Reset HP loss to default (1 HP/sec)
         if (playerStats != null)
@@ -613,7 +622,27 @@ public class PlayerCombatArena : MonoBehaviour
     // 📥 Getter methods for UI
     public int GetCurrentHp() => currentHp;
     public int GetCurrentExp() => currentExp;
-    public Dictionary<EnumCurrency, int> GetCollectedCurrency() => collectedCurrency;
+    
+    /// <summary>
+    /// 💰 Get collected currency including xpBits from level ups this run
+    /// </summary>
+    public Dictionary<EnumCurrency, int> GetCollectedCurrency()
+    {
+        // 🌟 Calculate xpBits earned from level ups this run
+        if (playerStats != null)
+        {
+            int currentLevel = playerStats.GetStatValue(EnumStat.level);
+            int levelsGained = currentLevel - startingLevel;
+            
+            if (levelsGained > 0)
+            {
+                // Add xpBits to collected currency (1 xpBit per level up)
+                collectedCurrency[EnumCurrency.xpBits] = levelsGained;
+            }
+        }
+        
+        return collectedCurrency;
+    }
 
     /// <summary>
     /// 💚 Heal player by amount (capped at max HP)

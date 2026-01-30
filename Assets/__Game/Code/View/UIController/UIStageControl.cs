@@ -30,6 +30,7 @@ public class UIStageControl : MonoBehaviour
     public GameObject startLockStageNotification; // Shows when trying to play locked stage
     public TMP_Text startText; // The always-visible start text that also flashes
     public float notificationDuration = 3f;
+    public float fadeOutDuration = 0.5f;
     public Color flashColor = Color.red;
     public int flashCount = 3;
     public float flashSpeed = 0.15f;
@@ -45,13 +46,9 @@ public class UIStageControl : MonoBehaviour
     public float scaleDuration = 0.2f;
     public Ease scaleEase = Ease.OutBack;
     
-    [Header("🔒 Locked Stage Alpha")]
-    public float lockedAlpha = 0.5f;
-    public float unlockedAlpha = 1f;
-    
     // Runtime generated stage images
     private List<RectTransform> stageImages = new List<RectTransform>();
-    private List<CanvasGroup> stageCanvasGroups = new List<CanvasGroup>();
+    private List<GameObject> stageLockObjects = new List<GameObject>(); // Lock child objects for each stage
     private float stageWidth;  // Width of each stage element
     private float stageSpacing;  // Spacing between stages (from layout group)
     
@@ -195,7 +192,7 @@ public class UIStageControl : MonoBehaviour
         
         // Clear any existing children (except prefab if it's in container)
         stageImages.Clear();
-        stageCanvasGroups.Clear();
+        stageLockObjects.Clear();
         
         // Generate stage images
         for (int i = 0; i < maxStage; i++)
@@ -216,15 +213,12 @@ public class UIStageControl : MonoBehaviour
                 stageText.text = $"Stage {stageNumber}";
             }
             
-            // Add or get CanvasGroup for alpha control
-            CanvasGroup canvasGroup = stageImage.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-            {
-                canvasGroup = stageImage.gameObject.AddComponent<CanvasGroup>();
-            }
+            // Find "Lock" child object for showing/hiding
+            Transform lockTransform = stageImage.Find("Lock");
+            GameObject lockObj = lockTransform != null ? lockTransform.gameObject : null;
             
             stageImages.Add(stageImage);
-            stageCanvasGroups.Add(canvasGroup);
+            stageLockObjects.Add(lockObj);
         }
         
         // Hide prefab if it's in container
@@ -235,7 +229,7 @@ public class UIStageControl : MonoBehaviour
     }
     
     /// <summary>
-    /// 🔒 Update locked/unlocked alpha states based on Stage singleton
+    /// 🔒 Update locked/unlocked states - show/hide Lock object based on Stage singleton
     /// </summary>
     private void UpdateLockedStates()
     {
@@ -249,17 +243,15 @@ public class UIStageControl : MonoBehaviour
         // Update cached value
         cachedUnlockedStage = unlockedStage;
         
-        for (int i = 0; i < stageCanvasGroups.Count; i++)
+        for (int i = 0; i < stageLockObjects.Count; i++)
         {
             int stageNumber = i + 1;
             bool isUnlocked = stageNumber <= unlockedStage;
             
-            if (stageCanvasGroups[i] != null)
+            // Show Lock object if locked, hide if unlocked
+            if (stageLockObjects[i] != null)
             {
-                // Set alpha directly - unlocked = 1, locked = 0.5
-                float targetAlpha = isUnlocked ? unlockedAlpha : lockedAlpha;
-                stageCanvasGroups[i].DOKill();
-                stageCanvasGroups[i].DOFade(targetAlpha, 0.2f);
+                stageLockObjects[i].SetActive(!isUnlocked);
             }
         }
     }
@@ -558,6 +550,14 @@ public class UIStageControl : MonoBehaviour
                 notificationRect.DOKill();
                 notificationRect.localScale = Vector3.one;
                 notificationRect.anchoredPosition = Vector2.zero;
+            }
+            
+            // Reset canvas group alpha
+            CanvasGroup notificationCanvasGroup = startLockStageNotification.GetComponent<CanvasGroup>();
+            if (notificationCanvasGroup != null)
+            {
+                notificationCanvasGroup.DOKill();
+                notificationCanvasGroup.alpha = 1f;
             }
             
             Image notificationImage = startLockStageNotification.GetComponent<Image>();
