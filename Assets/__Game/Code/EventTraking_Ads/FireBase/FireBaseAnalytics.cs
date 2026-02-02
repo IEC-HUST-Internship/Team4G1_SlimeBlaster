@@ -47,14 +47,22 @@ public class FireBaseAnalytics : MonoBehaviour
     public void LogLevelComplete(int levelNumber, int score)
     {
         if (!isFirebaseReady) return;
-        Debug.Log("LogLevelComplete Firebase");
-        Firebase.Analytics.FirebaseAnalytics.LogEvent(
-            "level_complete",
-            new Firebase.Analytics.Parameter("level_number", levelNumber),
-            new Firebase.Analytics.Parameter("score", score)
-        );
-        Debug.Log("LogLevelComplete Firebase End");
+        Debug.Log($"[Firebase] Attempting to log level_complete - Level: {levelNumber}, Score: {score}");
+        try
+        {
+            Firebase.Analytics.FirebaseAnalytics.LogEvent(
+                "level_complete",
+                new Firebase.Analytics.Parameter("level_number", levelNumber),
+                new Firebase.Analytics.Parameter("score", score)
+            );
+            Debug.Log("[Firebase] LogEvent call completed without exception");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[Firebase] LogEvent failed: {ex.Message}");
+        }
     }
+
     public void LogLevelReset(int levelNumber)
     {
         if (!isFirebaseReady) return;
