@@ -16306,8 +16306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc57e02ec38325643a15c44e16c36a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FireBaseLevelCompleteButton: {fileID: 933089642}
-  FireBaseLevelResetButton: {fileID: 307108799}
+  NoAdsPurchase: {fileID: 1959202440}
 --- !u!114 &1011987917
 MonoBehaviour:
   m_ObjectHideFlags: 0

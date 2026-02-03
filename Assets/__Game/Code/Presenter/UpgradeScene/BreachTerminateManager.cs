@@ -126,11 +126,11 @@ public class BreachTerminateManager : MonoBehaviour
             Stage.Instance.SetStage(selectedStage);
         }
         
-        // 📊 Firebase Analytics - PlayLevel
+        // 📊 Firebase Analytics - PlayStage
         if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
         {
-            int level = Stage.Instance.GetStage();
-            FireBaseAnalytics.Instance.PlayLevel(level, 1);
+            int stage = Stage.Instance.GetStage();
+            FireBaseAnalytics.Instance.PlayStage(stage, 1);
         }
         
         transition.PlayTransition(() =>
@@ -208,11 +208,11 @@ public class BreachTerminateManager : MonoBehaviour
     /// </summary>
     public void TriggerRestart()
     {
-        // 📊 Firebase Analytics - ReplayLevel
+        // 📊 Firebase Analytics - ReplayStage
         if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
         {
-            int level = Stage.Instance.GetStage();
-            FireBaseAnalytics.Instance.ReplayLevel(level, 1);
+            int stage = Stage.Instance.GetStage();
+            FireBaseAnalytics.Instance.ReplayStage(stage, 1);
         }
         
         transition.PlayTransition(() =>

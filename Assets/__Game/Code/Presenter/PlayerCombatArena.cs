@@ -195,9 +195,9 @@ public class PlayerCombatArena : MonoBehaviour
         // � Firebase Analytics - GameOver (Win)
         if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
         {
-            int level = Stage.Instance.GetStage();
+            int stage = Stage.Instance.GetStage();
             int time = Mathf.RoundToInt(GameTimeElapsed);
-            FireBaseAnalytics.Instance.GameOver(level, time, 1, true);
+            FireBaseAnalytics.Instance.GameOver(stage, time, 1, true);
         }
         
         // �🔓 Unlock 1 new stage when boss is defeated
@@ -617,9 +617,9 @@ public class PlayerCombatArena : MonoBehaviour
         // 📊 Firebase Analytics - GameOver (Lose)
         if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
         {
-            int level = Stage.Instance.GetStage();
+            int stage = Stage.Instance.GetStage();
             int time = Mathf.RoundToInt(GameTimeElapsed);
-            FireBaseAnalytics.Instance.GameOver(level, time, 1, false);
+            FireBaseAnalytics.Instance.GameOver(stage, time, 1, false);
         }
         
                 // � Save all currencies when game ends
