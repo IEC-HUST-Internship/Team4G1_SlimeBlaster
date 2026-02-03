@@ -16,7 +16,7 @@ MonoBehaviour:
   baseReflectionMultiplier: 1.25
   exp: 10
   currencyType: 3
-  baseCurrencyAmount: 1
+  baseCurrencyAmount: 0
   spawnAmount: 1
   spawnInterval: 20
   maxCapacity: 10

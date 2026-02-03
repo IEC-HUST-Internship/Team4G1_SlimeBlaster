@@ -5407,23 +5407,23 @@ MonoBehaviour:
   nextLevelButton: {fileID: 2071712380}
   currencyDisplays:
   - currencyType: 0
-    currencyParent: {fileID: 0}
+    currencyParent: {fileID: 19473747}
     iconObject: {fileID: 1802799934}
     amountText: {fileID: 16345523}
   - currencyType: 1
-    currencyParent: {fileID: 0}
+    currencyParent: {fileID: 1827753367}
     iconObject: {fileID: 281598314}
     amountText: {fileID: 220556110}
   - currencyType: 2
-    currencyParent: {fileID: 0}
+    currencyParent: {fileID: 1307692213}
     iconObject: {fileID: 2051159172}
     amountText: {fileID: 1820302291}
   - currencyType: 3
-    currencyParent: {fileID: 0}
+    currencyParent: {fileID: 1832760064}
     iconObject: {fileID: 606293801}
     amountText: {fileID: 1862204962}
   - currencyType: 4
-    currencyParent: {fileID: 0}
+    currencyParent: {fileID: 1224887088}
     iconObject: {fileID: 1577336135}
     amountText: {fileID: 2104134798}
   countAnimationDuration: 0.2
