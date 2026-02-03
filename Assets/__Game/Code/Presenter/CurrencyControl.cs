@@ -39,7 +39,7 @@ public class CurrencyControl : MonoBehaviour
                 if (!currencyAdded && playerStats != null)
                 {
                     playerStats.AddCurrency(currencyType, currencyAmount);
-                    GlobalSoundManager.PlaySound(SoundType.currencyCollect);
+                    GlobalSoundManager.PlaySoundRandomPitch(SoundType.currencyCollect);
                     currencyAdded = true;
                 }
                 ReturnToPool();
@@ -60,7 +60,7 @@ public class CurrencyControl : MonoBehaviour
                 if (!currencyAdded && playerStats != null)
                 {
                     playerStats.AddCurrency(currencyType, currencyAmount);
-                    GlobalSoundManager.PlaySound(SoundType.currencyCollect);
+                    GlobalSoundManager.PlaySoundRandomPitch(SoundType.currencyCollect);
                     currencyAdded = true;
                 }
                 ReturnToPool();

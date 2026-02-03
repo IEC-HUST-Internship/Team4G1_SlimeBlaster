@@ -96,6 +96,29 @@ public class GlobalSoundManager : MonoBehaviour
         instance.audioSource.PlayOneShot(instance.soundDict[sound], volume * instance.audioSource.volume);
     }
 
+    /// <summary>
+    /// 🎵 Play sound with random pitch (Minecraft-style fun!)
+    /// </summary>
+    /// <param name="sound">Sound type to play</param>
+    /// <param name="minPitch">Minimum pitch (default 0.9)</param>
+    /// <param name="maxPitch">Maximum pitch (default 1.1)</param>
+    /// <param name="volume">Volume multiplier (default 1)</param>
+    public static void PlaySoundRandomPitch(SoundType sound, float minPitch = 0.9f, float maxPitch = 1.1f, float volume = 1f)
+    {
+        if (!instance.soundDict.ContainsKey(sound))
+        {
+            Debug.LogWarning($"⚠️ No clip assigned for {sound}");
+            return;
+        }
+
+        AudioSource tempSource = instance.gameObject.AddComponent<AudioSource>();
+        tempSource.clip = instance.soundDict[sound];
+        tempSource.volume = volume * instance.audioSource.volume;
+        tempSource.pitch = Random.Range(minPitch, maxPitch);
+        tempSource.Play();
+        Destroy(tempSource, tempSource.clip.length / tempSource.pitch + 0.1f);
+    }
+
     public static void PlayLooping(SoundType sound, float volume = 1f)
     {
         if (loopingSources.ContainsKey(sound) && loopingSources[sound].isPlaying)

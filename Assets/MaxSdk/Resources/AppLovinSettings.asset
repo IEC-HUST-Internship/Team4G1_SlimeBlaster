@@ -9,15 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3cea06f9bca6014aa2e909bf67b17e5, type: 3}
-  m_Name: RainbowSlime
+  m_Script: {fileID: 11500000, guid: ebc0ba1b5ef6b4a6b9dd53d7eadfea16, type: 3}
+  m_Name: AppLovinSettings
   m_EditorClassIdentifier: 
-  hp: 200
-  baseReflectionMultiplier: 0.8
-  exp: 30
-  currencyType: 2
-  baseCurrencyAmount: 1
-  spawnAmount: 1
-  spawnInterval: 30
-  maxCapacity: 10
-  startTime: 0
+  qualityServiceEnabled: 1
+  sdkKey: 
+  customGradleVersionUrl: 
+  customGradleToolsVersion: 
+  adMobAndroidAppId: 
+  adMobIosAppId: 

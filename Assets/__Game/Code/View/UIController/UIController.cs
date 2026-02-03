@@ -390,9 +390,12 @@ public class UIController : MonoBehaviour
                         .SetLoops(flashCount * 2, LoopType.Yoyo)
                         .OnComplete(() => moneyText.color = originalMoneyTextColor);
 
-                    // Shake text and reset to original position when done
+                    // Shake text and reset to original position AND rotation when done
                     moneyText.transform.DOShakePosition(flashDuration, strength: shakeStrength, vibrato: shakeVibrato, randomness: shakeRandomness)
-                        .OnComplete(() => moneyText.transform.localPosition = originalMoneyTextPosition);
+                        .OnComplete(() => {
+                            moneyText.transform.localPosition = originalMoneyTextPosition;
+                            moneyText.transform.rotation = Quaternion.identity;
+                        });
                 }
                 return;
             }

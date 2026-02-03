@@ -126,6 +126,13 @@ public class BreachTerminateManager : MonoBehaviour
             Stage.Instance.SetStage(selectedStage);
         }
         
+        // 📊 Firebase Analytics - PlayLevel
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            int level = Stage.Instance.GetStage();
+            FireBaseAnalytics.Instance.PlayLevel(level, 1);
+        }
+        
         transition.PlayTransition(() =>
         {
             foreach (var scene in upgradeScenes)
@@ -201,6 +208,13 @@ public class BreachTerminateManager : MonoBehaviour
     /// </summary>
     public void TriggerRestart()
     {
+        // 📊 Firebase Analytics - ReplayLevel
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            int level = Stage.Instance.GetStage();
+            FireBaseAnalytics.Instance.ReplayLevel(level, 1);
+        }
+        
         transition.PlayTransition(() =>
         {
             if (gameOverPanel != null)

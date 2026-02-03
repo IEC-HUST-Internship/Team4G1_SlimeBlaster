@@ -192,7 +192,15 @@ public class PlayerCombatArena : MonoBehaviour
         // 🚫 Move player out of scene
         transform.position = new Vector3(100f, 0f, 0f);
         
-        // 🔓 Unlock 1 new stage when boss is defeated
+        // � Firebase Analytics - GameOver (Win)
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            int level = Stage.Instance.GetStage();
+            int time = Mathf.RoundToInt(GameTimeElapsed);
+            FireBaseAnalytics.Instance.GameOver(level, time, 1, true);
+        }
+        
+        // �🔓 Unlock 1 new stage when boss is defeated
         if (Stage.Instance != null)
         {
             Stage.Instance.UnlockStages(1);
@@ -510,7 +518,7 @@ public class PlayerCombatArena : MonoBehaviour
         UpdateDebugField(enemyCount, damageDealtToSingleEnemy, totalDamageDealtToAllEnemies, damageTakenFromBoss, damageTakenFromEnemy, damageTakenFromSingleEnemy);
 
         // 🔊 Play laser attack sound
-        GlobalSoundManager.PlaySound(SoundType.laserAttack);
+        GlobalSoundManager.PlaySoundRandomPitch(SoundType.laserAttack);
 
         playerEffect.PlayerAttackEffect();
     }
@@ -605,6 +613,15 @@ public class PlayerCombatArena : MonoBehaviour
             ShowWin();
             return;
         }
+        
+        // 📊 Firebase Analytics - GameOver (Lose)
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            int level = Stage.Instance.GetStage();
+            int time = Mathf.RoundToInt(GameTimeElapsed);
+            FireBaseAnalytics.Instance.GameOver(level, time, 1, false);
+        }
+        
                 // � Save all currencies when game ends
         if (SaveSystem.Instance != null && playerStats != null)
             SaveSystem.Instance.SaveAllCurrenciesFromPlayerStats(playerStats);
