@@ -1,17 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Rewarded : MonoBehaviour
+public class RewardedAds : MonoBehaviour
 {
+    private AppLovinConfig config;
+    private int retryAttempt;
 
-    string adUnitId = "1882960987cccae9";
-    int retryAttempt;
-
-    // Start is called before the first frame update
     void Start()
     {
+        config = Resources.Load<AppLovinConfig>("AppLovinConfig");
+        
         // Attach callback
         MaxSdkCallbacks.Rewarded.OnAdLoadedEvent += OnRewardedAdLoadedEvent;
         MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += OnRewardedAdLoadFailedEvent;
@@ -21,21 +19,17 @@ public class Rewarded : MonoBehaviour
         MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += OnRewardedAdHiddenEvent;
         MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardedAdFailedToDisplayEvent;
         MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardedAdReceivedRewardEvent;
-
-        // Load the first rewarded ad
-
-
     }
 
     public void LoadRewardedAd()
     {
-        MaxSdk.LoadRewardedAd(adUnitId);
+        MaxSdk.LoadRewardedAd(config.RewardId);
     }
 
     private void OnRewardedAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
         // Rewarded ad is ready for you to show. MaxSdk.IsRewardedAdReady(adUnitId) now returns 'true'.
-        MaxSdk.ShowRewardedAd(adUnitId);
+        MaxSdk.ShowRewardedAd(config.RewardId);
         // Reset retry attempt
         retryAttempt = 0;
     }
@@ -64,7 +58,6 @@ public class Rewarded : MonoBehaviour
     private void OnRewardedAdHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
         // Rewarded ad is hidden. Pre-load the next ad
-       
     }
 
     private void OnRewardedAdReceivedRewardEvent(string adUnitId, MaxSdk.Reward reward, MaxSdkBase.AdInfo adInfo)
@@ -75,11 +68,5 @@ public class Rewarded : MonoBehaviour
     private void OnRewardedAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
         // Ad revenue paid. Use this callback to track user revenue.
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

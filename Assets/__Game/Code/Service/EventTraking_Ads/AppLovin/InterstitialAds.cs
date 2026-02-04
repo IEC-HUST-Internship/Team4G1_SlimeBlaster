@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Interstitial : MonoBehaviour
+public class InterstitialAds : MonoBehaviour
 {
-    string adUnitId = "d9a62d3d22828eee";
-    int retryAttempt;
+    private AppLovinConfig config;
+    private int retryAttempt;
 
-    // Start is called before the first frame update
     void Start()
     {
+        config = Resources.Load<AppLovinConfig>("AppLovinConfig");
+        
         // Attach callback
         MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += OnInterstitialLoadedEvent;
         MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += OnInterstitialLoadFailedEvent;
@@ -18,21 +17,17 @@ public class Interstitial : MonoBehaviour
         MaxSdkCallbacks.Interstitial.OnAdClickedEvent += OnInterstitialClickedEvent;
         MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
         MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
-
-        // Load the first interstitial
-        
     }
 
     public void LoadInterstitial()
     {
-        MaxSdk.LoadInterstitial(adUnitId);
+        MaxSdk.LoadInterstitial(config.InterstitialId);
     }
-
 
     private void OnInterstitialLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
         // Interstitial ad is ready for you to show. MaxSdk.IsInterstitialReady(adUnitId) now returns 'true'
-        MaxSdk.ShowInterstitial(adUnitId);
+        MaxSdk.ShowInterstitial(config.InterstitialId);
         // Reset retry attempt
         retryAttempt = 0;
     }
@@ -61,12 +56,5 @@ public class Interstitial : MonoBehaviour
     private void OnInterstitialHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
         // Interstitial ad is hidden. Pre-load the next ad.
-       
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19cae367d08952d4fb13c41eb6163bd4, type: 3}
+  m_Name: AppLovinConfig
+  m_EditorClassIdentifier: 
+  sdkKey: iBJBZKgGo-0qqAq7TEpTUwQvhiD-rH6vTDqDeKyQxBOFCH-OBJt8nFs7dP_-A715Z1pu4UC6HSTG-EISryHdg2
+  android:
+    appId: HcGLca2V78QtCG23tsGZl-AXiq9RncI2DZNq9QJGTk7m_Apt04Rm2bImPSCA3UDG3b5C0PTZ8bJ7m7_nBQWE0p
+    interstitialId: 69005ff127289881
+    bannerId: cc66fce24329def6
+    rewardId: 7ca74cf1840a9933
+  ios:
+    appId: HcGLca2V78QtCG23tsGZl-AXiq9RncI2DZNq9QJGTk7m_Apt04Rm2bImPSCA3UDG3b5C0PTZ8bJ7m7_nBQWE0p
+    interstitialId: 0
+    bannerId: 0
+    rewardId: 0
