@@ -382,6 +382,10 @@ public class SaveData
     
     // 📺 Ads
     public int interstitialPlayCount = 0;
+    
+    // 🎁 Daily Reward
+    public int dailyRewardClaimedCount = 0;
+    public string dailyRewardLastClaimDate = "";
 }
 
 /// <summary>
