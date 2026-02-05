@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class InterstitialAds : MonoBehaviour
 {
+    private const int REQUIRED_PLAYS_BEFORE_ADS = 5;
+    private const float COOLDOWN_SECONDS = 1f; // 2 minutes
+
     private AppLovinConfig config;
     private int retryAttempt;
+    private float lastAdShownTime = float.MinValue;
+    private bool isAdReady = false;
 
     void Start()
     {
@@ -17,44 +22,92 @@ public class InterstitialAds : MonoBehaviour
         MaxSdkCallbacks.Interstitial.OnAdClickedEvent += OnInterstitialClickedEvent;
         MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
         MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
+
+        // Pre-load ad
+        LoadInterstitialAd();
     }
 
-    public void LoadInterstitial()
+    private void LoadInterstitialAd()
     {
         MaxSdk.LoadInterstitial(config.InterstitialId);
     }
 
+    /// <summary>
+    /// Call this when player presses Play or Replay
+    /// </summary>
+    public void TryShowInterstitial()
+    {
+        // Increment play count and save to JSON
+        var saveData = SaveSystem.Instance.LoadGame();
+        saveData.interstitialPlayCount++;
+        int playCount = saveData.interstitialPlayCount;
+        SaveSystem.Instance.SaveGame(saveData);
+
+        // Check if we've played enough times
+        if (playCount <= REQUIRED_PLAYS_BEFORE_ADS)
+        {
+            Debug.Log($"[InterstitialAds] Play count: {playCount}/{REQUIRED_PLAYS_BEFORE_ADS} - Not showing ad yet");
+            return;
+        }
+
+        // Check cooldown
+        float timeSinceLastAd = Time.realtimeSinceStartup - lastAdShownTime;
+        if (timeSinceLastAd < COOLDOWN_SECONDS)
+        {
+            Debug.Log($"[InterstitialAds] Cooldown active: {COOLDOWN_SECONDS - timeSinceLastAd:F0}s remaining");
+            return;
+        }
+
+        // Show ad if ready
+        if (isAdReady && MaxSdk.IsInterstitialReady(config.InterstitialId))
+        {
+            MaxSdk.ShowInterstitial(config.InterstitialId);
+            lastAdShownTime = Time.realtimeSinceStartup;
+        }
+        else
+        {
+            // Load for next time
+            LoadInterstitialAd();
+        }
+    }
+
     private void OnInterstitialLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
-        // Interstitial ad is ready for you to show. MaxSdk.IsInterstitialReady(adUnitId) now returns 'true'
-        MaxSdk.ShowInterstitial(config.InterstitialId);
-        // Reset retry attempt
+        isAdReady = true;
         retryAttempt = 0;
     }
 
     private void OnInterstitialLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
     {
-        // Interstitial ad failed to load 
-        // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds)
-
+        isAdReady = false;
         retryAttempt++;
         double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
-
-        Invoke("LoadInterstitial", (float)retryDelay);
+        Invoke("LoadInterstitialAd", (float)retryDelay);
     }
 
-    private void OnInterstitialDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
+    private void OnInterstitialDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) 
+    {
+        isAdReady = false;
+        // Pause game
+        Time.timeScale = 0f;
+        AudioListener.pause = true;
+    }
 
     private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
     {
-        // Interstitial ad failed to display. AppLovin recommends that you load the next ad.
-        LoadInterstitial();
+        isAdReady = false;
+        LoadInterstitialAd();
     }
 
     private void OnInterstitialClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
 
     private void OnInterstitialHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
-        // Interstitial ad is hidden. Pre-load the next ad.
+        // Resume game
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        
+        // Pre-load next ad
+        LoadInterstitialAd();
     }
 }

@@ -379,6 +379,9 @@ public class SaveData
     // 📚 Tutorials
     public bool tutorialCombatShown = false;
     public bool tutorialUpgradeShown = false;
+    
+    // 📺 Ads
+    public int interstitialPlayCount = 0;
 }
 
 /// <summary>
