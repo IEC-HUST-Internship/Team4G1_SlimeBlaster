@@ -20,11 +20,13 @@ public class UIStageControl : MonoBehaviour
     
     [Header("🎮 Play Button")]
     public Button playButton;
-    public Image playButtonImage;
-    public Color normalColor = Color.white;
-    public Color lockedColor = Color.red;
     public float errorShakeDuration = 0.3f;
     public float errorShakeStrength = 10f;
+    
+    [Header("🎮 Stage Sprites (3 States)")]
+    public Sprite unlockedSelectedSprite;   // Unlocked and currently selected
+    public Sprite unlockedUnselectedSprite; // Unlocked but not selected
+    public Sprite lockedSprite;             // Locked stage
     
     [Header("🔒 Locked Stage Notification")]
     public GameObject startLockStageNotification; // Shows when trying to play locked stage
@@ -46,8 +48,12 @@ public class UIStageControl : MonoBehaviour
     public float scaleDuration = 0.2f;
     public Ease scaleEase = Ease.OutBack;
     
+    [Header("🌊 Swipe Fade")]
+    public float swipeFadeAlpha = 0.7f; // Alpha when swiping (30% less)
+    
     // Runtime generated stage images
     private List<RectTransform> stageImages = new List<RectTransform>();
+    private List<Image> stageImageComponents = new List<Image>(); // Image components for sprite swapping
     private List<GameObject> stageLockObjects = new List<GameObject>(); // Lock child objects for each stage
     private float stageWidth;  // Width of each stage element
     private float stageSpacing;  // Spacing between stages (from layout group)
@@ -61,8 +67,10 @@ public class UIStageControl : MonoBehaviour
     
     // Swipe tracking
     private bool isDragging = false;
+    private bool isSwiping = false; // Only true when finger actually moved (blocks play button)
     private float dragStartX;
     private float containerDragStartX;
+    private const float SWIPE_MOVE_THRESHOLD = 15f; // Pixels moved before considered a swipe
     
     private Camera uiCamera;
     private bool isInitialized = false;
@@ -92,10 +100,6 @@ public class UIStageControl : MonoBehaviour
         
         if (rightArrowButton != null)
             rightArrowButton.onClick.AddListener(OnRightArrowClicked);
-        
-        // Setup play button
-        if (playButton != null)
-            playButton.onClick.AddListener(OnPlayButtonClicked);
         
         // Start at current stage from Stage singleton
         if (Stage.Instance != null)
@@ -131,7 +135,7 @@ public class UIStageControl : MonoBehaviour
         UpdateSelection(false);
         UpdateArrowVisibility();
         UpdateLockedStates();
-        UpdatePlayButtonColor();
+        UpdateStageSprites();
         
         // Cache start text color and hide notification
         if (startText != null)
@@ -192,6 +196,7 @@ public class UIStageControl : MonoBehaviour
         
         // Clear any existing children (except prefab if it's in container)
         stageImages.Clear();
+        stageImageComponents.Clear();
         stageLockObjects.Clear();
         
         // Generate stage images
@@ -212,6 +217,10 @@ public class UIStageControl : MonoBehaviour
             {
                 stageText.text = $"Stage {stageNumber}";
             }
+            
+            // Get Image component for sprite swapping
+            Image imgComp = stageImage.GetComponent<Image>();
+            stageImageComponents.Add(imgComp);
             
             // Find "Lock" child object for showing/hiding
             Transform lockTransform = stageImage.Find("Lock");
@@ -294,7 +303,7 @@ public class UIStageControl : MonoBehaviour
             cachedUnlockedStage = currentUnlockedStage;
             UpdateLockedStates();
             isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-            UpdatePlayButtonColor();
+            UpdateStageSprites();
         }
     }
     
@@ -334,6 +343,13 @@ public class UIStageControl : MonoBehaviour
         {
             float deltaX = Input.mousePosition.x - dragStartX;
             stageContainer.anchoredPosition = new Vector2(containerDragStartX + deltaX, stageContainer.anchoredPosition.y);
+            
+            // Only mark as swiping once finger moves beyond threshold
+            if (!isSwiping && Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD)
+            {
+                isSwiping = true;
+                SetStageAlpha(swipeFadeAlpha);
+            }
         }
         
         if (Input.GetMouseButtonUp(0) && isDragging)
@@ -359,6 +375,13 @@ public class UIStageControl : MonoBehaviour
         {
             float deltaX = touch.position.x - dragStartX;
             stageContainer.anchoredPosition = new Vector2(containerDragStartX + deltaX, stageContainer.anchoredPosition.y);
+            
+            // Only mark as swiping once finger moves beyond threshold
+            if (!isSwiping && Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD)
+            {
+                isSwiping = true;
+                SetStageAlpha(swipeFadeAlpha);
+            }
         }
         else if ((touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) && isDragging)
         {
@@ -369,6 +392,19 @@ public class UIStageControl : MonoBehaviour
     private void EndSwipe(float deltaX)
     {
         isDragging = false;
+        
+        // Reset alpha back to full
+        SetStageAlpha(1f);
+        
+        bool didSwipe = Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD;
+        
+        // If finger barely moved, it's a tap → trigger play button
+        if (!didSwipe)
+        {
+            OnPlayTap();
+            isSwiping = false;
+            return;
+        }
         
         int previousIndex = currentIndex;
         
@@ -404,11 +440,39 @@ public class UIStageControl : MonoBehaviour
         
         // Update lock status for current viewed stage
         isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-        UpdatePlayButtonColor();
+        UpdateStageSprites();
         
         // Snap to current index
         UpdateSelection(true);
         UpdateArrowVisibility();
+        
+        // Clear swiping flag after a frame so play button click doesn't sneak through
+        StartCoroutine(ClearSwipingFlag());
+    }
+    
+    /// <summary>
+    /// ⏱ Clear swiping flag after one frame so play button is re-enabled
+    /// </summary>
+    private IEnumerator ClearSwipingFlag()
+    {
+        yield return null;
+        isSwiping = false;
+    }
+    
+    /// <summary>
+    /// 🌊 Set alpha on all stage images
+    /// </summary>
+    private void SetStageAlpha(float alpha)
+    {
+        for (int i = 0; i < stageImageComponents.Count; i++)
+        {
+            if (stageImageComponents[i] != null)
+            {
+                Color c = stageImageComponents[i].color;
+                c.a = alpha;
+                stageImageComponents[i].color = c;
+            }
+        }
     }
     
     private bool IsInSwipeRegion(Vector2 screenPosition)
@@ -419,17 +483,24 @@ public class UIStageControl : MonoBehaviour
     
     // ========== PLAY BUTTON ==========
     
-    private void OnPlayButtonClicked()
+    /// <summary>
+    /// 🎮 Called when player taps (not swipes) on the stage area
+    /// </summary>
+    private void OnPlayTap()
     {
         if (!isCurrentStageUnlocked)
         {
             // Stage is locked - show error effect
             PlayLockedErrorEffect();
-            GlobalSoundManager.PlaySound(SoundType.buttonClick); // Or error sound if you have one
+            GlobalSoundManager.PlaySound(SoundType.buttonClick);
             return;
         }
         
-        // Stage is unlocked - can proceed (BreachTerminateManager handles actual play)
+        // Stage is unlocked - simulate play button click
+        if (playButton != null)
+        {
+            playButton.onClick.Invoke();
+        }
         GlobalSoundManager.PlaySound(SoundType.buttonClick);
     }
     
@@ -590,15 +661,37 @@ public class UIStageControl : MonoBehaviour
     }
     
     /// <summary>
-    /// 🎨 Update play button color based on current stage lock status
+    /// 🎨 Update all stage image sprites based on 3 states
     /// </summary>
-    private void UpdatePlayButtonColor()
+    private void UpdateStageSprites()
     {
-        if (playButtonImage == null) return;
-        
-        playButtonImage.DOKill();
-        Color targetColor = isCurrentStageUnlocked ? normalColor : lockedColor;
-        playButtonImage.DOColor(targetColor, 0.2f);
+        for (int i = 0; i < stageImageComponents.Count; i++)
+        {
+            if (stageImageComponents[i] == null) continue;
+            
+            bool isUnlocked = IsStageUnlocked(i);
+            bool isSelected = (i == currentIndex);
+            
+            Sprite targetSprite;
+            
+            if (!isUnlocked)
+            {
+                targetSprite = lockedSprite;
+            }
+            else if (isSelected)
+            {
+                targetSprite = unlockedSelectedSprite;
+            }
+            else
+            {
+                targetSprite = unlockedUnselectedSprite;
+            }
+            
+            if (targetSprite != null)
+            {
+                stageImageComponents[i].sprite = targetSprite;
+            }
+        }
     }
     
     // ========== ARROW BUTTONS ==========
@@ -619,7 +712,7 @@ public class UIStageControl : MonoBehaviour
         
         // Update lock status for current viewed stage
         isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-        UpdatePlayButtonColor();
+        UpdateStageSprites();
         
         UpdateSelection(true);
         UpdateArrowVisibility();
@@ -641,7 +734,7 @@ public class UIStageControl : MonoBehaviour
         
         // Update lock status for current viewed stage
         isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-        UpdatePlayButtonColor();
+        UpdateStageSprites();
         
         UpdateSelection(true);
         UpdateArrowVisibility();
@@ -664,6 +757,11 @@ public class UIStageControl : MonoBehaviour
         }
         ResetNotificationState();
         
+        // Reset swipe state
+        isSwiping = false;
+        isDragging = false;
+        SetStageAlpha(1f);
+        
         // Always refresh when enabled - get fresh data from Stage singleton
         if (Stage.Instance != null)
         {
@@ -682,7 +780,7 @@ public class UIStageControl : MonoBehaviour
             
             // Update current stage unlock status
             isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-            UpdatePlayButtonColor();
+            UpdateStageSprites();
             UpdateSelection(false);
         }
     }
@@ -699,6 +797,11 @@ public class UIStageControl : MonoBehaviour
             notificationCoroutine = null;
         }
         ResetNotificationState();
+        
+        // Reset swipe state
+        isSwiping = false;
+        isDragging = false;
+        SetStageAlpha(1f);
     }
     
     // ========== SELECTION & ANIMATION ==========
@@ -808,7 +911,7 @@ public class UIStageControl : MonoBehaviour
     {
         UpdateLockedStates();
         isCurrentStageUnlocked = IsStageUnlocked(currentIndex);
-        UpdatePlayButtonColor();
+        UpdateStageSprites();
         UpdateSelection(false);
         
         // Update cached value
@@ -823,8 +926,5 @@ public class UIStageControl : MonoBehaviour
         
         if (rightArrowButton != null)
             rightArrowButton.onClick.RemoveListener(OnRightArrowClicked);
-        
-        if (playButton != null)
-            playButton.onClick.RemoveListener(OnPlayButtonClicked);
     }
 }

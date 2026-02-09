@@ -4,7 +4,7 @@ using UnityEngine;
 public class InterstitialAds : MonoBehaviour
 {
     private const int REQUIRED_PLAYS_BEFORE_ADS = 5;
-    private const float COOLDOWN_SECONDS = 1f; // 2 minutes
+    private const float COOLDOWN_SECONDS = 60f; // 1 min
 
     private AppLovinConfig config;
     private int retryAttempt;
