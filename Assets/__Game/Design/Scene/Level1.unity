@@ -5029,7 +5029,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -118, y: -701}
-  m_SizeDelta: {x: 210, y: 230}
+  m_SizeDelta: {x: 170, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &307108799
 MonoBehaviour:
@@ -5734,9 +5734,9 @@ MonoBehaviour:
   playButton: {fileID: 924132032}
   errorShakeDuration: 0.3
   errorShakeStrength: 10
-  unlockedSelectedSprite: {fileID: 21300000, guid: 1c50b750a1b64714d93bfa969687d3bf, type: 3}
-  unlockedUnselectedSprite: {fileID: 21300000, guid: 001382aaa09fe4a4287607c89aeeef8b, type: 3}
-  lockedSprite: {fileID: 21300000, guid: 95e030b8fa15dac4f8ea74a752960461, type: 3}
+  unlockedSelectedSprite: {fileID: 21300000, guid: 95e030b8fa15dac4f8ea74a752960461, type: 3}
+  unlockedUnselectedSprite: {fileID: 21300000, guid: 216db74d89ea129479a15fef1bc5a3da, type: 3}
+  lockedSprite: {fileID: 21300000, guid: d1892fcccc9c3f4499fc7bce45dd9a5a, type: 3}
   startLockStageNotification: {fileID: 1004650685}
   startText: {fileID: 0}
   notificationDuration: 2
@@ -14770,7 +14770,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -123, y: -419}
-  m_SizeDelta: {x: 200, y: 240}
+  m_SizeDelta: {x: 160, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &933089642
 MonoBehaviour:
