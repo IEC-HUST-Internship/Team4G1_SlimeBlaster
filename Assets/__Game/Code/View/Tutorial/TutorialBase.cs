@@ -22,6 +22,7 @@ public abstract class TutorialBase : MonoBehaviour
     protected int currentStepIndex = -1;
     protected bool isTutorialActive = false;
     protected bool hasShownTutorial = false;
+    private bool hasStarted = false;
 
     // 🔑 Each tutorial must define its own save key
     protected abstract string TutorialSaveKey { get; }
@@ -36,10 +37,26 @@ public abstract class TutorialBase : MonoBehaviour
 
         // Hide all tutorial steps at start
         HideAllSteps();
+
+        hasStarted = true;
+
+        // Load saved state and auto-start if needed (after HideAllSteps)
+        if (SaveSystem.Instance != null)
+        {
+            hasShownTutorial = SaveSystem.Instance.GetTutorialShown(TutorialSaveKey);
+        }
+
+        if (!hasShownTutorial)
+        {
+            StartTutorial();
+        }
     }
 
     protected virtual void OnEnable()
     {
+        // Skip if Start() hasn't run yet — Start() will handle auto-start
+        if (!hasStarted) return;
+
         // Load saved state from SaveSystem
         if (SaveSystem.Instance != null)
         {

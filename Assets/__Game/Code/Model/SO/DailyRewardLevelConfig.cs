@@ -45,6 +45,19 @@ public class DailyRewardLevelConfig : ScriptableObject
         }
     }
 
+    [Header("🔧 Auto-Generate Settings")]
+    [Tooltip("Base reward amount for Stage 1, Button 1")]
+    public int baseValue = 100;
+
+    [Tooltip("Within a stage: button 0 = base, button 1 = base×2, ... button 4 = base×5")]
+    public int buttonsPerStage = 5;
+
+    [Tooltip("Multiply base by this each stage (stage2 base = stage1 base × this)")]
+    public float baseMultiplyPerStage = 1.5f;
+
+    [Tooltip("Number of stages to generate")]
+    public int stageCount = 8;
+
     [Tooltip("Index 0 = Stage 1 rewards, Index 1 = Stage 2 rewards, etc.")]
     public List<DailyRewardLevel> levelRewards = new List<DailyRewardLevel>();
 

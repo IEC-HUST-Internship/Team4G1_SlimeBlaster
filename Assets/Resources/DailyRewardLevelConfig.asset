@@ -12,103 +12,96 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66765c3b896f61a43992c9b418b8d2d5, type: 3}
   m_Name: DailyRewardLevelConfig
   m_EditorClassIdentifier: 
+  baseValue: 20
+  buttonsPerStage: 5
+  baseMultiplyPerStage: 2
+  stageCount: 8
   levelRewards:
   - rewards:
     - currencyType: 0
-      amount: 100
+      amount: 20
     - currencyType: 0
-      amount: 100
+      amount: 40
     - currencyType: 0
-      amount: 100
+      amount: 60
     - currencyType: 0
-      amount: 100
-    - currencyType: 0
-      amount: 100
-  - rewards:
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-  - rewards:
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-    - currencyType: 0
-      amount: 200
-  - rewards:
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-  - rewards:
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-    - currencyType: 0
-      amount: 400
-  - rewards:
-    - currencyType: 0
-      amount: 100
-    - currencyType: 0
-      amount: 100
-    - currencyType: 0
-      amount: 100
-    - currencyType: 0
-      amount: 100
+      amount: 80
     - currencyType: 0
       amount: 100
   - rewards:
     - currencyType: 0
-      amount: 100
+      amount: 40
     - currencyType: 0
-      amount: 100
+      amount: 80
     - currencyType: 0
-      amount: 100
+      amount: 120
     - currencyType: 0
-      amount: 100
+      amount: 160
     - currencyType: 0
-      amount: 100
+      amount: 200
   - rewards:
     - currencyType: 0
-      amount: 100
+      amount: 80
     - currencyType: 0
-      amount: 100
+      amount: 160
     - currencyType: 0
-      amount: 100
+      amount: 240
     - currencyType: 0
-      amount: 100
+      amount: 320
     - currencyType: 0
-      amount: 100
+      amount: 400
   - rewards:
     - currencyType: 0
-      amount: 100
+      amount: 160
     - currencyType: 0
-      amount: 100
+      amount: 320
     - currencyType: 0
-      amount: 100
+      amount: 480
     - currencyType: 0
-      amount: 100
+      amount: 640
     - currencyType: 0
-      amount: 100
+      amount: 800
+  - rewards:
+    - currencyType: 0
+      amount: 320
+    - currencyType: 0
+      amount: 640
+    - currencyType: 0
+      amount: 960
+    - currencyType: 0
+      amount: 1280
+    - currencyType: 0
+      amount: 1600
+  - rewards:
+    - currencyType: 0
+      amount: 640
+    - currencyType: 0
+      amount: 1280
+    - currencyType: 0
+      amount: 1920
+    - currencyType: 0
+      amount: 2560
+    - currencyType: 0
+      amount: 3200
+  - rewards:
+    - currencyType: 0
+      amount: 1280
+    - currencyType: 0
+      amount: 2560
+    - currencyType: 0
+      amount: 3840
+    - currencyType: 0
+      amount: 5120
+    - currencyType: 0
+      amount: 6400
+  - rewards:
+    - currencyType: 0
+      amount: 2560
+    - currencyType: 0
+      amount: 5120
+    - currencyType: 0
+      amount: 7680
+    - currencyType: 0
+      amount: 10240
+    - currencyType: 0
+      amount: 12800
