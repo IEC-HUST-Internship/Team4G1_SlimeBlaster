@@ -5,6 +5,9 @@ public class RewardedAds : MonoBehaviour
 {
     private AppLovinConfig config;
     private int retryAttempt;
+    private Action onRewardEarned;
+    private Action onRewardFailed;
+    private bool rewardGranted;
 
     void Start()
     {
@@ -19,6 +22,18 @@ public class RewardedAds : MonoBehaviour
         MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += OnRewardedAdHiddenEvent;
         MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardedAdFailedToDisplayEvent;
         MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardedAdReceivedRewardEvent;
+    }
+
+    /// <summary>
+    /// Show a rewarded ad. When player finishes watching, onReward callback is invoked.
+    /// If ad fails or player closes early, onFailed is invoked.
+    /// </summary>
+    public void ShowRewardedAd(Action onReward, Action onFailed = null)
+    {
+        onRewardEarned = onReward;
+        onRewardFailed = onFailed;
+        rewardGranted = false;
+        LoadRewardedAd();
     }
 
     public void LoadRewardedAd()
@@ -36,12 +51,18 @@ public class RewardedAds : MonoBehaviour
 
     private void OnRewardedAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
     {
-        // Rewarded ad failed to load 
-        // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds).
-
         retryAttempt++;
-        double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
+        if (retryAttempt > 3)
+        {
+            // Give up after 3 retries, notify failure
+            onRewardFailed?.Invoke();
+            onRewardFailed = null;
+            onRewardEarned = null;
+            retryAttempt = 0;
+            return;
+        }
 
+        double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
         Invoke("LoadRewardedAd", (float)retryDelay);
     }
 
@@ -49,7 +70,10 @@ public class RewardedAds : MonoBehaviour
 
     private void OnRewardedAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
     {
-        // Rewarded ad failed to display. AppLovin recommends that you load the next ad.
+        // Rewarded ad failed to display. Notify failure and retry load.
+        onRewardFailed?.Invoke();
+        onRewardFailed = null;
+        onRewardEarned = null;
         LoadRewardedAd();
     }
 
@@ -57,12 +81,22 @@ public class RewardedAds : MonoBehaviour
 
     private void OnRewardedAdHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
-        // Rewarded ad is hidden. Pre-load the next ad
+        // Rewarded ad is hidden. If reward was not granted, notify failure.
+        if (!rewardGranted)
+        {
+            onRewardFailed?.Invoke();
+            onRewardFailed = null;
+            onRewardEarned = null;
+        }
     }
 
     private void OnRewardedAdReceivedRewardEvent(string adUnitId, MaxSdk.Reward reward, MaxSdkBase.AdInfo adInfo)
     {
         // The rewarded ad displayed and the user should receive the reward.
+        rewardGranted = true;
+        onRewardEarned?.Invoke();
+        onRewardEarned = null;
+        onRewardFailed = null;
     }
 
     private void OnRewardedAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)

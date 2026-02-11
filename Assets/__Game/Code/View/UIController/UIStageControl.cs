@@ -78,6 +78,8 @@ public class UIStageControl : MonoBehaviour
     // Notification state
     private Coroutine notificationCoroutine;
     private Color startTextOriginalColor;
+    private Color notificationImageOriginalColor;
+    private Color notificationTextOriginalColor;
     
     private void Start()
     {
@@ -142,7 +144,15 @@ public class UIStageControl : MonoBehaviour
             startTextOriginalColor = startText.color;
         
         if (startLockStageNotification != null)
+        {
+            Image nImg = startLockStageNotification.GetComponent<Image>();
+            if (nImg != null) notificationImageOriginalColor = nImg.color;
+            
+            TMP_Text nTxt = startLockStageNotification.GetComponentInChildren<TMP_Text>();
+            if (nTxt != null) notificationTextOriginalColor = nTxt.color;
+            
             startLockStageNotification.SetActive(false);
+        }
         
         // Cache current unlocked stage
         if (Stage.Instance != null)
@@ -398,10 +408,10 @@ public class UIStageControl : MonoBehaviour
         
         bool didSwipe = Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD;
         
-        // If finger barely moved, it's a tap → trigger play button
+        // If finger barely moved, it's a tap → just snap back, no action
         if (!didSwipe)
         {
-            OnPlayTap();
+            UpdateSelection(true);
             isSwiping = false;
             return;
         }
@@ -509,12 +519,11 @@ public class UIStageControl : MonoBehaviour
     /// </summary>
     private void PlayLockedErrorEffect()
     {
-        // Stop any ongoing notification
+        // Always stop and fully reset before replaying (fixes spam leaving red color)
         if (notificationCoroutine != null)
-        {
             StopCoroutine(notificationCoroutine);
-            ResetNotificationState();
-        }
+        
+        ResetNotificationState();
         
         // Start new notification sequence
         notificationCoroutine = StartCoroutine(ShowLockedNotification());
@@ -635,12 +644,14 @@ public class UIStageControl : MonoBehaviour
             if (notificationImage != null)
             {
                 notificationImage.DOKill();
+                notificationImage.color = notificationImageOriginalColor;
             }
             
             TMP_Text notificationText = startLockStageNotification.GetComponentInChildren<TMP_Text>();
             if (notificationText != null)
             {
                 notificationText.DOKill();
+                notificationText.color = notificationTextOriginalColor;
             }
         }
         

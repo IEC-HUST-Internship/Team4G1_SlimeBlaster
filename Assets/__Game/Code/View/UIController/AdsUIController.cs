@@ -28,6 +28,7 @@ public class AdsUIController : MonoBehaviour
     [Header("🔗 Other Controllers to Disable")]
     public UIController uiController;
     public ControlUpgradeButton controlUpgradeButton;
+    public BreachTerminateManager breachTerminateManager;
     public Button[] otherButtonsToDisable;
 
     private Vector3 dailyRewardPanelOriginalScale;
@@ -247,6 +248,15 @@ public class AdsUIController : MonoBehaviour
         if (controlUpgradeButton != null)
         {
             controlUpgradeButton.enabled = interactable;
+        }
+
+        // 🔒 Disable breach/terminate buttons
+        if (breachTerminateManager != null)
+        {
+            if (breachTerminateManager.breachButton != null)
+                breachTerminateManager.breachButton.interactable = interactable;
+            if (breachTerminateManager.terminateButton != null)
+                breachTerminateManager.terminateButton.interactable = interactable;
         }
     }
 

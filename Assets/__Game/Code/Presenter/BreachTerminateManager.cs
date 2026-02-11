@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class BreachTerminateManager : MonoBehaviour
 {
     private Transition transition;
+    private bool isStartClicked = false;
 
     [Header("Buttons")]
     public Button startButton;
@@ -73,6 +74,11 @@ public class BreachTerminateManager : MonoBehaviour
         breachButton.gameObject.SetActive(false);
         terminateButton.gameObject.SetActive(false);
 
+        // Ensure start button is interactable
+        if (startButton != null)
+            startButton.interactable = true;
+        isStartClicked = false;
+
         // 🎵 Menu music
         if (backgroundMusic != null)
             backgroundMusic.TransitionToMenuMusic();
@@ -80,26 +86,78 @@ public class BreachTerminateManager : MonoBehaviour
 
     private void OnStartClicked()
     {
+        // Prevent spam clicking
+        if (isStartClicked) return;
+        isStartClicked = true;
+
+        if (startButton != null)
+            startButton.interactable = false;
+
         // 🔊 Play button click sound
         GlobalSoundManager.PlaySound(SoundType.buttonClick);
         
-        transition.PlayTransition(() =>
+        // Check if this is the very first play ever (entire game lifetime) via JSON save
+        bool isFirstPlay = SaveSystem.Instance != null && !SaveSystem.Instance.GetHasPlayedFirstGame();
+        
+        if (isFirstPlay)
         {
-            // Hide menu
-            if (menuScene != null)
-                menuScene.SetActive(false);
+            // Mark first play as done (persisted in JSON save)
+            if (SaveSystem.Instance != null)
+                SaveSystem.Instance.SaveHasPlayedFirstGame(true);
+            
+            // 🎮 Set the selected stage from UIStageControl (only unlocked stages)
+            if (uiStageControl != null && Stage.Instance != null)
+            {
+                int selectedStage = uiStageControl.GetSelectedStage();
+                Stage.Instance.SetStage(selectedStage);
+            }
+            
+            // 📊 Firebase Analytics - PlayStage
+            if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+            {
+                int stage = Stage.Instance.GetStage();
+                FireBaseAnalytics.Instance.PlayStage(stage, 1);
+            }
+            
+            transition.PlayTransition(() =>
+            {
+                // Hide menu
+                if (menuScene != null)
+                    menuScene.SetActive(false);
 
-            // Show upgrade scene
-            foreach (var scene in upgradeScenes)
-                if (scene != null) scene.SetActive(true);
+                // Go straight to combat (first time only)
+                foreach (var scene in combatScenes)
+                    if (scene != null) scene.SetActive(true);
 
-            breachButton.gameObject.SetActive(true);
-            terminateButton.gameObject.SetActive(false);
+                breachButton.gameObject.SetActive(false);
+                terminateButton.gameObject.SetActive(true);
 
-            // 🎵 Upgrade music
-            if (backgroundMusic != null)
-                backgroundMusic.TransitionToUpgradeMusic();
-        });
+                // 🎵 Combat music
+                if (backgroundMusic != null)
+                    backgroundMusic.TransitionToCombatMusic();
+            });
+        }
+        else
+        {
+            // Normal flow: go to upgrade scene
+            transition.PlayTransition(() =>
+            {
+                // Hide menu
+                if (menuScene != null)
+                    menuScene.SetActive(false);
+
+                // Show upgrade scene
+                foreach (var scene in upgradeScenes)
+                    if (scene != null) scene.SetActive(true);
+
+                breachButton.gameObject.SetActive(true);
+                terminateButton.gameObject.SetActive(false);
+
+                // 🎵 Upgrade music
+                if (backgroundMusic != null)
+                    backgroundMusic.TransitionToUpgradeMusic();
+            });
+        }
     }
 
     private void OnBreachClicked()

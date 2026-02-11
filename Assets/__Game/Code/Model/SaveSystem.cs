@@ -351,6 +351,30 @@ public class SaveSystem : Singleton<SaveSystem>
         
         return false;
     }
+    
+    /// <summary>
+    /// 🎮 Save first play flag
+    /// </summary>
+    public void SaveHasPlayedFirstGame(bool played)
+    {
+        if (currentSaveData == null)
+            currentSaveData = LoadGame();
+        
+        currentSaveData.hasPlayedFirstGame = played;
+        SaveGame(currentSaveData);
+        MizuLog.Save($"🎮 HasPlayedFirstGame saved: {played}");
+    }
+    
+    /// <summary>
+    /// 🎮 Get first play flag
+    /// </summary>
+    public bool GetHasPlayedFirstGame()
+    {
+        if (currentSaveData == null)
+            currentSaveData = LoadGame();
+        
+        return currentSaveData.hasPlayedFirstGame;
+    }
 }
 
 /// <summary>
@@ -386,6 +410,9 @@ public class SaveData
     // 🎁 Daily Reward
     public int dailyRewardClaimedCount = 0;
     public string dailyRewardLastClaimDate = "";
+    
+    // 🎮 First play flag
+    public bool hasPlayedFirstGame = false;
 }
 
 /// <summary>

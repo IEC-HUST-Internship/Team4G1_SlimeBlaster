@@ -13,12 +13,18 @@ public class DailyRewardButton
     public Sprite spriteBeforeClaimed;
     public Sprite spriteClaimed;
     public TextMeshProUGUI claimedText;
+    public TextMeshProUGUI txtCurrencyAmount;
 }
 
 public class DailyReward : MonoBehaviour
 {
     [Header("Daily Reward Buttons")]
     [SerializeField] private List<DailyRewardButton> rewardButtons = new List<DailyRewardButton>();
+
+    [Header("Progress Bar")]
+    [SerializeField] private Image progressBarImage;
+    [SerializeField] private Sprite defaultProgressBarSprite; // Empty bar sprite (no claims)
+    [SerializeField] private List<Sprite> progressBarSprites = new List<Sprite>(); // 4 sprites for each claim step
 
     [Header("Countdown")]
     [SerializeField] private TextMeshProUGUI countdownText;
@@ -29,24 +35,118 @@ public class DailyReward : MonoBehaviour
     [SerializeField] private float textFadeDuration = 0.3f;
     [SerializeField] private float textScaleDuration = 0.3f;
 
+    [Header("Player")]
+    [SerializeField] private PlayerStats playerStats;
+
+    [Header("Currency Icons")]
+    [SerializeField] private List<CurrencySprite> currencySprites = new List<CurrencySprite>();
+
+    [Header("Rewarded Ads")]
+    [SerializeField] private RewardedAds rewardedAds;
+
     private const int RESET_HOUR = 0; // 12 PM
 
     private int claimedCount = 0;
+    private int cachedMaxUnlockedStage = 1;
     private SaveData cachedSaveData;
     private DateTime nextResetTime;
 
     private void Start()
     {
         cachedSaveData = SaveSystem.Instance.LoadGame();
+        cachedMaxUnlockedStage = cachedSaveData.maxUnlockedStage;
         LoadProgress();
         SetupButtons();
         UpdateButtonStates();
+        UpdateCurrencyAmountTexts();
+        CalculateNextResetTime();
+    }
+
+    private void OnEnable()
+    {
+        if (cachedSaveData == null) return; // Start() hasn't run yet
+        cachedSaveData = SaveSystem.Instance.LoadGame();
+        cachedMaxUnlockedStage = cachedSaveData.maxUnlockedStage;
+        LoadProgress();
+        UpdateButtonStates();
+        UpdateCurrencyAmountTexts();
         CalculateNextResetTime();
     }
 
     private void Update()
     {
         UpdateCountdown();
+        CheckStageChanged();
+    }
+
+    /// <summary>
+    /// Check if max unlocked stage changed and refresh currency amount texts
+    /// </summary>
+    private void CheckStageChanged()
+    {
+        if (SaveSystem.Instance == null) return;
+        var saveData = SaveSystem.Instance.LoadGame();
+        int currentMaxStage = saveData.maxUnlockedStage;
+        if (currentMaxStage != cachedMaxUnlockedStage)
+        {
+            cachedMaxUnlockedStage = currentMaxStage;
+            UpdateCurrencyAmountTexts();
+        }
+    }
+
+    /// <summary>
+    /// Update all button currency amount texts based on current player level
+    /// </summary>
+    private void UpdateCurrencyAmountTexts()
+    {
+        if (DailyRewardLevelConfig.Instance == null)
+        {
+            Debug.LogError("[DailyReward] DailyRewardLevelConfig.Instance is NULL!");
+            return;
+        }
+
+        Debug.Log($"[DailyReward] Updating currency texts for stage {cachedMaxUnlockedStage}, buttons: {rewardButtons.Count}");
+
+        for (int i = 0; i < rewardButtons.Count; i++)
+        {
+            var rewardButton = rewardButtons[i];
+            if (rewardButton.txtCurrencyAmount != null)
+            {
+                var entry = DailyRewardLevelConfig.Instance.GetReward(cachedMaxUnlockedStage, i);
+                if (entry != null)
+                {
+                    // Set the correct TMP sprite asset for this currency type
+                    SetCurrencySpriteAsset(rewardButton.txtCurrencyAmount, entry.currencyType);
+                    rewardButton.txtCurrencyAmount.text = $"<sprite index=0> {entry.amount}";
+                    Debug.Log($"[DailyReward] Button {i}: {entry.currencyType} x{entry.amount}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[DailyReward] Button {i}: GetReward returned null for stage {cachedMaxUnlockedStage}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[DailyReward] Button {i}: txtCurrencyAmount is NOT assigned!");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set the TMP sprite asset on a text component based on currency type
+    /// </summary>
+    private void SetCurrencySpriteAsset(TextMeshProUGUI tmp, EnumCurrency currencyType)
+    {
+        if (tmp == null || currencySprites == null) return;
+
+        foreach (var currencySprite in currencySprites)
+        {
+            if (currencySprite.currencyType == currencyType && currencySprite.spriteAsset != null)
+            {
+                tmp.spriteAsset = currencySprite.spriteAsset;
+                return;
+            }
+        }
     }
 
     private void CalculateNextResetTime()
@@ -77,8 +177,10 @@ public class DailyReward : MonoBehaviour
             countdownText.text = "00:00:00";
             // Reset has occurred, reload progress
             cachedSaveData = SaveSystem.Instance.LoadGame();
+            cachedMaxUnlockedStage = cachedSaveData.maxUnlockedStage;
             LoadProgress();
             UpdateButtonStates();
+            UpdateCurrencyAmountTexts();
             CalculateNextResetTime();
         }
         else
@@ -128,10 +230,10 @@ public class DailyReward : MonoBehaviour
                 rewardButton.mainButton.onClick.AddListener(() => OnRewardButtonClicked(index));
             }
 
-            // Set initial text to "Free"
+            // Set initial text: index 0 = "Free", index 1+ = "Ads"
             if (rewardButton.claimedText != null)
             {
-                rewardButton.claimedText.text = "Free";
+                rewardButton.claimedText.text = index == 0 ? "Free" : "Ads";
                 rewardButton.claimedText.alpha = 1f;
                 rewardButton.claimedText.transform.localScale = Vector3.one;
             }
@@ -165,6 +267,7 @@ public class DailyReward : MonoBehaviour
 
             // Show claimed text for already claimed buttons
             if (isClaimed && rewardButton.claimedText != null)
+
             {
                 rewardButton.claimedText.text = "Claimed";
                 rewardButton.claimedText.alpha = 1f;
@@ -172,8 +275,28 @@ public class DailyReward : MonoBehaviour
             }
             else if (rewardButton.claimedText != null)
             {
-                rewardButton.claimedText.text = "Free";
+                // Index 0 = Free, Index 1+ = Ads
+                rewardButton.claimedText.text = i == 0 ? "Free" : "Ads";
             }
+        }
+
+        // Update progress bar sprite based on claimed count
+        UpdateProgressBar();
+    }
+
+    private void UpdateProgressBar()
+    {
+        if (progressBarImage == null || progressBarSprites == null || progressBarSprites.Count == 0) return;
+
+        if (claimedCount > 0)
+        {
+            int spriteIndex = Mathf.Clamp(claimedCount - 1, 0, progressBarSprites.Count - 1);
+            progressBarImage.sprite = progressBarSprites[spriteIndex];
+        }
+        else
+        {
+            // No claims yet or reset - show empty/default bar
+            progressBarImage.sprite = defaultProgressBarSprite != null ? defaultProgressBarSprite : progressBarSprites[0];
         }
     }
 
@@ -182,6 +305,40 @@ public class DailyReward : MonoBehaviour
         // Can only claim the next button in sequence
         if (index != claimedCount) return;
 
+        // Index 0 is free, index 1+ requires watching a rewarded ad
+        if (index == 0)
+        {
+            PlayClaimAnimation(index);
+        }
+        else
+        {
+            // Show rewarded ad, claim only after player finishes watching
+            if (rewardedAds != null)
+            {
+                // Disable button while ad is loading/showing
+                var rewardButton = rewardButtons[index];
+                if (rewardButton.mainButton != null)
+                    rewardButton.mainButton.interactable = false;
+
+                rewardedAds.ShowRewardedAd(
+                    () => { PlayClaimAnimation(index); },
+                    () => {
+                        // Ad failed or player closed early — re-enable button
+                        if (rewardButton.mainButton != null)
+                            rewardButton.mainButton.interactable = true;
+                    }
+                );
+            }
+            else
+            {
+                Debug.LogWarning("[DailyReward] RewardedAds reference is missing! Giving reward for free.");
+                PlayClaimAnimation(index);
+            }
+        }
+    }
+
+    private void PlayClaimAnimation(int index)
+    {
         var rewardButton = rewardButtons[index];
 
         // Button jump animation (up then down)
@@ -246,17 +403,14 @@ public class DailyReward : MonoBehaviour
 
     private void GiveReward(int index)
     {
-        // TODO: Add your reward logic here based on index
-        // Example:
-        // switch (index)
-        // {
-        //     case 0: // Day 1 reward
-        //         break;
-        //     case 1: // Day 2 reward
-        //         break;
-        //     // etc...
-        // }
-        Debug.Log($"[DailyReward] Claimed reward {index + 1}!");
+        if (playerStats == null || DailyRewardLevelConfig.Instance == null) return;
+
+        EnumCurrency currencyType = DailyRewardLevelConfig.Instance.GetCurrencyType(cachedMaxUnlockedStage, index);
+        int amount = DailyRewardLevelConfig.Instance.GetAmount(cachedMaxUnlockedStage, index);
+
+        playerStats.AddCurrency(currencyType, amount);
+
+        Debug.Log($"[DailyReward] Claimed reward {index + 1} (Stage {cachedMaxUnlockedStage}): +{amount} {currencyType}");
     }
 
     private void SaveProgress()
@@ -270,7 +424,9 @@ public class DailyReward : MonoBehaviour
     public void CheckAndResetIfNeeded()
     {
         cachedSaveData = SaveSystem.Instance.LoadGame();
+        cachedMaxUnlockedStage = cachedSaveData.maxUnlockedStage;
         LoadProgress();
         UpdateButtonStates();
+        UpdateCurrencyAmountTexts();
     }
 }
