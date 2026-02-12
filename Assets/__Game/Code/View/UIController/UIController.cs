@@ -483,7 +483,7 @@ public class UIController : MonoBehaviour
     }
 
     // ⚙️ Close setting panel
-    private void CloseSettingPanel()
+    public void CloseSettingPanel()
     {
         if (settingPanel != null)
         {

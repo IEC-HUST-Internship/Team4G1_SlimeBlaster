@@ -406,6 +406,7 @@ public class SaveData
     
     // 📺 Ads
     public int interstitialPlayCount = 0;
+    public bool noAdsPurchased = false;
     
     // 🎁 Daily Reward
     public int dailyRewardClaimedCount = 0;

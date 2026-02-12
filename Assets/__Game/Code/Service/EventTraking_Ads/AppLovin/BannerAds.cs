@@ -17,6 +17,9 @@ public class BannerAds : MonoBehaviour
             isInitialized = true;
         };
 
+        // Banner revenue callback
+        MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += OnBannerRevenuePaidEvent;
+
         MaxSdk.SetSdkKey(config.sdkKey);
         MaxSdk.SetUserId("USER_ID");
         MaxSdk.InitializeSdk();
@@ -35,6 +38,15 @@ public class BannerAds : MonoBehaviour
         if (isInitialized)
         {
             MaxSdk.HideBanner(config.BannerId);
+        }
+    }
+
+    private void OnBannerRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+    {
+        // Ad revenue paid — send ad_impression to Firebase
+        if (FireBaseAnalytics.Instance != null)
+        {
+            FireBaseAnalytics.Instance.AdImpression(adInfo);
         }
     }
 }

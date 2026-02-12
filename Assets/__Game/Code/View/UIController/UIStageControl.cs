@@ -408,9 +408,10 @@ public class UIStageControl : MonoBehaviour
         
         bool didSwipe = Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD;
         
-        // If finger barely moved, it's a tap → just snap back, no action
+        // If finger barely moved, it's a tap → trigger play/locked action
         if (!didSwipe)
         {
+            OnPlayTap();
             UpdateSelection(true);
             isSwiping = false;
             return;

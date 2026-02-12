@@ -11,6 +11,7 @@ public class DailyRewardButton
     public Button mainButton;
     public Image buttonImage;
     public Sprite spriteBeforeClaimed;
+    public Sprite spriteBeforeClaimedButLock;
     public Sprite spriteClaimed;
     public TextMeshProUGUI claimedText;
     public TextMeshProUGUI txtCurrencyAmount;
@@ -230,10 +231,11 @@ public class DailyReward : MonoBehaviour
                 rewardButton.mainButton.onClick.AddListener(() => OnRewardButtonClicked(index));
             }
 
-            // Set initial text: index 0 = "Free", index 1+ = "Ads"
+            // Set initial text: index 0 = "Free", index 1+ = "Ads" (or "Free" if No Ads purchased)
             if (rewardButton.claimedText != null)
             {
-                rewardButton.claimedText.text = index == 0 ? "Free" : "Ads";
+                bool isNoAds = ADSController.Instance != null && ADSController.Instance.IsNoAds;
+                rewardButton.claimedText.text = (index == 0 || isNoAds) ? "Free" : "Ads";
                 rewardButton.claimedText.alpha = 1f;
                 rewardButton.claimedText.transform.localScale = Vector3.one;
             }
@@ -251,7 +253,12 @@ public class DailyReward : MonoBehaviour
             // Update sprite
             if (rewardButton.buttonImage != null)
             {
-                rewardButton.buttonImage.sprite = isClaimed ? rewardButton.spriteClaimed : rewardButton.spriteBeforeClaimed;
+                if (isClaimed)
+                    rewardButton.buttonImage.sprite = rewardButton.spriteClaimed;
+                else if (canClaim)
+                    rewardButton.buttonImage.sprite = rewardButton.spriteBeforeClaimed;
+                else
+                    rewardButton.buttonImage.sprite = rewardButton.spriteBeforeClaimedButLock;
             }
 
             // Update button interactable (but don't fade when claimed)
@@ -273,10 +280,16 @@ public class DailyReward : MonoBehaviour
                 rewardButton.claimedText.alpha = 1f;
                 rewardButton.claimedText.transform.localScale = Vector3.one;
             }
+            else if (canClaim && rewardButton.claimedText != null)
+            {
+                // Index 0 = Free, Index 1+ = Ads (or Free if No Ads purchased)
+                bool isNoAds = ADSController.Instance != null && ADSController.Instance.IsNoAds;
+                rewardButton.claimedText.text = (i == 0 || isNoAds) ? "Free" : "Ads";
+            }
             else if (rewardButton.claimedText != null)
             {
-                // Index 0 = Free, Index 1+ = Ads
-                rewardButton.claimedText.text = i == 0 ? "Free" : "Ads";
+                // Locked — not yet claimable, show nothing
+                rewardButton.claimedText.text = "";
             }
         }
 
@@ -306,8 +319,11 @@ public class DailyReward : MonoBehaviour
         if (index != claimedCount) return;
 
         // Index 0 is free, index 1+ requires watching a rewarded ad
-        if (index == 0)
+        bool isNoAds = ADSController.Instance != null && ADSController.Instance.IsNoAds;
+
+        if (index == 0 || isNoAds)
         {
+            // Free claim (first reward, or player purchased No Ads)
             PlayClaimAnimation(index);
         }
         else

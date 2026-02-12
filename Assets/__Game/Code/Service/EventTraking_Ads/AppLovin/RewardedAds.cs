@@ -66,7 +66,14 @@ public class RewardedAds : MonoBehaviour
         Invoke("LoadRewardedAd", (float)retryDelay);
     }
 
-    private void OnRewardedAdDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
+    private void OnRewardedAdDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+    {
+        // Rewarded ad displayed successfully — track Firebase event
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            FireBaseAnalytics.Instance.SraPosition(Stage.Instance.GetStage(), "rewarded");
+        }
+    }
 
     private void OnRewardedAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
     {
@@ -101,6 +108,10 @@ public class RewardedAds : MonoBehaviour
 
     private void OnRewardedAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     {
-        // Ad revenue paid. Use this callback to track user revenue.
+        // Ad revenue paid — send ad_impression to Firebase
+        if (FireBaseAnalytics.Instance != null)
+        {
+            FireBaseAnalytics.Instance.AdImpression(adInfo);
+        }
     }
 }

@@ -22,6 +22,7 @@ public class InterstitialAds : MonoBehaviour
         MaxSdkCallbacks.Interstitial.OnAdClickedEvent += OnInterstitialClickedEvent;
         MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
         MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
+        MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += OnInterstitialRevenuePaidEvent;
 
         // Pre-load ad
         LoadInterstitialAd();
@@ -91,6 +92,12 @@ public class InterstitialAds : MonoBehaviour
         // Pause game
         Time.timeScale = 0f;
         AudioListener.pause = true;
+
+        // Interstitial ad displayed successfully — track Firebase event
+        if (FireBaseAnalytics.Instance != null && Stage.Instance != null)
+        {
+            FireBaseAnalytics.Instance.SfaPosition(Stage.Instance.GetStage(), "interstitial");
+        }
     }
 
     private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
@@ -109,5 +116,14 @@ public class InterstitialAds : MonoBehaviour
         
         // Pre-load next ad
         LoadInterstitialAd();
+    }
+
+    private void OnInterstitialRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+    {
+        // Ad revenue paid — send ad_impression to Firebase
+        if (FireBaseAnalytics.Instance != null)
+        {
+            FireBaseAnalytics.Instance.AdImpression(adInfo);
+        }
     }
 }

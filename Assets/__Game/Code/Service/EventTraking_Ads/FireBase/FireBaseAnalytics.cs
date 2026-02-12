@@ -185,4 +185,33 @@ public class FireBaseAnalytics : MonoBehaviour
             Debug.LogError($"[Firebase] LogBuySuccess failed: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// Log ad_impression event when MAX pays revenue for any ad type
+    /// Called from OnAdRevenuePaidEvent callback of Rewarded, Interstitial, Banner
+    /// </summary>
+    public void AdImpression(MaxSdkBase.AdInfo adInfo)
+    {
+        if (!isFirebaseReady) return;
+        
+        double revenue = adInfo.Revenue;
+        Debug.Log($"[Firebase] AdImpression - AdFormat: {adInfo.AdFormat}, Network: {adInfo.NetworkName}, Revenue: {revenue}");
+        
+        try
+        {
+            Firebase.Analytics.FirebaseAnalytics.LogEvent(
+                "ad_impression",
+                new Firebase.Analytics.Parameter("ad_platform", "AppLovin"),
+                new Firebase.Analytics.Parameter("ad_source", adInfo.NetworkName),
+                new Firebase.Analytics.Parameter("ad_unit_name", adInfo.AdUnitIdentifier),
+                new Firebase.Analytics.Parameter("ad_format", adInfo.AdFormat),
+                new Firebase.Analytics.Parameter("value", revenue),
+                new Firebase.Analytics.Parameter("currency", "USD")
+            );
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[Firebase] AdImpression failed: {ex.Message}");
+        }
+    }
 }

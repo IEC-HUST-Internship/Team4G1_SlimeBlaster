@@ -32,7 +32,7 @@ public abstract class TutorialBase : MonoBehaviour
         // Setup tutorial button
         if (tutorialButton != null)
         {
-            tutorialButton.onClick.AddListener(StartTutorial);
+            tutorialButton.onClick.AddListener(OnTutorialButtonClicked);
         }
 
         // Hide all tutorial steps at start
@@ -80,6 +80,18 @@ public abstract class TutorialBase : MonoBehaviour
                 NextStep();
             }
         }
+    }
+
+    // 📚 When tutorial button is pressed, close settings first then start tutorial
+    private void OnTutorialButtonClicked()
+    {
+        // Close settings panel if open
+        if (uiController != null)
+        {
+            uiController.CloseSettingPanel();
+        }
+
+        StartTutorial();
     }
 
     // 📚 Start tutorial from beginning
@@ -232,7 +244,7 @@ public abstract class TutorialBase : MonoBehaviour
     {
         if (tutorialButton != null)
         {
-            tutorialButton.onClick.RemoveListener(StartTutorial);
+            tutorialButton.onClick.RemoveListener(OnTutorialButtonClicked);
         }
     }
 }
