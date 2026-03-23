@@ -293,6 +293,9 @@ public class UIStageControl : MonoBehaviour
     {
         if (!isInitialized) return;
         
+        // Don't handle input if this GameObject is disabled or parent is inactive
+        if (!gameObject.activeInHierarchy) return;
+        
         HandleSwipe();
         
         // Check for unlock changes in real-time
@@ -322,6 +325,9 @@ public class UIStageControl : MonoBehaviour
     private void HandleSwipe()
     {
         if (isAnimating) return;
+        
+        // Don't handle input if swipe region is disabled
+        if (swipeRegion != null && !swipeRegion.gameObject.activeInHierarchy) return;
         
         // Use touch if available, otherwise use mouse
         bool hasTouch = Input.touchCount > 0;
@@ -408,10 +414,15 @@ public class UIStageControl : MonoBehaviour
         
         bool didSwipe = Mathf.Abs(deltaX) > SWIPE_MOVE_THRESHOLD;
         
-        // If finger barely moved, it's a tap → trigger play/locked action
+        // If finger barely moved, it's a tap → just update selection (don't auto-play)
         if (!didSwipe)
         {
-            OnPlayTap();
+            // Only show locked notification if stage is locked, but don't auto-play
+            if (!isCurrentStageUnlocked)
+            {
+                PlayLockedErrorEffect();
+                GlobalSoundManager.PlaySound(SoundType.buttonClick);
+            }
             UpdateSelection(true);
             isSwiping = false;
             return;
